@@ -55,6 +55,7 @@ namespace SpaceSim.Runtime.Menu
         void Awake()
         {
             GameSettings.ApplyAtStart();
+            MusicDirector.Ensure()?.EnterMenu(); // main-menu soundtrack (persistent player, survives scene loads)
             document = GetComponent<UIDocument>();
             if (panelSettings == null) panelSettings = document.panelSettings;
             if (panelSettings == null) panelSettings = MenuKit.CreatePanel("MainMenuPanel (runtime)", opaque: true, sortingOrder: 0);

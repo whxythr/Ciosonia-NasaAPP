@@ -2562,3 +2562,38 @@ C — робот перегреется (предел	C — the robot will overh
 Химзащита	Chemical protection
 химзащита разрушена	chemical protection destroyed
 электроника робота откажет	the robot's electronics would fail
+СЕЙЧАС ИГРАЕТ	NOW PLAYING
+файл не найден	file not found
+Положите файл	Put the file
+Открыть в SoundCloud	Open on SoundCloud
+Скрыть	Hide
+Звук	Audio
+Музыка по умолчанию	Music settings reset to defaults
+МУЗЫКА	MUSIC
+Громкость музыки	Music volume
+Выключить музыку	Mute music
+Плавный переход	Crossfade
+Длительность смены трека при перелёте между зонами	How long one track fades into the next when you fly between zones
+Папка с музыкой	Music folder
+ОТКРЫТЬ	OPEN
+ОБНОВИТЬ	RESCAN
+ТРЕКИ	TRACKS
+найден	found
+нет файла — ожидается	no file — expected
+тела без своей музыки	bodies without their own track
+Тишина	Silence
+Музыка зависит от того, где вы: у какой планеты или спутника, у звезды или в открытом космосе	The music depends on where you are: near which planet or moon, near the star or in deep space
+Треки защищены авторским правом и в игру не входят: положите свои копии (.ogg, .mp3 или .wav) в папку с музыкой под именами из списка и нажмите «Обновить»	The tracks are copyrighted and not included with the game: put your own copies (.ogg, .mp3 or .wav) into the music folder under the names listed and press «Rescan»
+Без файла трек не звучит — кнопка SoundCloud открывает его официальную страницу в браузере	Without a file the track is silent — the SoundCloud button opens its official page in your browser
+главное меню	main menu
+у звезды	near the star
+Теонан и Кварис	Teonan and Quoris
+Гермеус Мора и Мора I	Hermeous Mora and Mora I
+Циозония: поверхность и атмосфера	Ciozonia: surface and atmosphere
+спутники Циозонии	moons of Ciozonia
+Колосс	Colossus
+у Еремуса (внутри орбиты Ори	near Eremus (inside Ori's orbit
+Еремус	Eremus
+Моти-Моти и Дотта	Mochi-Mochi and Dotta
+Золин	Tholin
+открытый космос	deep space
