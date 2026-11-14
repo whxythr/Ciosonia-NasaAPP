@@ -1,0 +1,242 @@
+SPACE MISSION DESIGN PROGRAM	ПРОГРАММА ПРОЕКТИРОВАНИЯ КОСМИЧЕСКИХ МИССИЙ
+Design it. Launch it. Live with every trade-off	Спроектируй. Запусти. Живи с каждым компромиссом
+PLAY	ИГРАТЬ
+Straight to the launch pad  ·  build a rocket and fly	Сразу на стартовую площадку  ·  собери ракету и лети
+CONTINUE	ПРОДОЛЖИТЬ
+Back to the launch pad  ·  credits, modules and samples are autosaved	Назад на площадку  ·  кредиты, модули и образцы сохраняются автоматически
+AUTOSAVE	АВТОСОХРАНЕНИЕ
+TEAM MISSION	КООПЕРАТИВ
+crew  ·  co-op or versus  ·  every player owns a subsystem	экипаж  ·  вместе или друг против друга  ·  у каждого своя подсистема
+SANDBOX	ПЕСОЧНИЦА
+No budget, no limits — experiment with every trade-off	Без бюджета и ограничений — проверяйте любой компромисс
+MISSION ARCHIVE	АРХИВ МИССИЙ
+Saved designs, debriefs, rankings and side-by-side comparison	Сохранённые проекты, разборы, рейтинги и сравнение
+ACADEMY	АКАДЕМИЯ
+Five-minute lessons on orbits, power, data and launch	Пятиминутные уроки об орбитах, энергии, данных и запуске
+SETTINGS	НАСТРОЙКИ
+Brightness, mouse sensitivity, controls	Яркость, разрешение, мышь, управление, язык
+QUIT	ВЫХОД
+Leave Mission Control	Покинуть центр управления
+DAILY CHALLENGE	ЗАДАНИЕ ДНЯ
+ENDS IN 14:22:07	ОСТАЛОСЬ 14:22:07
+Map both poles of Quoris on a 300 M$ budget	Составьте карту обоих полюсов Квариса с бюджетом 300 M$
+Smallest launch mass wins. Polar orbits cover everything — but need more energy to reach	Побеждает наименьшая стартовая масса. Полярные орбиты видят всё — но требуют больше энергии
+kg	кг
+yr	г.
+TOP CREWS · THIS WEEK	ЛУЧШИЕ ЭКИПАЖИ · ЭТА НЕДЕЛЯ
+SCORE	ОЧКИ
+crew	экипаж
+You	Вы
+NEW	НОВОЕ
+Academy: "Mass margins" lesson unlocks the lightweight carbon bus	Академия: урок «Запасы массы» открывает лёгкую углепластиковую платформу
+NEW MISSION	НОВАЯ МИССИЯ
+CHOOSE YOUR OBJECTIVE	ВЫБЕРИТЕ ЦЕЛЬ
+Every mission starts with a goal. The goal decides which resource will hurt the most	Каждая миссия начинается с цели. Цель решает, какой ресурс будет самым дефицитным
+OBJECTIVE	ЦЕЛЬ
+REQUIREMENTS	ТРЕБОВАНИЯ
+SPACECRAFT	АППАРАТ
+LAUNCH & ORBIT	ЗАПУСК И ОРБИТА
+SIMULATE	СИМУЛЯЦИЯ
+DEBRIEF	РАЗБОР
+YOU WILL LEARN	ВЫ УЗНАЕТЕ
+STARTING RESOURCES  ·  HOW TIGHT EACH ONE IS	СТАРТОВЫЕ РЕСУРСЫ  ·  НАСКОЛЬКО ИХ МАЛО
+CRITICAL	КРИТИЧНО
+GENEROUS	С ЗАПАСОМ
+TIGHT	В ОБРЕЗ
+DIFFICULTY	СЛОЖНОСТЬ
+OPTIONS	ПАРАМЕТРЫ
+Random mission events	Случайные события в миссии
+Advisor explains each decision	Советник объясняет каждое решение
+Show real-world equivalents	Показывать реальные аналоги
+BEGIN MISSION DESIGN	НАЧАТЬ ПРОЕКТИРОВАНИЕ
+PLAY AS A TEAM	ИГРАТЬ КОМАНДОЙ
+MISSION GOALS	ЦЕЛИ МИССИИ
+NO LIMITS	БЕЗ ОГРАНИЧЕНИЙ
+ASSEMBLE YOUR CREW	СОБЕРИТЕ ЭКИПАЖ
+Up to four players, one spacecraft. Each role owns a subsystem — and has to negotiate with the others	До четырёх игроков, один аппарат. У каждой роли своя подсистема — и ей приходится договариваться с остальными
+MODE	РЕЖИМ
+CO-OP	ВМЕСТЕ
+VERSUS	ПРОТИВ
+SAME SCREEN	ОДИН ЭКРАН
+ONLINE	ОНЛАЙН
+ROOM CODE	КОД КОМНАТЫ
+MISSION	МИССИЯ
+QUORIS POLAR MAPPER · ENGINEER	ПОЛЯРНЫЙ КАРТОГРАФ КВАРИСА · ИНЖЕНЕР
+Host · Level 12	Хост · Уровень 12
+Level 8	Уровень 8
+Level 15	Уровень 15
+VETO	ВЕТО
+MASS MARGIN	ЗАПАС МАССЫ
+INSTRUMENTS	ПРИБОРЫ
+STATIONS	СТАНЦИИ
+Open seat	Свободное место
+Share the room code or press ENTER on a second controller	Поделитесь кодом комнаты или нажмите ENTER на втором контроллере
+VOTE	ГОЛОС
+WAITING FOR CREW	ОЖИДАНИЕ ЭКИПАЖА
+READY	ГОТОВ
+DESIGNING	ПРОЕКТИРУЕТ
+HOW IT WORKS	КАК ЭТО РАБОТАЕТ
+Each role signs off its own subsystem. Changes that cross roles — a heavier camera, a bigger antenna — go to a crew vote. Arguing costs schedule days, and the clock is a resource too	Каждая роль утверждает свою подсистему. Изменения, затрагивающие других — более тяжёлая камера, большая антенна — идут на голосование экипажа. Споры стоят дней графика, а время — тоже ресурс
+INVITE CREW	ПРИГЛАСИТЬ ЭКИПАЖ
+START MISSION	НАЧАТЬ МИССИЮ
+FLIGHT SCHOOL	ЛЁТНАЯ ШКОЛА
+Short interactive lessons. Each one explains why a decision matters — and unlocks a part in the hangar	Короткие интерактивные уроки. Каждый объясняет, почему решение важно, — и открывает деталь в ангаре
+YOUR PROGRESS	ВАШ ПРОГРЕСС
+lessons complete	уроков пройдено
+Finish "Payload capacity" to unlock the heavy-lift launcher	Завершите «Грузоподъёмность», чтобы открыть тяжёлый носитель
+UP NEXT	ДАЛЕЕ
+Payload capacity & choosing a rocket	Грузоподъёмность и выбор ракеты
+Why a rocket that can lift 20 t to low orbit can only carry 8 t to geostationary orbit	Почему ракета, поднимающая 20 т на низкую орбиту, доставит на геостационарную только 8 т
+RESUME LESSON	ПРОДОЛЖИТЬ УРОК
+GLOSSARY	ГЛОССАРИЙ
+Orbit	Орбита
+Payload	Полезная нагрузка
+Apoapsis	Апоцентр
+Data rate	Скорость передачи
+Margin	Запас
+RTG	РТГ
+Ground station	Наземная станция
+LOCKED	ЗАКРЫТО
+COMPLETE	ПРОЙДЕНО
+START	НАЧАТЬ
+POWER	ЭНЕРГИЯ
+MASS	МАССА
+COMMS	СВЯЗЬ
+SCIENCE	НАУКА
+LIFETIME	СРОК СЛУЖБЫ
+LAUNCH	ЗАПУСК
+PAST MISSIONS	ПРОШЛЫЕ МИССИИ
+Every design you simulate is kept with its debrief. Pick two to compare what changed — and what it cost	Каждый смоделированный проект хранится с разбором. Выберите два, чтобы сравнить, что изменилось и чего это стоило
+DESIGN	ПРОЕКТ
+SCENARIO	СЦЕНАРИЙ
+CREW	ЭКИПАЖ
+GRADE	ОЦЕНКА
+RESULT	РЕЗУЛЬТАТ
+DATE	ДАТА
+Ice Hunter III	Охотник за льдом III
+Quoris Polar Mapper	Полярный картограф Квариса
+SUCCESS	УСПЕХ
+Oct 31	31 окт
+Ice Hunter II	Охотник за льдом II
+PARTIAL	ЧАСТИЧНО
+Oct 29	29 окт
+Featherweight	Пушинка
+Homeworld Weather Watch	Метеодозор родной планеты
+Oct 27	27 окт
+Big Ears	Большие уши
+Relay Ring	Кольцо ретрансляторов
+Oct 24	24 окт
+Icarus	Икар
+Teonan Sun-Grazer	Теонан: у самой звезды
+LOST	ПОТЕРЯН
+Oct 22	22 окт
+Dust Devil	Пыльный дьявол
+Mora Moon Lander	Посадка на луну Моры
+Oct 20	20 окт
+Everything Bagel	Всё и сразу
+Sandbox	Песочница
+Oct 18	18 окт
+COMPARE  ·  ICE HUNTER II → III	СРАВНЕНИЕ  ·  ОХОТНИК ЗА ЛЬДОМ II → III
+Swapping the radar for a lighter spectrometer saved 140 kg — enough for a cheaper rocket	Замена радара на лёгкий спектрометр сэкономила 140 кг — хватило на более дешёвую ракету
+Tb	Тбит
+OPEN FULL DEBRIEF	ОТКРЫТЬ ПОЛНЫЙ РАЗБОР
+SHARE A DESIGN	ПОДЕЛИТЬСЯ ПРОЕКТОМ
+Send a design code to another team so they can fly your spacecraft against the same objective	Отправьте код проекта другой команде, чтобы они слетали на вашем аппарате с той же целью
+COPY	КОПИРОВАТЬ
+DONE	ГОТОВО
+MISSION CONTROL  ·  HOME SYSTEM	ЦЕНТР УПРАВЛЕНИЯ  ·  РОДНАЯ СИСТЕМА
+UPLINK	СВЯЗЬ
+CM	КМ
+COMMANDER	КОМАНДИР
+LV 7	УР 7
+ARROWS	СТРЕЛКИ
+NAVIGATE	НАВИГАЦИЯ
+SELECT	ВЫБОР
+BACK	НАЗАД
+BUILD 0.2.0  ·  PHASE 1 FLIGHT CORE  ·  NASA SPACE APPS 2026	СБОРКА 0.2.0  ·  ЯДРО ПОЛЁТА  ·  NASA SPACE APPS 2026
+END SESSION	ЗАВЕРШИТЬ СЕАНС
+Your current design is autosaved. Team members will keep the lobby open for 10 minutes	Текущий проект сохранён автоматически. Экипаж будет держать лобби открытым 10 минут
+STAY	ОСТАТЬСЯ
+QUIT TO DESKTOP	ВЫЙТИ НА РАБОЧИЙ СТОЛ
+MAIN MENU	ГЛАВНОЕ МЕНЮ
+BUDGET	БЮДЖЕТ
+DATA	ДАННЫЕ
+Gb/day	Гбит/сут
+Money to build, launch and operate the mission	Деньги на постройку, запуск и работу миссии
+Everything the rocket must lift: structure, fuel, instruments	Всё, что должна поднять ракета: конструкция, топливо, приборы
+Electricity from solar panels or RTGs, stored in batteries	Электричество от солнечных панелей или РТГ, запасаемое в батареях
+Science your instruments produce every day	Научные данные, которые приборы дают каждый день
+How fast the spacecraft can send data to the ground	Как быстро аппарат передаёт данные на Землю
+How long the mission must survive and keep working	Сколько миссия должна проработать
+Home · Low orbit	Дом · Низкая орбита
+EARTH OBSERVATION	НАБЛЮДЕНИЕ ПЛАНЕТЫ
+Build a small satellite that photographs storms on the homeworld twice a day and warns coastal cities	Постройте малый спутник, который дважды в день снимает штормы и предупреждает прибрежные города
+Image every coastline at least twice per day	Снимать каждое побережье минимум дважды в день
+Deliver storm alerts within 3 hours	Доставлять штормовые оповещения за 3 часа
+Operate for 3 years	Проработать 3 года
+Orbit altitude vs. coverage and revisit time	Высота орбиты, охват и периодичность съёмки
+Home · Geostationary	Дом · Геостационарная
+COMMUNICATIONS	СВЯЗЬ
+Place a relay so the far side of the homeworld never loses contact with Mission Control	Разместите ретранслятор, чтобы дальняя сторона планеты не теряла связь с ЦУП
+Continuous link to 3 ground stations	Постоянная связь с 3 наземными станциями
+Survive 10 years in high orbit	Прожить 10 лет на высокой орбите
+Stay inside the launch window	Уложиться в окно запуска
+Why higher orbits see more but cost more to reach	Почему высокие орбиты видят больше, но дороже
+Quoris · Polar orbit	Кварис · Полярная орбита
+PLANETARY SCIENCE	ПЛАНЕТОЛОГИЯ
+Map the frozen poles of Quoris and look for buried ice. Every instrument you add competes for power and data	Составьте карту замёрзших полюсов Квариса и найдите погребённый лёд. Каждый прибор конкурирует за энергию и данные
+Map 90% of the surface at 50 m resolution	Снять 90% поверхности с разрешением 50 м
+Detect subsurface ice	Обнаружить подповерхностный лёд
+Return 2 Tb of science	Вернуть 2 Тбит научных данных
+Instrument choice vs. mass, power and data volume	Выбор приборов: масса, энергия и объём данных
+Teonan · Inner system	Теонан · Внутренняя система
+HELIOPHYSICS	ГЕЛИОФИЗИКА
+Fly closer to the star than anything before. Power is plentiful — heat is not your friend	Подлетите к звезде ближе всех. Энергии много — но жар вам не друг
+Reach 0.1 AU from the star	Подойти к звезде на 0.1 а.е
+Measure the stellar wind for 1 year	Измерять звёздный ветер 1 год
+Keep electronics below 70 °C	Держать электронику ниже 70 °C
+Thermal limits, solar power and distance from the star	Тепловые пределы, солнечная энергия и расстояние до звезды
+Hermeous Mora I · Surface	Гермеус Мора I · Поверхность
+LANDER	ПОСАДОЧНЫЙ АППАРАТ
+Land on the irregular moon of Hermeous Mora and sample its dust. Far from the star, every watt counts	Сядьте на неправильной формы луну Гермеус Моры и возьмите пыль. Вдали от звезды важен каждый ватт
+Soft-land within 2 km of the target	Мягкая посадка в пределах 2 км от цели
+Analyse 5 regolith samples	Проанализировать 5 проб реголита
+Relay data via an orbiter	Передать данные через орбитальный аппарат
+Communications distance, relays and power far from the star	Дальность связи, ретрансляторы и энергия вдали от звезды
+Anywhere	Где угодно
+FREE DESIGN	СВОБОДНЫЙ ПРОЕКТ
+No objectives, no limits. Try any spacecraft, orbit and rocket and watch how the numbers react	Без целей и ограничений. Пробуйте любой аппарат, орбиту и ракету и смотрите на цифры
+Unlimited budget and parts	Неограниченный бюджет и детали
+Simulate as often as you like	Моделируйте сколько угодно
+Great for learning the systems	Отлично для изучения систем
+Experiment freely with every trade-off	Свободно проверяйте любой компромисс
+CADET	КАДЕТ
+Guided	С подсказками
+Simple parts, generous margins and an advisor who explains every number before you commit	Простые детали, большие запасы и советник, объясняющий каждую цифру
+ENGINEER	ИНЖЕНЕР
+Full trade-offs	Полные компромиссы
+Advanced components and real margins. The advisor only speaks up when a design will fail	Продвинутые компоненты и реальные запасы. Советник вмешивается, только если проект провалится
+FLIGHT DIRECTOR	РУКОВОДИТЕЛЬ ПОЛЁТА
+No safety net	Без страховки
+Tight budgets, part failures and random events during the mission. Plan reserves or lose the spacecraft	Жёсткий бюджет, отказы и случайные события. Планируйте резервы или потеряете аппарат
+MISSION PLANNER	ПЛАНИРОВЩИК МИССИИ
+Objective · Orbit · Timeline	Цель · Орбита · График
+Sets the goal, picks the orbit and keeps the schedule	Ставит цель, выбирает орбиту и следит за графиком
+SPACECRAFT ENGINEER	ИНЖЕНЕР АППАРАТА
+Structure · Power · Mass	Конструкция · Энергия · Масса
+Builds the bus: frame, solar arrays, batteries, attitude control	Строит платформу: каркас, панели, батареи, ориентацию
+SCIENCE LEAD	РУКОВОДИТЕЛЬ НАУКИ
+Instruments · Data	Приборы · Данные
+Chooses the instruments and fights for science return	Выбирает приборы и борется за научный результат
+OPS & COMMS	ОПЕРАЦИИ И СВЯЗЬ
+Launch · Ground stations · Budget	Запуск · Наземные станции · Бюджет
+Books the rocket, the antennas and signs off on the money	Заказывает ракету и антенны, подписывает расходы
+What keeps a satellite up	Что удерживает спутник наверху
+ORBITS	ОРБИТЫ
+min	мин
+Low, polar or geostationary	Низкая, полярная или геостационарная
+The power budget: watts vs. sunlight	Энергобюджет: ватты и солнечный свет
+Data rate, antennas & ground stations	Скорость данных, антенны и наземные станции
+Mass margins: why engineers add 20	Запас массы: зачем инженеры добавляют 20
+Instruments: what does science cost	Приборы: сколько стоит наука
+Radiation, heat and mission lifetime	Радиация, тепло и срок службы

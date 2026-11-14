@@ -1,0 +1,2520 @@
+Звезда	Star
+Ступень	Stage
+Ракета	Rocket
+Стартовая ракета	Starter rocket
+Ступень 1	Stage 1
+Ступень 2	Stage 2
+Двигатели	Engines
+Топливные баки	Fuel tanks
+Навигация	Navigation
+Защита	Protection
+Наука	Science
+Пробоотборники	Samplers
+Проект	Design
+Характеристики	Specs
+Замечания	Notes
+Ангар недоступен	Hangar unavailable
+Перестройка возможна только на стартовой площадке	The rocket can only be rebuilt on the launch pad
+Проект сброшен к стандартной ракете — «Вывезти на старт», чтобы поставить её на площадку	Design reset to the standard rocket — press “Roll out” to put it on the pad
+Ангар: не удалось применить проект — ракета не на стартовой площадке	Hangar: could not apply the design — the rocket is not on the launch pad
+Ангар: на площадку вывезена ракета	Hangar: rolled out to the pad
+ступеней	stages
+стартовая масса	launch mass
+идеальный Δv	ideal Δv
+Замечаний	Notes
+см. ангар	see hangar
+АНГАР	HANGAR
+есть неприменённые изменения	unapplied changes
+изменений нет	no changes
+Масса	Mass
+идеально	ideal
+высота	height
+м	m
+ПКМ	RMB
+обзор	look
+колесо	wheel
+зум	zoom
+выше/ниже	up/down
+вращать	rotate
+вся ракета	whole rocket
+клик	click
+выбрать деталь	select part
+color=#8A97AB>модель-заготовка</color	color=#8A97AB>placeholder model</color
+клик — выбрать	click to select
+ступень	stage
+двигатель	engine
+из	of
+бак	tank
+головной отсек · защитный слой вокруг зонда	nose bay · protective layer around the probe
+головной отсек · на корпусе зонда	nose bay · on the probe body
+головной отсек · ядро зонда	nose bay · probe core
+НА РАКЕТЕ	ON THE ROCKET
+Снять	Remove
+Обязательный	Mandatory
+Показать	Show
+Снять выбор	Deselect
+Каталог модулей	Module catalog
+магазин	shop
+Выберите модуль в списке	Select a module from the list
+Заблокировано — доступно в магазине	Locked — available in the shop
+Купите его в магазине (кнопка внизу или	Buy it in the shop (button below or
+Масса (сухая	Mass (dry
+Цена	Price
+Длина	Length
+Тяга в вакууме	Vacuum thrust
+Isp в вакууме	Vacuum Isp
+Isp у поверхности	Sea-level Isp
+Топливо	Propellant
+Срез сопла	Nozzle exit
+Ёмкость	Capacity
+Масса с топливом	Mass when fuelled
+Возможности	Capabilities
+есть	yes
+Радиационная защита	Radiation shielding
+Кислотостойкость	Acid resistance
+Образцы, до	Samples, up to
+Виды образцов	Sample types
+Научная ценность	Science value
+Обязательный модуль: всегда в отсеке, убрать нельзя	Mandatory module: always in the bay, cannot be removed
+Сейчас в отсеке	Now in the bay
+шт	pcs
+Купить в магазине	Buy in the shop
+Сначала добавьте ступень	Add a stage first
+Поставить на ступень	Mount on stage
+Заменяет двигатель выбранной ступени (сейчас	Replaces the engine of the selected stage (now
+Ступень — в панели «Проект» или кликом по ракете	Stage — in the “Design” panel or by clicking the rocket
+Добавить в ступень	Add to stage
+Бак ставится сверху на баки ступени, заправленным полностью; заправку можно уменьшить ползунком	The tank goes on top of the stage’s tanks, fully fuelled; reduce the load with the slider
+в проекте	in the design
+Уже в отсеке (обязательный	Already in the bay (mandatory
+Установить в головной отсек	Install in the nose bay
+Защита оборачивает зонд слоем — каждый следующий слой поверх предыдущего	Protection wraps the probe in layers — each new layer over the previous one
+Прибор крепится снаружи на корпус зонда, под обтекателем	The instrument mounts outside the probe body, under the fairing
+Сверху вниз — как ракета стоит в ангаре. Ступень 1 работает первой, затем отделяется	Top to bottom — as the rocket stands in the hangar. Stage 1 fires first, then separates
+Добавить ступень сверху	Add a stage on top
+Ступеней нет — ракете нечем взлетать. Добавьте ступень, двигатель и баки	No stages — the rocket has nothing to lift off with. Add a stage, an engine and tanks
+сборочный стенд	assembly stand
+Головной отсек (полезная нагрузка	Nose bay (payload
+неизвестный модуль	unknown module
+Найти	Find
+обязательный	mandatory
+Убрать	Remove
+Пусто — ядро зонда будет добавлено автоматически	Empty — the probe core will be added automatically
+Модули добавляются из каталога: Навигация, Защита, Наука, Пробоотборники. «Найти» — показать на ракете	Modules are added from the catalog: Navigation, Protection, Science, Samplers. “Find” shows one on the rocket
+Удалить ступень	Delete stage
+Двигатель: нет — выберите в каталоге «Двигатели» и нажмите «Поставить на ступень	Engine: none — pick one in the “Engines” catalog and press “Mount on stage
+Двигатель	Engine
+Баков нет — добавьте из каталога «Топливные баки	No tanks — add some from the “Fuel tanks” catalog
+неизвестный бак	unknown tank
+т	t
+Топливо не подходит двигателю	Propellant does not match the engine
+его нечем сжечь, это мёртвый груз	it cannot be burned, this is dead weight
+Ступень: сухая	Stage: dry
+топливо	propellant
+Ступень 1 (первой работает	Stage 1 (fires first
+верхняя	upper
+нет	none
+Все цифры здесь — идеально (уровень A): уравнение Циолковского без потерь на гравитацию, сопротивление	All figures here are ideal (level A): the Tsiolkovsky equation without gravity, air drag
+воздуха и управление. В настоящем полёте (уровень B) Δv понадобится больше	and steering losses. A real flight (level B) needs more Δv
+Стартовая масса	Launch mass
+Сухая масса (с отсеком	Dry mass (with bay
+в т.ч. головной отсек	incl. nose bay
+Топливо рабочее / ёмкость	Usable propellant / capacity
+Неиспользуемое топливо	Unused propellant
+Это топливо не подходит двигателю своей ступени — его везут как мёртвый груз	This propellant does not match its stage’s engine — it is carried as dead weight
+Макс. тяга у поверхности	Max sea-level thrust
+Макс. тяга в вакууме	Max vacuum thrust
+Isp ст. 1 (пов. / вак	Isp st. 1 (s.l. / vac
+с	s
+Расход ṁ ступени 1	Mass flow ṁ of stage 1
+кг/с	kg/s
+Тяга/вес на старте (TWR	Launch thrust/weight (TWR
+g на площадке	g at the pad
+м/с²	m/s²
+Идеальный Δv (вакуум	Ideal Δv (vacuum
+По ступеням (в порядке работы	By stage (in firing order
+Ступеней нет	No stages
+работает	burns
+TWR при включении	TWR at ignition
+тяга у поверхности	sea-level thrust
+тяга в вакууме, g площадки	vacuum thrust, pad g
+нет двигателя — Δv не даёт	no engine — gives no Δv
+Возможности полёта	Flight capabilities
+Сравнение идеального запаса Δv с идеальной потребностью. Потери на гравитацию и сопротивление НЕ учтены	Ideal Δv budget compared with the ideal requirement. Gravity and drag losses are NOT included
+реальному полёту нужно больше. Отмеченная цель проверяется в замечаниях	a real flight needs more. The marked target is checked in the notes
+Цели не рассчитаны	Targets not calculated
+нужно	needs
+хватает	enough
+не хватает	not enough
+запас	margin
+даже без потерь	even without losses
+Оборудование	Equipment
+Прогноз орбиты	Orbit prediction
+Межпланетная навигация	Interplanetary navigation
+Анализ атмосферы	Atmosphere analysis
+Анализ образцов	Sample analysis
+да	yes
+нет пробоотборника	no sampler
+Замечания — это последствия, а не запреты: вывезти на старт можно любой проект	Notes are consequences, not prohibitions: any design can be rolled out
+Замечаний нет: ракета оторвётся от площадки, идеального Δv хватает на отмеченную цель (потери в полёте не учтены	No notes: the rocket will lift off and ideal Δv covers the marked target (flight losses not included
+ВЫВЕЗТИ НА СТАРТ — применить	ROLL OUT — apply
+Выйти без изменений	Leave without changes
+Сбросить к стандартной	Reset to standard
+Обтекатель: виден	Fairing: shown
+Обтекатель: снят	Fairing: removed
+Вся ракета	Whole rocket
+МАГАЗИН	SHOP
+Выйти из ангара	Leave the hangar
+В проекте есть неприменённые изменения. Вывезти новую ракету на старт или вернуться к прежней	The design has unapplied changes. Roll out the new rocket or go back to the previous one
+Вывезти на старт	Roll out
+Остаться	Stay
+кг	kg
+МН	MN
+кН	kN
+м/с	m/s
+мин	min
+кр	cr
+бесплатно	free
+уровень	level
+прогноз орбиты	orbit prediction
+межпланетная навигация	interplanetary navigation
+анализ атмосферы	atmosphere analysis
+анализ образцов	sample analysis
+камни	rocks
+грунт	soil
+жидкости	liquids
+кислоты	acids
+редкие материалы	rare materials
+Планеты	Planets
+План полёта	Flight plan
+Карта	Map
+Манёвр не задан: введите числа во все поля манёвра	Manoeuvre not set: enter numbers in all manoeuvre fields
+Манёвр не задан: время импульса должно быть в будущем (≥ 0 с	Manoeuvre not set: the burn time must be in the future (≥ 0 s
+Манёвр задан. Нажмите «Проверить план	Manoeuvre set. Press “Check plan
+Манёвр удалён	Manoeuvre deleted
+Проверка недоступна: навигационная система не загружена	Check unavailable: navigation system not loaded
+не выбрана	not selected
+звезда	star
+здесь	here
+цель	target
+система	system
+Радиус	Radius
+км	km
+Температура поверхности	Surface temperature
+Расстояние от аппарата	Distance from vehicle
+Центр системы: вокруг звезды обращаются планеты. Справочная информация — целью полёта звезда быть не может	Centre of the system: planets orbit the star. Reference only — the star cannot be a flight target
+вы здесь	you are here
+Физические свойства	Physical properties
+Ускорение g у поверхности	Surface gravity g
+Сутки (звёздные	Day (sidereal
+сут	d
+обратное вращение	retrograde rotation
+Орбита	Orbit
+Большая полуось a	Semi-major axis a
+а.е	AU
+млн км	million km
+Эксцентриситет e	Eccentricity e
+Период обращения	Orbital period
+Обращается вокруг	Orbits
+Сфера влияния	Sphere of influence
+Атмосфера и поверхность	Atmosphere and surface
+Атмосфера	Atmosphere
+не задан	not set
+Температура у поверхности	Near-surface temperature
+нет атмосферы	no atmosphere
+Состав	Composition
+Давление у поверхности	Surface pressure
+атм	atm
+Радиация	Radiation
+нет (0	none (0
+Кислота	Acid
+Уровни опасности: 0 = нет; чем выше уровень, тем более сильная защита аппарата нужна (магазин	Hazard levels: 0 = none; the higher the level, the stronger the protection needed (shop
+Требования миссии (уровень A, с поверхности	Mission requirements (level A, from the surface
+Вы здесь	You are here
+Нет данных	No data
+Подъём на орбиту	Ascent to orbit
+Отлёт (к цели	Departure (to target
+Захват на орбиту цели	Capture into target orbit
+Посадка	Landing
+Итого	Total
+Время перелёта	Transfer time
+Идеально: без потерь на подъём (+1–2 км/с в атмосфере	Ideal: without ascent losses (+1–2 km/s in an atmosphere
+момент импульса t	burn time t
+время симуляции	simulation time
+введите число секунд ≥ 0	enter a number of seconds ≥ 0
+Манёвр не задан	Manoeuvre not set
+До манёвра	Until manoeuvre
+время прошло	time has passed
+назад	ago
+Момент (время симуляции	Time (simulation time
+Прогрейд / нормаль / радиально	Prograde / normal / radial
+Δv| манёвра	Δv| of manoeuvre
+Работа двигателя (оценка	Engine burn (estimate
+Время манёвра прошло — задайте новый или удалите его	Manoeuvre time has passed — set a new one or delete it
+Расчёт (уровень A) · обновляется постоянно	Calculation (level A) · updates continuously
+Подсказка: окно запуска — когда цель на угле θ; Δv отлёта — Академия, тема «Окна запуска	Hint: launch window — when the target is at angle θ; departure Δv — Academy, topic “Launch windows
+Расчёт (уровень A	Calculation (level A
+Выберите цель	Select a target
+Расчёт ещё не готов	Calculation not ready yet
+Ручной режим: всё рассчитываете сами, автоматических подсказок и поправок до проверки нет	Manual mode: you calculate everything yourself, no automatic hints or corrections before the check
+Подробная оценка — после нажатия «Проверить план	Detailed assessment — after pressing “Check plan
+Как исправить	How to fix
+Попадание в сферу влияния	Reaches sphere of influence
+Вход в сферу влияния	SOI entry
+через	in
+v∞ прибытия	arrival v∞
+Перицентр над поверхностью	Periapsis above surface
+Δv захвата (по прогнозу	Capture Δv (predicted
+Ближайшее сближение с целью	Closest approach to target
+План изменён после проверки — нажмите «Проверить план» снова	Plan changed after the check — press “Check plan” again
+Время перелёта (Хоман	Transfer time (Hohmann
+Нужный фазовый угол θ	Required phase angle θ
+Текущий фазовый угол	Current phase angle
+До окна запуска	Until launch window
+Окно (время симуляции	Window (simulation time
+Синодический период	Synodic period
+v∞ отлёта / прибытия	Departure / arrival v∞
+Δv подъём на орбиту	Δv ascent to orbit
+Δv отлёт (орбита	Δv departure (orbit
+Δv захват (орбита	Δv capture (orbit
+Δv посадка	Δv landing
+Δv итого	Δv total
+Δv аппарата	Vehicle Δv
+Не хватает	Short by
+это	that is
+т топлива на последней ступени	t of propellant on the last stage
+Δv аппарата хватает на весь план (идеальные импульсы	Vehicle Δv covers the whole plan (ideal burns
+Защита слабее опасностей цели (радиация	Protection is weaker than the target’s hazards (radiation
+кислота	acid
+нужна защита (магазин	protection needed (shop
+Прогноз траектории недоступен (аппарат на поверхности или нет данных	Trajectory prediction unavailable (vehicle on the surface or no data
+перицентр	periapsis
+км над поверхностью · v	km above surface · v
+Ближайшее сближение с	Closest approach to
+в сферу влияния не попадает	does not reach the sphere of influence
+Цель не выбрана — показана только траектория	No target selected — showing the trajectory only
+Столкновение с	Collision with
+Траектория учитывает заданный манёвр	Trajectory includes the planned manoeuvre
+Время перелёта: ручной режим — рассчитайте сами (или проверьте план	Transfer time: manual mode — calculate it yourself (or check the plan
+Масштаб: 1 деление	Scale: 1 division
+Навигационная система недоступна — звёздная система ещё не загружена	Navigation system unavailable — the star system is not loaded yet
+НАВИГАЦИЯ · межпланетные перелёты	NAVIGATION · interplanetary transfers
+Режим	Mode
+С помощником	Assisted
+Ручной	Manual
+Планеты движутся по орбитам; расчёты — уровень A (идеальные импульсы), проверка — прогноз по сферам влияния с реальным движением планет	Planets move along their orbits; calculations are level A (ideal burns), the check is a sphere-of-influence prediction with real planetary motion
+Отправление	Departure
+Выбрать целью	Set as target
+Цель	Target
+Других тел нет	No other bodies
+Орбиты и посадка	Orbits and landing
+Орбита ожидания у	Parking orbit at
+Орбита у цели	Orbit at target
+Посадка на цель	Land on target
+Ваш импульс захвата (0 — не задан	Your capture burn (0 — not set
+Манёвр отлёта (импульс	Departure manoeuvre (burn
+Время импульса: через	Burn time: in
+с от текущего момента	s from now
+Прогрейд	Prograde
+Нормаль	Normal
+Радиально	Radial
+Задать манёвр	Set manoeuvre
+Удалить манёвр	Delete manoeuvre
+Подбираю	Searching
+Подобрать манёвр (помощник	Find manoeuvre (assistant
+Проверить план	Check plan
+План ещё не проверен. Нажмите «Проверить план» — прогноз по сферам влияния покажет, попадает ли манёвр в цель	The plan has not been checked. Press “Check plan” — the sphere-of-influence prediction shows whether the manoeuvre reaches the target
+не число ≥ 0	not a number ≥ 0
+Вид	View
+Вся система	Whole system
+Вокруг аппарата	Around vehicle
+Обозначения	Legend
+планеты и луны (сейчас	planets and moons (now
+отправление	departure
+цель в момент встречи / сближения	target at encounter / closest approach
+аппарат	vehicle
+прогноз траектории	predicted trajectory
+орбиты тел	body orbits
+сфера влияния	sphere of influence
+Вид сверху на плоскость эклиптики (X, Y	Top view of the ecliptic plane (X, Y
+Прогноз	Prediction
+открыть/закрыть	open/close
+ускорение времени (выше ×1000 — только вне атмосферы, с выключенным двигателем	time warp (above ×1000 only outside the atmosphere with the engine off
+Закрыть	Close
+Па	Pa
+Ускорение снижено до	Time warp reduced to
+Вы в космосе! Открыта звёздная система	You are in space! Star system unlocked
+карта системы	system map
+метки тел	body markers
+перелёт к другому телу	travel to another body
+Новая заправленная ракета на стартовой площадке	New fuelled rocket on the launch pad
+показать приборы	show instruments
+АНАЛИЗ ОРБИТЫ НЕДОСТУПЕН	ORBIT ANALYSIS UNAVAILABLE
+Нужен навигационный компьютер НК-1 (добавьте в ангаре, бесплатно). Без него орбиту можно рассчитать самостоятельно по r, v и формулам Flight Manual	Requires the NK-1 navigation computer (add it in the hangar, free). Without it you can calculate the orbit yourself from r, v and the Flight Manual formulas
+РАКЕТА	ROCKET
+кнопка — зажигание	button — ignition
+тангаж	pitch
+курс	heading
+тяга	thrust
+полная	full
+отсечка	cutoff
+отделить ступень	separate stage
+система отсчёта	reference frame
+фокус	focus
+время	time
+пауза	pause
+нач. условия	init. conditions
+новая ракета	new rocket
+карта	map
+метки	markers
+к другому телу	to another body
+Академия	Academy
+навигация	navigation
+орбита	orbit
+единицы	units
+скрыть	hide
+настройки	settings
+только зонд	probe only
+РАБОТАЕТ	RUNNING
+выключен	off
+топливо кончилось	out of propellant
+Топливо ступени	Stage propellant
+Тяга (дроссель	Thrust (throttle
+Тяга/вес (макс	Thrust/weight (max
+Расход ṁ	Mass flow ṁ
+Тангаж / курс	Pitch / heading
+Δv идеальн. остаток	Ideal Δv remaining
+Δv израсходовано	Δv spent
+Потери: гравит	Losses: gravity
+Потери: сопрот	Losses: drag
+Потери: управл	Losses: steering
+Идеальный Δv (Циолковский) — без потерь; реальный разгон меньше на сумму потерь	Ideal Δv (Tsiolkovsky) has no losses; real acceleration is lower by the sum of the losses
+ЗАПУСК	LAUNCH
+ВКЛЮЧИТЬ ДВИГАТЕЛЬ	IGNITE ENGINE
+ОТДЕЛИТЬ СТУПЕНЬ	SEPARATE STAGE
+НАВИГАЦИЯ	NAVIGATION
+АКАДЕМИЯ	ACADEMY
+Подробнее	Details
+МАНЁВР · Δv	MANOEUVRE · Δv
+Зажигание через	Ignition in
+СЕЙЧАС	NOW
+Осталось Δv	Δv remaining
+Работа двигателя	Engine burn
+сфера влияния через	sphere of influence in
+промах	miss
+Пауза на время Академии — закройте её	Paused for the Academy — close it
+или Esc), чтобы продолжить полёт	or Esc) to continue the flight
+ДОСТИЖЕНИЕ	ACHIEVEMENT
+очк. исследований. Новые товары в магазине	research pts. New items in the shop
+КАРТА СИСТЕМЫ	SYSTEM MAP
+вид сверху	top view
+или Esc — закрыть	or Esc to close
+ТЕЛЕМЕТРИЯ	TELEMETRY
+Время симуляции	Simulation time
+Широта / долгота	Latitude / longitude
+Высота над поверхн	Height above surface
+Высота над R (h	Height above R (h
+От центра (r	From centre (r
+v| инерциальная	v| inertial
+v| отн. поверхн	v| rel. surface
+v| отн. воздуха	v| rel. air
+v радиальная (v_r	v radial (v_r
+v горизонт. (инерц	v horizontal (inert
+v⃗ отн. пов. E/N/Up	v⃗ rel. surf. E/N/Up
+v⃗ инерц. x/y/z	v⃗ inertial x/y/z
+a| полное	a| total
+Перегрузка (акселерометр	G-load (accelerometer
+Плотность ρ	Density ρ
+Давление p	Pressure p
+Скоростной напор q	Dynamic pressure q
+Сопротивление a_drag	Drag a_drag
+Нагрев носа (Саттон–Грейвс	Nose heating (Sutton–Graves
+кВт/м²	kW/m²
+АНАЛИЗ ОРБИТЫ (двухтельная модель, без атмосферы	ORBIT ANALYSIS (two-body model, no atmosphere
+Перицентр (высота	Periapsis (altitude
+Апоцентр (высота	Apoapsis (altitude
+Период T	Period T
+Наклонение i	Inclination i
+v_круг(r) = √(μ/r	v_circ(r) = √(μ/r
+v_уход(r) = √(2μ/r	v_esc(r) = √(2μ/r
+Это проверочные значения. Для обучения рассчитайте их сами по r, v и формулам из Flight Manual	These are for checking. To learn, calculate them yourself from r, v and the Flight Manual formulas
+УСКОРЕНИЕ	TIME WARP
+макс	max
+УСКОРИТЬ	WARP
+взлёт и посадка	takeoff and landing
+верхняя атмосфера	upper atmosphere
+работает двигатель	engine running
+ещё не орбита	not an orbit yet
+дуга с возвратом	return arc
+низкая орбита	low orbit
+высокая орбита	high orbit
+межпланетный полёт	interplanetary flight
+ПАУЗА	PAUSE
+на «рельсах»: точные кеплеровы дуги	on rails: exact Keplerian arcs
+выше нельзя	cannot go higher
+ограничено производительностью	limited by performance
+камера: планета	camera: planet
+камера: аппарат	camera: vehicle
+инерциальная	inertial
+местный горизонт	local horizon
+Время	Time
+шаг	step
+звёзды	stars
+Кредиты	Credits
+кр  ·  исследования	cr  ·  research
+ТОЛЬКО ЧТЕНИЕ	READ ONLY
+РАДИАЦИЯ	RADIATION
+защита	protection
+КИСЛОТА	ACID
+оборудование	equipment
+ПРИБОРЫ ОТКЛЮЧЕНЫ	INSTRUMENTS OFFLINE
+притягивает	attracted by
+вне сферы влияния	outside sphere of influence of
+ДО ПОВЕРХН	TO SURFACE
+до контакта	to contact
+НА ПОВЕРХНОСТИ	ON THE SURFACE
+ПОДЪЁМ В АТМОСФЕРЕ	ATMOSPHERIC ASCENT
+ВЕРХНИЕ СЛОИ АТМОСФЕРЫ	UPPER ATMOSPHERE
+КОСМИЧЕСКИЙ ПОЛЁТ (НЕ ОРБИТА	SPACE FLIGHT (NOT AN ORBIT
+ОРБИТАЛЬНЫЙ ПОЛЁТ	ORBITAL FLIGHT
+ТРАЕКТОРИЯ УХОДА	ESCAPE TRAJECTORY
+СНИЖЕНИЕ В АТМОСФЕРЕ	ATMOSPHERIC DESCENT
+ЗАХОД НА ПОСАДКУ	LANDING APPROACH
+Аппарат покоится на грунте и вращается вместе с планетой	The vehicle rests on the ground and rotates with the planet
+Вертикальная скорость > 0, плотный воздух	Vertical speed > 0, dense air
+Вертикальная скорость < 0, плотный воздух	Vertical speed < 0, dense air
+ρ/ρ₀ ниже порога верхней атмосферы; сопротивление ещё действует	ρ/ρ₀ below the upper-atmosphere threshold; drag still acts
+Снижение у поверхности: следите за вертикальной скоростью	Descending near the surface: watch your vertical speed
+Суборбитальная траектория	Suborbital trajectory
+Выше условной границы, но перицентр под поверхностью — траектория пересекает планету	Above the nominal boundary, but periapsis is below the surface — the trajectory hits the planet
+ε < 0, но перицентр в атмосфере — сопротивление разрушит орбиту	ε < 0, but periapsis is in the atmosphere — drag will destroy the orbit
+ε < 0 и перицентр выше плотной атмосферы	ε < 0 and periapsis above the dense atmosphere
+ε ≥ 0 — траектория не замкнута, аппарат уходит от планеты	ε ≥ 0 — open trajectory, the vehicle is leaving the planet
+Магазин	Shop
+Рынок	Market
+Исследования	Research
+Профиль только для чтения — покупка не сохранится после выхода из игры	Read-only profile — the purchase will not be saved after you quit
+Образец	Sample
+не найден — возможно, он уже продан	not found — it may already be sold
+Продан образец	Sold sample
+за	for
+Профиль только для чтения — продажа не сохранится после выхода из игры	Read-only profile — the sale will not be saved after you quit
+кр · Исследования	cr · Research
+Профиль только для чтения	Read-only profile
+сохранение создано более новой версией игры — изменения не сохраняются	the save was made by a newer game version — changes are not saved
+Купить за	Buy for
+Куплено — модуль доступен в ангаре	Purchased — module available in the hangar
+Куплено	Purchased
+Доступно	Available
+Заблокировано: требуется	Locked: requires
+Заблокировано: требуется достижение	Locked: requires achievement
+Образцов	Samples
+общая масса	total mass
+в ракете	on the rocket
+продажа после возвращения на Четвёртую планету	sale after returning to the Fourth Planet
+до	up to
+Награда	Reward
+Открывает в магазине	Unlocks in the shop
+Посещённые тела	Visited bodies
+пока нет	none yet
+Всего заработано за игру	Total earned in the game
+вне плотной атмосферы	outside dense atmosphere
+в атмосфере	in atmosphere
+безопасно	safe
+не нужна	not needed
+радиация уровня	radiation level
+кислота уровня	acid level
+Радиация действует там, где воздух разрежен (ρ/ρ₀	Radiation acts where the air is thin (ρ/ρ₀
+плотная атмосфера экранирует. Кислота действует внутри атмосферы (ρ/ρ₀	dense atmosphere shields. Acid acts inside the atmosphere (ρ/ρ₀
+в тонком верхнем слое — обе опасности сразу	in a thin upper layer both hazards apply at once
+Каждый незащищённый уровень изнашивает оборудование отсека: 1 уровень	Each unprotected level wears the bay equipment: 1 level
+уровня	levels
+время симуляции). При целостности ниже	simulation time). With integrity below
+приборы отсека отключаются	the bay instruments shut down
+Защита слабее нужного уровня не спасает полностью, но замедляет износ	Protection below the required level does not fully save you but slows the wear
+радиация	radiation
+модуля нет	no module
+Профиль игрока не загружен — магазин недоступен	Player profile not loaded — shop unavailable
+МАГАЗИН · экономика и исследования	SHOP · economy and research
+Цены, условия открытия и сделки задаёт ядро игры; каждая покупка и продажа сразу сохраняется в профиле	Prices, unlock conditions and deals are set by the game core; every purchase and sale is saved to the profile at once
+В магазине пока ничего нет	Nothing in the shop yet
+Что даёт в игре	What it does in the game
+Купленные модули появляются в ангаре (кнопка АНГАР / B на стартовой площадке) — там их ставят на ракету	Purchased modules appear in the hangar (HANGAR button / B on the launch pad), where they are mounted on the rocket
+Покупка разовая: модуль остаётся в профиле. Остальные модули каталога бесплатны и уже доступны в ангаре	A purchase is one-time: the module stays in the profile. All other catalog modules are free and already available in the hangar
+Категория	Category
+Планета	Planet
+Редкость	Rarity
+Анализ	Analysis
+Ценность	Value
+Продажа образцов	Sample sales
+Цена растёт с редкостью и с анализом на месте (спектрометр). При продаже начисляются и очки исследований	The price grows with rarity and on-site analysis (spectrometer). Selling also earns research points
+Образцов пока нет	No samples yet
+Образцы собирают на поверхности других планет и лун пробоотборником — это будет в этапе «Посадка и	Samples are collected on other planets and moons with a sampler — this comes in the “Landing and
+исследование» (следующие milestone). Вид пробоотборника ограничивает, что можно взять и сколько	exploration” stage (next milestones). The sampler type limits what and how much you can take
+Собранные образцы появятся здесь: их можно продать за кредиты, на которые покупаются улучшения	Collected samples appear here: sell them for credits to buy upgrades
+Продать	Sell
+В ракете	On the rocket
+Тело	Body
+Износ без защиты	Wear without protection
+Нужна защита	Protection needed
+Исследовательские достижения	Research achievements
+Засчитываются только по настоящему полёту (симуляция), без телепортации и тестовых инструментов	Count only for a real flight (simulation), without teleporting or test tools
+Достигнуто	Achieved
+Не достигнуто	Not achieved
+Условие было	Condition was
+Условие	Condition
+Открытия	Discoveries
+Опасности окружения	Environmental hazards
+Звёздная система недоступна — таблица опасностей появится после загрузки системы	Star system unavailable — the hazard table appears once the system is loaded
+Закрыть (Esc	Close (Esc
+очк	pts
+г	g
+приборы не отключатся	instruments will not shut down
+приборы отключатся через	instruments shut down in
+топливный бак	fuel tank
+наука	science
+пробоотборник	sampler
+камень	rock
+минерал	mineral
+редкая порода	rare rock
+минеральный грунт	mineral soil
+необычное соединение	unusual compound
+вода	water
+другая жидкость	other liquid
+обычный	common
+необычный	uncommon
+редкий	rare
+исключительный	exceptional
+ЛЁТНАЯ АКАДЕМИЯ · физика полёта на практике	FLIGHT ACADEMY · flight physics in practice
+Все расчёты — те же функции, что считают полёт. Уровень A — идеальная теория; полёт (уровень B) учитывает потери	All calculations are the same functions that compute the flight. Level A is ideal theory; the flight (level B) includes losses
+Профиль только для чтения (сохранение от более новой версии игры): прочитанные темы и решённые задачи не сохранятся после выхода	Read-only profile (save from a newer game version): read topics and solved problems will not be saved after you quit
+Подсказки появляются по ходу полёта	Hints appear during the flight
+открыть Академию	open the Academy
+Пока подсказок нет. Академия реагирует на полёт: например, если тяга/вес меньше 1 или топливо кончилось до орбиты	No hints yet. The Academy reacts to the flight: for example, if thrust/weight is below 1 or propellant ran out before orbit
+По умолчанию	Defaults
+Решение по шагам откроется после всех подсказок	The step-by-step solution opens after all hints
+Подсказки (0	Hints (0
+Академия: задача по теме	Academy: problem on topic
+решена	solved
+профиль только для чтения — не сохранится	read-only profile — will not be saved
+Подсказки	Hints
+активно	active
+Поле	Field
+не число	not a number
+Не числа в полях	Non-numbers in fields
+Вводите, например: 12.5, 12,5 или 3.2e4	Enter, for example: 12.5, 12,5 or 3.2e4
+Расчёт невозможен	Calculation impossible
+Расчёт не дал результата	Calculation gave no result
+Профиль не загружен — прогресс не сохраняется	Profile not loaded — progress is not saved
+Темы	Topics
+Задачи	Problems
+Открыть калькулятор	Open calculator
+Ответ	Answer
+Подсказка	Hint
+Шаг	Step
+Решение: следующий шаг	Solution: next step
+Тема	Topic
+Калькулятор	Calculator
+Академия недоступна: уроки ещё не построены	Academy unavailable: lessons not built yet
+Калькуляторы	Calculators
+Выберите тему в списке слева	Select a topic in the list on the left
+Символ	Symbol
+Что означает	Meaning
+Единица	Unit
+Объяснение	Explanation
+Пример (числа вашей планеты и ракеты	Example (numbers of your planet and rocket
+Применение в игре	Use in the game
+Ограничения	Limitations
+Задача	Problem
+Проверить	Check
+Выберите калькулятор в списке слева	Select a calculator in the list on the left
+Наборы значений	Value sets
+Исходные данные	Input data
+Рассчитать	Calculate
+Результат пересчитывается сразу при вводе	The result updates as you type
+Результат	Result
+Введите значения — результат появится здесь	Enter values — the result appears here
+Величина	Quantity
+Значение	Value
+Расчёт по шагам	Step-by-step calculation
+Подсказок пока нет	No hints yet
+Выберите подсказку в списке слева	Select a hint in the list on the left
+Проверьте себя	Test yourself
+Предупреждение	Warning
+Совет	Tip
+Начальные условия (тестовый инструмент	Initial conditions (test tool
+Двигателя нет: аппарат получает только заданное состояние, дальше — гравитация и сопротивление	No engine: the vehicle only gets the set state, then gravity and drag take over
+Широта	Latitude
+Долгота	Longitude
+Высота над R [м	Height above R [m
+v восток [м/с	v east [m/s
+v север [м/с	v north [m/s
+v вверх [м/с	v up [m/s
+Скорость относительно вращающейся поверхности	Velocity relative to the rotating surface
+Скорость инерциальная (без вращения планеты	Inertial velocity (without planet rotation
+Подсказка: на текущей широте поверхность движется на восток со скоростью	Hint: at the current latitude the surface moves east at
+м/с (ω·R·cos φ	m/s (ω·R·cos φ
+Применить	Apply
+Сброс на площадку	Reset to pad
+Аппарат возвращён на стартовую площадку	Vehicle returned to the launch pad
+Неверное число (используйте точку как десятичный разделитель	Invalid number (use a dot as the decimal separator
+Широта должна быть в диапазоне −90…90	Latitude must be within −90…90
+Заданы начальные условия: h	Initial conditions set: h
+м, v(E,N,Up	m, v(E,N,Up
+отн. поверхности	rel. surface
+инерциально	inertial
+ИЗОБРАЖЕНИЕ	DISPLAY
+МЫШЬ	MOUSE
+УПРАВЛЕНИЕ	CONTROLS
+ПО УМОЛЧАНИЮ	DEFAULTS
+Нажмите клавишу для	Press a key for
+Esc — отмена	Esc to cancel
+Отмена: клавиша для	Cancelled: key for
+не изменилась	unchanged
+и так на	is already on
+теперь	now
+Клавиша была у	The key belonged to
+ей досталась	which got
+Яркость сброшена: 100	Brightness reset: 100
+Мышь: чувствительность ×1, без инверсии	Mouse: sensitivity ×1, no inversion
+Все клавиши — как по умолчанию	All keys are back to default
+Яркость	Brightness
+Экспозиция кадра от −1 до +1 ступени (EV	Frame exposure from −1 to +1 stop (EV
+Чувствительность мыши	Mouse sensitivity
+Обзор в полёте (ПКМ / СКМ) и взгляд на поверхности	Looking around in flight (RMB / MMB) and on the surface
+Инвертировать ось Y	Invert Y axis
+Мышь вверх — взгляд вниз, как в авиасимуляторах	Mouse up — look down, as in flight simulators
+НАЖМИТЕ КЛАВИШУ	PRESS A KEY
+Яркость экрана	Screen brightness
+Меняет экспозицию кадра: 50 % — вдвое темнее, 200 % — вдвое светлее (±1 ступень	Changes frame exposure: 50 % is half as bright, 200 % twice as bright (±1 stop
+Освещённость в симуляции, приборы и физика не меняются — только изображение	Simulation lighting, instruments and physics do not change — only the image
+Обзор мышью	Mouse look
+Чувствительность умножает поворот камеры вокруг ракеты (правая или средняя кнопка) и взгляд астронавта	Sensitivity multiplies camera rotation around the rocket (right or middle button) and the astronaut’s view
+на поверхности. ×1 — как было в игре изначально. Колесо мыши по-прежнему меняет приближение	on the surface. ×1 is the game’s original speed. The mouse wheel still zooms
+Клавиши	Keys
+Нажмите на команду, затем нужную клавишу. Esc — отмена. Если клавиша уже занята, команды	Click a command, then press the key you want. Esc cancels. If the key is taken, the commands
+поменяются клавишами. Esc всегда закрывает окна и открывает это меню	swap keys. Esc always closes windows and opens this menu
+ЦЕНТР УПРАВЛЕНИЯ ПОЛЁТОМ	FLIGHT CONTROL CENTRE
+СИМУЛЯЦИЯ	SIMULATION
+НА ПАУЗЕ	PAUSED
+К ПОЛЁТУ	TO FLIGHT
+ПАУЗА  /  НАСТРОЙКИ	PAUSE  /  SETTINGS
+НАСТРОЙКИ	SETTINGS
+ЛКМ	LMB
+ВЫБРАТЬ	SELECT
+ИЗМЕНИТЬ ЗНАЧЕНИЕ	CHANGE VALUE
+ПРОДОЛЖИТЬ ПОЛЁТ	RESUME FLIGHT
+ГЛАВНОЕ МЕНЮ	MAIN MENU
+Выйти в главное меню	Leave to the main menu
+Текущий полёт не сохраняется. Профиль — кредиты, модули, образцы и конструкция ракеты — уже сохранён	The current flight is not saved. The profile — credits, modules, samples and rocket design — is already saved
+В ГЛАВНОЕ МЕНЮ	TO MAIN MENU
+ВЫЙТИ ИЗ ИГРЫ	QUIT GAME
+ЗАВЕРШИТЬ СЕАНС	END SESSION
+Выйти из игры	Quit the game
+Текущий полёт не сохраняется. Профиль игрока уже сохранён	The current flight is not saved. The player profile is already saved
+ВЫЙТИ НА РАБОЧИЙ СТОЛ	QUIT TO DESKTOP
+Главное меню недоступно: сцены MainMenu нет в Build Settings (SpaceSim ▸ Create Main Menu Scene	Main menu unavailable: the MainMenu scene is not in Build Settings (SpaceSim ▸ Create Main Menu Scene
+ОТМЕНА	CANCEL
+Выйти можно только из стоящей на грунте ракеты	You can only exit a rocket standing on the ground
+спринт	sprint
+без усталости	no fatigue
+на	on
+бег невозможен — слишком тяжело	running impossible — too heavy
+Выход на поверхность: g	Going outside: g
+м/с², шаг	m/s², step
+прыжок	jump
+м. E — образец/вернуться, V — вид со стороны	m. E — sample/return, V — side view
+Астронавт в ракете	Astronaut is in the rocket
+Рядом нет образцов	No samples nearby
+Профиль только для чтения — образец не сохранится	Read-only profile — the sample will not be saved
+Взят образец	Sample taken
+проанализирован спектрометром	analysed by spectrometer
+Груз	Cargo
+Вы дома — образец сразу сдан (можно продать	You are home — sample delivered at once (can be sold
+Продать — после возвращения на Четвёртую планету	Sell — after returning to the Fourth Planet
+Ничего в пределах	Nothing within
+м; до ракеты	m; to rocket
+Нужна посадка	Landing needed
+Манипулятор достаёт только до	The manipulator only reaches
+м — образцов в зоне нет	m — no samples in range
+м/с² · шаг	m/s² · step
+м/с (√(Fr·g·L	m/s (√(Fr·g·L
+разгон ≤ μg	acceleration ≤ μg
+м/с² · прыжок v²/2g	m/s² · jump v²/2g
+м · до ракеты	m · to rocket
+м (трос	m (tether
+Сейчас	Now
+шаг/с	steps/s
+наклон	lean
+от первого лица	first person
+вид со стороны	side view
+Стоп	Stop
+ПОСАДКА	LANDING
+выйти на поверхность	go outside
+идти	walk
+прыжок, ПКМ — осмотреться	jump, RMB — look around
+Выход невозможен	Cannot go outside
+манипулятор (до	manipulator (up to
+образцов рядом нет	no samples nearby
+ближайший	nearest
+взять	take
+бег невозможен: ноги давят	running impossible: legs push
+веса тела, а вес с костюмом здесь	of body weight, while weight with suit here is
+кг (k	kg (k
+м/с — предел силы ног L(2k−1)/t, k	m/s — limited by leg strength L(2k−1)/t, k
+м/с — предел Fr	m/s — limited by Fr
+сильнее толчок — долгий неуправляемый полёт	a harder push means a long uncontrolled flight
+Запас сил	Stamina
+Вт (порог	W (threshold
+Вт	W
+только шаг	walk only
+хватит на	lasts
+спринт здесь не утомляет	sprinting does not tire here
+Вт < порога	W < threshold
+восстановление	recovering
+бег	run
+в прыжке	in a jump
+стоит	standing
+КАМЕРА И ВРЕМЯ	CAMERA AND TIME
+ОКНА	WINDOWS
+ИНТЕРФЕЙС	INTERFACE
+Зажигание двигателя	Engine ignition
+Тангаж вверх · шаг вперёд	Pitch up · step forward
+Тангаж вниз · шаг назад	Pitch down · step back
+Курс влево · шаг влево	Heading left · step left
+Курс вправо · шаг вправо	Heading right · step right
+Тяга больше · спринт	More thrust · sprint
+Тяга меньше	Less thrust
+Полная тяга	Full thrust
+Отсечка двигателя	Engine cutoff
+Отделить ступень · прыжок	Separate stage · jump
+Система отсчёта камеры	Camera reference frame
+Фокус камеры: ракета / планета	Camera focus: rocket / planet
+Приблизить	Zoom in
+Отдалить	Zoom out
+Ускорить время	Speed up time
+Замедлить время	Slow down time
+Пауза симуляции	Pause simulation
+Ангар	Hangar
+Карта (3D	Flight Manual (second key
+Начальные условия (тест	Initial conditions (test
+Скрыть / показать приборы	Hide / show instruments
+Схема системы (2D	System map
+Метки тел	Body markers
+Перелёт к другому телу	Travel to another body
+Анализ орбиты	Orbit analysis
+Единицы измерения	Units
+Новая ракета на площадке	New rocket on the pad
+Выйти · взять образец	Go outside · take sample
+Вид от первого / третьего лица	First / third person view
+Пробел	Space
+Правый Shift	Right Shift
+Правый Ctrl	Right Ctrl
+Правый Alt	Right Alt
+Вверх	Up
+Вниз	Down
+Влево	Left
+Вправо	Right
+Ускорение времени сброшено: вход в новую сферу влияния	Time warp reset: entering a new sphere of influence
+Теперь притягивает	Now attracted by
+система отсчёта — центр	reference frame — centre of
+Открытие	Discovery
+первое посещение	first visit
+Активное тело	Active body
+Зонд на стартовой площадке	Probe on the launch pad
+новая ракета на старте	new rocket at the pad
+Потеряно образцов	Samples lost
+Доставлено образцов	Samples delivered
+их можно продать на рынке	they can be sold at the market
+Образцы на борту старой ракеты потеряны	Samples aboard the old rocket are lost
+Пересечена условная граница космоса	Crossed the nominal boundary of space
+км). Атмосфера здесь не заканчивается: ρ	km). The atmosphere does not end here: ρ
+Ниже условной границы космоса	Below the nominal boundary of space
+Контакт с поверхностью: скорость относительно грунта	Surface contact: speed relative to ground
+м/с (вертикальная	m/s (vertical
+Двигатель выключен	Engine off
+Нельзя: астронавт снаружи. Вернитесь в ракету (E у ракеты	Not possible: the astronaut is outside. Return to the rocket (E near the rocket
+Зажигание	Ignition
+Нечем запускаться: ступень пуста или отделены все ступени	Nothing to fire: the stage is empty or all stages are separated
+Отделена	Separated
+Включите следующую ступень (Enter	Ignite the next stage (Enter
+нет ракеты или ангара	no rocket or hangar
+ракета разбита	rocket destroyed
+ракета не на стартовой площадке	the rocket is not on the launch pad
+астронавт снаружи — сначала вернитесь в ракету	astronaut outside — return to the rocket first
+Ручной режим: подбор манёвра недоступен — рассчитайте его сами	Manual mode: manoeuvre search unavailable — calculate it yourself
+Подбор манёвра — с орбиты ожидания: сначала выйдите на круговую орбиту	Manoeuvre search works from a parking orbit: reach a circular orbit first
+Подбираю манёвр	Searching for a manoeuvre
+Не удалось подобрать манёвр	Could not find a manoeuvre
+Манёвр подобран: попадание в сферу влияния цели	Manoeuvre found: reaches the target’s sphere of influence
+Лучший найденный манёвр не попадает в сферу влияния цели	The best manoeuvre found does not reach the target’s sphere of influence
+нет модели навигации	no navigation model
+ниже	below
+км над	km above
+атмосфера/рельеф — только точное интегрирование	atmosphere/terrain — exact integration only
+Новый профиль	New profile
+Сохранение создано более новой версией игры (v	The save was made by a newer game version (v
+профиль только для чтения, изменения не сохраняются	read-only profile, changes are not saved
+Профиль обновлён до версии	Profile upgraded to version
+Профиль загружен	Profile loaded
+Сохранение повреждено	Save corrupted
+сохранено как	saved as
+создан новый профиль	new profile created
+Профиль только для чтения (сохранение от более новой версии игры) — покупки недоступны	Read-only profile (save from a newer game version) — purchases unavailable
+ПЛАН ПОЛЁТА: ПРИНЯТ	FLIGHT PLAN: ACCEPTED
+ПЛАН ПОЛЁТА: FAILED	FLIGHT PLAN: FAILED
+Выберите цель — другую планету	Select a target — another planet
+Перелёт рассчитывается между телами с общим центром обращения	Transfers are calculated between bodies with a common centre of orbit
+обращается вокруг	orbits
+сначала долетите до	first travel to
+Без атмосферы весь спуск — двигателем (идеально: как подъём на орбиту в обратном порядке, без вращения	No atmosphere, the whole descent is powered (ideal: like the ascent to orbit in reverse, no rotation
+Атмосфера тормозит аппарат: сход с орбиты	The atmosphere brakes the vehicle: deorbit
+м/с + гашение предельной скорости у поверхности	m/s + cancelling terminal velocity near the surface
+м/с. Нагрев и парашюты не учтены (посадка — этап M6	m/s. Heating and parachutes not included (landing is milestone M6
+Выберите планету в списке «Цель	Select a planet in the “Target” list
+Недостаточно Δv: на весь план нужно	Not enough Δv: the whole plan needs
+м/с (идеально), у ракеты	m/s (ideal), the rocket has
+м/с — не хватает	m/s — short by
+Добавьте	Add
+т топлива на последнюю ступень (или легче груз, выше Isp). Реальный полёт потребует ещё больше — потери	t of propellant to the last stage (or lighter payload, higher Isp). A real flight needs even more — losses
+Увеличьте запас Δv ракеты в ангаре	Increase the rocket’s Δv in the hangar
+Недостаточная защита: у	Insufficient protection: at
+у ракеты защита	the rocket’s protection
+и	and
+оборудование будет деградировать	equipment will degrade
+Купите и установите защиту нужного уровня (магазин K, ангар B	Buy and install protection of the required level (shop K, hangar B
+Не задан импульс отлёта: без него проверить траекторию нельзя	Departure burn not set: the trajectory cannot be checked without it
+Задайте время и Δv импульса (по Академии: окно через	Set the burn time and Δv (per the Academy: window in
+м/с) — или «Подобрать» в режиме с помощником	m/s) — or “Find” in assisted mode
+Импульс отлёта даётся с орбиты ожидания, а аппарат	The departure burn is made from a parking orbit, but the vehicle is
+на поверхности	on the surface
+не на устойчивой орбите	not in a stable orbit
+Сначала выйдите на круговую орбиту	First reach a circular orbit
+выше	above
+там можно ускорять время	time can be warped there
+Время импульса уже прошло	The burn time has already passed
+Задайте время в будущем	Set a time in the future
+Недостаточно топлива: импульс	Not enough propellant: burn
+м/с, а запас Δv	m/s, but the Δv budget is
+м/с — двигатель остановится на	m/s — the engine will stop at
+манёвра	of the manoeuvre
+Больше топлива или меньший импульс (точнее выберите время в окне	More propellant or a smaller burn (choose the time in the window more precisely
+После манёвра аппарат падает обратно на	After the manoeuvre the vehicle falls back to
+Импульс по направлению движения (прогрейд), а не вниз	Burn along the direction of motion (prograde), not down
+Недостаточно Δv для выхода на орбиту у	Not enough Δv to enter orbit at
+прилёт с v	arrival with v
+м/с, захват на перицентре	m/s, capture at periapsis
+м/с, а останется	m/s, but remaining
+Больше топлива для захвата — или пролёт мимо (без захвата) как разведка	More propellant for capture — or a flyby (no capture) as reconnaissance
+Запланированного импульса захвата	The planned capture burn of
+м/с не хватит: нужно	m/s is not enough: needed
+Δv = √(v∞² + 2μ/r_p) − √(μ/r_p) — Академия, тема «Окна запуска	Δv = √(v∞² + 2μ/r_p) − √(μ/r_p) — Academy, topic “Launch windows
+Траектория прилёта врезается в	The arrival trajectory hits
+Небольшая коррекция курса на полпути (радиальный/нормальный импульс) поднимет перицентр	A small mid-course correction (radial/normal burn) will raise the periapsis
+Скорость отлёта недостаточна: после импульса	Departure speed insufficient: after the burn of
+м/с аппарат остаётся в сфере влияния	m/s the vehicle stays in the sphere of influence
+Нужно	Needed
+м/с с орбиты	m/s from orbit
+вторая космическая + v	escape velocity + v
+апоцентр	apoapsis
+Скорость отлёта недостаточна для выхода на переходную орбиту	Departure speed insufficient to enter the transfer orbit
+Переходная орбита не достигает орбиты цели	The transfer orbit does not reach the target’s orbit
+вокруг звезды, а орбита	around the star, while the orbit of
+Δv отлёта	Departure Δv
+м/с в момент, когда скорость вокруг	m/s at the moment when the speed around
+направлена	is directed
+против	against
+по	along
+движения планеты (ваш импульс	the planet’s motion (your burn
+Промах: орбита цели достигнута, но	Miss: the target’s orbit is reached, but
+в этот момент не там — сближение лишь до	is elsewhere at that moment — closest approach only
+Импульс	Burn
+раньше	earlier
+позже	later
+окна на	than the window by
+Окно запуска — когда	Launch window — when
+опережает	leads
+на θ	by θ
+сейчас	now
+ближайшее через	nearest in
+Точнее подберите момент импульса на орбите (точку выхода	Choose the burn moment in orbit more precisely (exit point
+Сокол-1	Sokol-1
+Керосин-кислородный двигатель первой ступени. Хорошая тяга у поверхности	Kerosene-oxygen first-stage engine. Good thrust near the surface
+Сокол-1М	Sokol-1M
+Модернизированный Сокол: +15 % тяги, выше Isp, легче	Upgraded Sokol: +15 % thrust, higher Isp, lighter
+Вега-В	Vega-V
+Вакуумный двигатель верхней ступени: большое сопло, у поверхности тяга сильно падает	Vacuum upper-stage engine: large nozzle, thrust drops sharply near the surface
+Гидра	Hydra
+Водородный вакуумный двигатель: лучший Isp, но малая тяга — долгие разгоны	Hydrogen vacuum engine: best Isp but low thrust — long burns
+Искра	Iskra
+Маленький двигатель на самовоспламеняющемся топливе: манёвры и посадка	Small hypergolic engine: manoeuvres and landing
+Бак K-100	Tank K-100
+Большой керосин-кислородный бак, 100 т	Large kerosene-oxygen tank, 100 t
+Расширенный бак K-140	Extended tank K-140
+Расширенный бак: +40 % топлива при +30 % сухой массы. Больше Δv — но и тяжелее старт	Extended tank: +40 % propellant for +30 % dry mass. More Δv — but a heavier launch
+Бак K-40	Tank K-40
+Средний керосин-кислородный бак, 40 т	Medium kerosene-oxygen tank, 40 t
+Бак K-10	Tank K-10
+Малый керосин-кислородный бак, 10 т	Small kerosene-oxygen tank, 10 t
+Бак H-20	Tank H-20
+Водород-кислородный бак, 20 т. Водород лёгкий и объёмный — бак тяжёлый и длинный	Hydrogen-oxygen tank, 20 t. Hydrogen is light and bulky — the tank is heavy and long
+Бак N-2	Tank N-2
+Малый бак самовоспламеняющегося топлива, 2 т	Small hypergolic propellant tank, 2 t
+Зонд (ядро	Probe (core
+Научный зонд: связь, питание, управление. Обязательная полезная нагрузка	Science probe: comms, power, control. Mandatory payload
+Навигационный компьютер НК-1	Navigation computer NK-1
+Рассчитывает текущую орбиту: перицентр, апоцентр, период, наклонение (прибор «Анализ орбиты	Calculates the current orbit: periapsis, apoapsis, period, inclination (the “Orbit analysis” instrument
+Звёздный датчик СД-2	Star tracker SD-2
+Ориентация по звёздам — нужна для межпланетной навигации и режима подсказок планировщика	Star-based attitude — needed for interplanetary navigation and planner hints
+Радиационная защита Р-1	Radiation shield R-1
+Экранирует оборудование и экипаж: открывает исследование районов с сильным излучением	Shields equipment and crew: opens exploration of high-radiation areas
+Радиационная защита Р-2	Radiation shield R-2
+Тяжёлая защита уровня 2: работа в самых сильных полях излучения (Теонан). Вдвое тяжелее Р-1	Heavy level 2 shielding: work in the strongest radiation fields (Teonan). Twice as heavy as R-1
+Кислотостойкое покрытие К-1	Acid-resistant coating K-1
+Защищает от коррозии: нужно для посадки в кислотной атмосфере (Гермеус Мора	Protects against corrosion: needed to land in an acid atmosphere (Hermeous Mora
+Спектрометр СП-1	Spectrometer SP-1
+Определяет минералы на месте: научная ценность образцов ×1.5	Identifies minerals on site: sample science value ×1.5
+Метеокомплекс МЕТЕО	METEO weather package
+Давление, температура и состав атмосферы в точке посадки	Atmospheric pressure, temperature and composition at the landing site
+Пробоотборник ПБ-1	Sampler PB-1
+Камни и грунт, до 10 кг	Rocks and soil, up to 10 kg
+Пробоотборник ПБ-2	Sampler PB-2
+До 30 кг; жидкости, кислоты и редкие материалы	Up to 30 kg; liquids, acids and rare materials
+Нет ни одной ступени: аппарат не сможет взлететь	No stages at all: the vehicle cannot lift off
+нельзя ставить в отсек полезной нагрузки	cannot be placed in the payload bay
+Зонд (ядро) обязателен и добавлен автоматически	Probe (core) is mandatory and added automatically
+не двигатель	not an engine
+помещается не более	fits no more than
+двигателей — установлено	engines — installed
+вакуумный двигатель: у поверхности его Isp	vacuum engine: near the surface its Isp is
+с вместо	s instead of
+с, тяга на старте заметно ниже	s, launch thrust is noticeably lower
+не топливный бак	not a fuel tank
+запрошено	requested
+т, вмещается	t, capacity
+т — залито только то, что помещается	t — only what fits was loaded
+не подходит двигателю	does not match the engine
+т топлива — мёртвый груз	t of propellant — dead weight
+Неизвестный модуль	Unknown module
+пропущен	skipped
+не куплен — не установлен	not purchased — not installed
+керосин + O₂	kerosene + O₂
+водород + O₂	hydrogen + O₂
+гиперголь	hypergolic
+Больше топлива в ступени → выше идеальный Δv; но и стартовая масса больше (ниже тяга/вес	More propellant in a stage → higher ideal Δv; but also more launch mass (lower thrust/weight
+Больше тяги и Isp первой ступени: выше тяга/вес и Δv	More thrust and Isp on the first stage: higher thrust/weight and Δv
+Защита от радиации уровня 1: оборудование не деградирует у Квариса и Моры I; у Теонана — медленнее	Level 1 radiation protection: equipment does not degrade at Quoris and Mora I; slower at Teonan
+Защита от радиации уровня 2: безопасная работа даже у Теонана, ближайшей к звезде планеты	Level 2 radiation protection: safe operation even at Teonan, the planet nearest the star
+Кислотостойкость уровня 1: оборудование выдерживает сернокислотную атмосферу Гермеус Моры	Level 1 acid resistance: equipment withstands the sulphuric atmosphere of Hermeous Mora
+Пробоотборник ПБ-2: 30 кг, жидкости, кислоты и редкие материалы	Sampler PB-2: 30 kg, liquids, acids and rare materials
+Этот модуль не продаётся	This module is not for sale
+уже куплен	already purchased
+сначала	first
+кредитов на	credits short by
+кр. Доступно в ангаре	cr. Available in the hangar
+Первый выход в космос	First trip to space
+Пересечь условную границу космоса стартовой планеты на своей ракете	Cross the nominal space boundary of the home planet in your own rocket
+Первая орбита	First orbit
+Выйти на устойчивую орбиту (ε < 0, перицентр выше плотной атмосферы	Reach a stable orbit (ε < 0, periapsis above the dense atmosphere
+Уход от планеты	Leaving the planet
+Набрать скорость убегания (ε ≥ 0) у стартовой планеты	Reach escape speed (ε ≥ 0) at the home planet
+Посадка на другом теле	Landing on another body
+Мягко или жёстко сесть на другую планету или спутник на своей ракете	Land softly or hard on another planet or moon in your own rocket
+Первый образец	First sample
+Взять первый образец грунта, породы или жидкости	Collect the first sample of soil, rock or liquid
+Первый межпланетный перелёт	First interplanetary flight
+Долететь до сферы влияния другой планеты на своей ракете	Reach another planet’s sphere of influence in your own rocket
+вертикально	vertical
+м/с, вбок	m/s, sideways
+м/с, наклон	m/s, tilt
+склон	slope
+Авария	Crash
+Предел опор	Leg limit
+м/с вниз	m/s down
+м/с вбок, наклон	m/s sideways, tilt
+Жёсткая посадка	Hard landing
+Мягкая — не более	Soft is at most
+м/с вбок, наклон и склон до	m/s sideways, tilt and slope up to
+Мягкая посадка	Soft landing
+нет двигателя — ступень не даёт Δv, только добавляет массу	no engine — the stage gives no Δv, it only adds mass
+нет топлива — ступень бесполезна	no propellant — the stage is useless
+тяга/вес	thrust/weight
+разгон будет долгим, гравитационные потери велики	acceleration will be slow, gravity losses are large
+Тяга/вес на старте	Launch thrust/weight
+тяга двигателей	engine thrust
+МН) меньше веса ракеты m·g	MN) is less than the rocket’s weight m·g
+МН. Ракета не оторвётся от площадки	MN. The rocket will not lift off the pad
+Идеальный запас Δv	Ideal Δv budget
+м/с меньше требуемого	m/s is less than the required
+м/с — и это ещё без потерь на гравитацию и сопротивление	m/s — and that is before gravity and drag losses
+Идеально. Реальный подъём через атмосферу требует больше: обычно +1.0…2.0 км/с на потери	Ideal. A real ascent through the atmosphere needs more: usually +1.0…2.0 km/s for losses
+Идеально. Без атмосферы потери — в основном гравитационные (зависят от тяги/веса	Ideal. Without an atmosphere the losses are mainly gravitational (depend on thrust/weight
+Подъём на	Ascent to
+км (суборбитально	km (suborbital
+Круговая орбита	Circular orbit
+Уход с планеты	Escape from the planet
+бег невозможен: ноги не поднимут	running impossible: legs cannot lift
+кг (вес с костюмом) в полёт между шагами	kg (weight with suit) into flight between steps
+нет сил — отдышитесь (запас	no strength — catch your breath (reserve
+впереди вода	water ahead
+страховочный трос натянут	safety tether is taut
+значений	values
+введите число	enter a number
+должно быть больше нуля	must be greater than zero
+не может быть отрицательным	cannot be negative
+ЯЗЫК	LANGUAGE
+Язык	Language
+Язык игры	Game language
+Меню, приборы и окна игры	Menus, instruments and game windows
+Текст меню, приборов и окон меняется сразу. Лекции Академии и Flight Manual пока только на русском	Menus, instruments and windows change at once. Academy lessons and the Flight Manual are in Russian for now
+Разрешение экрана	Screen resolution
+Размер изображения в пикселях, применяется сразу	Image size in pixels, applied at once
+Экспозиция кадра от −2 до +2 ступеней (EV	Frame exposure from −2 to +2 stops (EV
+Меняет экспозицию кадра: 25 % — вчетверо темнее, 400 % — вчетверо светлее (±2 ступени	Changes frame exposure: 25 % is four times darker, 400 % four times brighter (±2 stops
+Яркость и разрешение	Brightness and resolution
+Разрешение	Resolution
+Настройки сброшены: яркость 100 %, разрешение экрана	Reset: brightness 100 %, screen resolution
+Четвёртая планета (старт	Fourth Planet (start
+Теонан (Teonan	Teonan
+Кварис (Quoris	Quoris
+Гермеус Мора (Hermeous Mora	Hermeous Mora
+Мора I (спутник	Mora I (moon
+Домашняя система	Home system
+N₂ ≈ 78 %, O₂ ≈ 21 %, Ar ≈ 1 % — как у Земли (допущение: состав не задан	N₂ ≈ 78 %, O₂ ≈ 21 %, Ar ≈ 1 % — like Earth (assumption: composition not specified
+очень тонкий слой O₂	very thin O₂ layer
+SO₂ и CO₂ с примесью O₂ и Ar; сернокислотные облака	SO₂ and CO₂ with traces of O₂ and Ar; sulphuric acid clouds
+Обитаемая стартовая планета: копия Земли с меньшей массой (0.842 M⊕) и g = 8.27 м/с². Фиолетовая вода (свет звезды K-класса), экваториальные пустыни, горы у экваториальных побережий, на полюсах до −49 °C. Сплюснутость 0.286 %, наклон оси 22.5°, магнитный полюс 11.5°, B = 0.254 Гс, магнитопауза 13 627 603 м. Сутки 0.844 земных, год 124 дня	Habitable starting planet: a copy of Earth with lower mass (0.842 M⊕) and g = 8.27 m/s². Violet water (K-class starlight), equatorial deserts, mountains on equatorial coasts, down to −49 °C at the poles. Flattening 0.286 %, axial tilt 22.5°, magnetic pole 11.5°, B = 0.254 G, magnetopause 13 627 603 m. Day 0.844 Earth days, year 124 days
+Ближайшая к звезде. Без атмосферы, силикатная серо-коричневая кора, железное ядро (ρ = 4350 кг/м³), кратеры и небольшие «моря», тектонически активна. Сутки = 54.1 земных	Closest to the star. No atmosphere, silicate grey-brown crust, iron core (ρ = 4350 kg/m³), craters and small “seas”, tectonically active. Day = 54.1 Earth days
+Самая малая планета. Приливный захват: всегда повёрнута одной стороной к звезде (−3 °C … 361 °C). Очень тонкий кислородный слой, ржавые красные пятна, массивные глубокие кратеры и «сердечко	The smallest planet. Tidally locked: one side always faces the star (−3 °C … 361 °C). Very thin oxygen layer, rusty red patches, massive deep craters and a “heart
+C, смертельное давление, сернокислотные осадки, атмосфера из SO₂ и CO₂ с примесью O₂ и Ar. Голубая органическая дымка над атмосферой, бело-голубые закаты. g ≈ 14.5 м/с². Сутки = 4.65 земных. Один несферический спутник на 30 000 км	C, lethal pressure, sulphuric acid rain, SO₂ and CO₂ atmosphere with traces of O₂ and Ar. Blue organic haze above the atmosphere, white-blue sunsets. g ≈ 14.5 m/s². Day = 4.65 Earth days. One non-spherical moon at 30 000 km
+Несферический спутник Гермеус Моры на расстоянии 30 000 км, приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка	Non-spherical moon of Hermeous Mora at 30 000 km, tidally locked. Radius ≈ 120 km (parameters not given — estimate
+Русский	Русский
+Brightness, mouse sensitivity, controls	Brightness, resolution, mouse, controls, language
+вашей ракеты	your rocket
+учебной ракеты	training rocket
+Масса ракеты и тяга	Rocket mass and thrust
+Ракетный двигатель отбрасывает назад продукты сгорания со скоростью vₑ. По третьему закону Ньютона газ толкает ракету вперёд	A rocket engine throws combustion products backwards at speed vₑ. By Newton’s third law the gas pushes the rocket forward
+с силой F = ṁ·vₑ — это тяга. Удельный импульс Isp — та же скорость истечения, выраженная в секундах: vₑ = Isp·g₀	with a force F = ṁ·vₑ — this is thrust. Specific impulse Isp is the same exhaust speed expressed in seconds: vₑ = Isp·g₀
+Чем выше Isp, тем меньше топлива уходит на ту же тягу	The higher the Isp, the less propellant the same thrust needs
+Почти вся масса ракеты на старте — топливо. Чтобы ракета вообще оторвалась, тяга должна быть больше её веса	Almost all of a rocket’s launch mass is propellant. To lift off at all, thrust must exceed its weight
+отношение тяга/вес (TWR) > 1. Когда топливо выгорает, масса падает и TWR растёт	thrust-to-weight ratio (TWR) > 1. As propellant burns, mass drops and TWR rises
+Первая ступень	First stage
+кг/с, Isp	kg/s, Isp
+с в вакууме и	s in vacuum and
+с у поверхности	s at the surface
+F_вак	F_vac
+кН;  F_пов	kN;  F_surf
+т, g	t, g
+м/с² → TWR	m/s² → TWR
+Ангар считает массу, тягу и TWR у старта по этим формулам. Кнопка ЗАПУСК не запрещает старт при TWR < 1 — двигатель будет работать	The hangar calculates mass, thrust and launch TWR with these formulas. The LAUNCH button does not forbid a launch at TWR < 1 — the engine will run
+а ракета стоять на площадке и жечь топливо. В полёте панель РАКЕТА показывает «Тяга/вес (макс.)» для текущей массы и давления	while the rocket stands on the pad burning propellant. In flight the ROCKET panel shows “Thrust/weight (max)” for the current mass and pressure
+Тяга зависит от давления снаружи: у поверхности Isp и тяга меньше, чем в вакууме (в игре это учтено	Thrust depends on outside pressure: near the surface Isp and thrust are lower than in vacuum (the game includes this
+TWR — статическая оценка: она не учитывает сопротивление воздуха и наклон ракеты	TWR is a static estimate: it ignores air drag and rocket tilt
+m₀ = m_сух + m_топл + m_груз	m₀ = m_dry + m_prop + m_load
+m_сух	m_dry
+сухая масса ступеней: баки, двигатели	dry mass of the stages: tanks, engines
+m_топл	m_prop
+масса топлива	propellant mass
+m_груз	m_load
+полезная нагрузка и приборы	payload and instruments
+Н	N
+массовый расход топлива	propellant mass flow
+удельный импульс	specific impulse
+стандартное ускорение 9.80665 (постоянная пересчёта, не местная гравитация	standard acceleration 9.80665 (conversion constant, not local gravity
+скорость истечения	exhaust speed
+отношение тяги к весу	thrust-to-weight ratio
+безразмерно	dimensionless
+текущая масса	current mass
+местное ускорение свободного падения	local gravitational acceleration
+Двигатель расходует ṁ	An engine burns ṁ
+кг/с топлива при Isp	kg/s of propellant at Isp
+с. Какова его тяга? Ответ в килоньютонах (кН	s. What is its thrust? Answer in kilonewtons (kN
+Тяга — это расход, умноженный на скорость истечения	Thrust is the mass flow multiplied by the exhaust speed
+Скорость истечения vₑ = Isp·g₀, где g₀ = 9.80665 м/с²	Exhaust speed vₑ = Isp·g₀, where g₀ = 9.80665 m/s²
+Получится ответ в ньютонах — переведите в кН	The answer comes out in newtons — convert to kN
+Гравитация	Gravity
+Любые две массы притягиваются с силой, обратно пропорциональной квадрату расстояния между их центрами	Any two masses attract with a force inversely proportional to the square of the distance between their centres
+Расстояние r отсчитывается от ЦЕНТРА планеты, а не от поверхности, поэтому с высотой гравитация слабеет медленно	The distance r is measured from the planet’s CENTRE, not the surface, so gravity weakens slowly with height
+На орбите гравитация никуда не исчезает: невесомость — это свободное падение, при котором аппарат всё время «промахивается» мимо планеты	Gravity does not vanish in orbit: weightlessness is free fall in which the vehicle keeps “missing” the planet
+м³/с², R	m³/s², R
+У поверхности g = μ/R²	At the surface g = μ/R²
+На высоте 400 км: r	At 400 km: r
+км, g	km, g
+м/с² — это	m/s² — that is
+от поверхностной	of the surface value
+Телеметрия показывает g(r) = μ/r². На подъёме гравитация — главный источник потерь: каждую секунду, пока ракета летит вверх	Telemetry shows g(r) = μ/r². During ascent gravity is the main source of losses: every second the rocket flies up
+она отнимает около g м/с скорости («Потери: гравит.» в панели РАКЕТА	it takes about g m/s of speed (“Losses: gravity” in the ROCKET panel
+Модель — сферическая однородная планета: горы и сжатие на g не влияют. В симуляции действует притяжение только того тела	The model is a uniform spherical planet: mountains and flattening do not affect g. The simulation applies only the attraction of the body
+в чьей сфере влияния находится аппарат (метод сопряжённых конических сечений	whose sphere of influence the vehicle is in (patched conics
+сила притяжения	gravitational force
+гравитационная постоянная 6.6743·10⁻¹¹	gravitational constant 6.6743·10⁻¹¹
+м³/(кг·с²	m³/(kg·s²
+масса планеты	planet mass
+масса аппарата	vehicle mass
+расстояние от центра планеты	distance from the planet’s centre
+ускорение свободного падения	gravitational acceleration
+гравитационный параметр	gravitational parameter
+м³/с²	m³/s²
+Чему равно ускорение свободного падения на высоте 400 км над планетой	What is the gravitational acceleration at 400 km above the planet
+км. Ответ в м/с²	km. Answer in m/s²
+В формулу подставляется расстояние от центра, а не высота	The formula uses the distance from the centre, not the height
+r = R + h — и всё в метрах	r = R + h — all in metres
+м²	m²
+Ускорение	Acceleration
+Второй закон Ньютона: ускорение равно сумме сил, делённой на массу. На ракету при вертикальном подъёме действуют тяга вверх и вес вниз	Newton’s second law: acceleration equals the sum of forces divided by mass. In a vertical ascent thrust acts up and weight down
+в атмосфере — ещё сопротивление	in an atmosphere, also drag
+Масса ракеты всё время уменьшается, поэтому при постоянной тяге ускорение растёт и максимально перед выключением ступени	The rocket’s mass keeps falling, so at constant thrust acceleration grows and peaks just before stage cutoff
+Акселерометр («перегрузка») показывает только негравитационные силы — тягу и сопротивление; в свободном падении он показывает ноль	The accelerometer (“G-load”) shows only non-gravitational forces — thrust and drag; in free fall it reads zero
+у старта: a = F/m	at launch: a = F/m
+вверх остаётся a − g	what is left upward is a − g
+Перед выгоранием (масса	Before burnout (mass
+т, вакуум): a	t, vacuum): a
+Телеметрия: «|a| полное», «Перегрузка (акселерометр)», в панели РАКЕТА — ускорение от тяги. Сильная перегрузка в конце ступени	Telemetry: “|a| total”, “G-load (accelerometer)”, and thrust acceleration in the ROCKET panel. High G at the end of a stage
+повод уменьшить тягу (Ctrl) для хрупкой нагрузки	is a reason to reduce thrust (Ctrl) for a fragile payload
+Формула a_верт — для строго вертикального полёта без сопротивления. При наклоне на подъём идёт только часть тяги	The a_vert formula is for strictly vertical flight without drag. When tilted, only part of the thrust goes into climbing
+ускорение	acceleration
+сила (тяга	force (thrust
+масса	mass
+a_верт = (F − m·g) / m	a_vert = (F − m·g) / m
+a_верт	a_vert
+ускорение вверх при вертикальном подъёме	upward acceleration in a vertical ascent
+местная гравитация	local gravity
+Ракета массой	A rocket of mass
+т стартует вертикально с тягой	t lifts off vertically with thrust
+кН, g	kN, g
+м/с². С каким ускорением она поднимается сразу после отрыва (без сопротивления)? Ответ в м/с²	m/s². What is its acceleration right after liftoff (no drag)? Answer in m/s²
+Действуют две силы: тяга вверх и вес вниз	Two forces act: thrust up and weight down
+Вес W = m·g; результирующая сила — F − W	Weight W = m·g; the net force is F − W
+Ускорение = результирующая сила / масса. Массу — в килограммах, силу — в ньютонах	Acceleration = net force / mass. Mass in kilograms, force in newtons
+Расход топлива	Propellant consumption
+Для заданной тяги двигатель должен выбрасывать ṁ килограммов в секунду; чем выше скорость истечения (Isp), тем меньше нужно	For a given thrust the engine must expel ṁ kilograms per second; the higher the exhaust speed (Isp), the less is needed
+Время работы ступени — запас топлива, делённый на расход	Stage burn time is the propellant load divided by the mass flow
+Дроссель уменьшает расход и тягу в одной пропорции: ступень работает дольше, но Δv — тот же, потому что он зависит только от масс и Isp	The throttle reduces flow and thrust in the same proportion: the stage burns longer but Δv is the same, since it depends only on masses and Isp
+кг/с, топлива	kg/s, propellant
+т → t	t → t
+Панель РАКЕТА: «Расход ṁ» и «Топливо ступени». Shift/Ctrl меняют дроссель — следите, как меняется ṁ. Пустая ступень — лишний груз: отделите её (Пробел	ROCKET panel: “Mass flow ṁ” and “Stage propellant”. Shift/Ctrl change the throttle — watch ṁ change. An empty stage is extra weight: separate it (Space
+Постоянные Isp и расход; без переходных режимов запуска и остатков топлива. У поверхности Isp ниже, поэтому при том же расходе тяга меньше	Constant Isp and flow; no start-up transients or residual propellant. Near the surface Isp is lower, so thrust is lower at the same flow
+массовый расход	mass flow
+t = m_топл / ṁ	t = m_prop / ṁ
+время работы на полной тяге	burn time at full thrust
+запас топлива ступени	stage propellant load
+масса через t секунд	mass after t seconds
+масса при зажигании	mass at ignition
+Ступень с тягой	A stage with thrust
+кН и Isp	kN and Isp
+с несёт	s carries
+т топлива. Сколько секунд она проработает на полной тяге	t of propellant. How many seconds will it burn at full thrust
+Сначала найдите расход ṁ	First find the mass flow ṁ
+ṁ = F/(Isp·g₀) — тягу подставьте в ньютонах	ṁ = F/(Isp·g₀) — thrust in newtons
+t = m_топл/ṁ — массу в килограммах	t = m_prop/ṁ — mass in kilograms
+Δv всей ракеты (сумма ступеней	Δv of the whole rocket (sum of stages
+Формула Циолковского	Tsiolkovsky equation
+Сколько скорости может набрать ракета, сжигая топливо? Каждая порция газа уносит импульс, а ракете приходится разгонять ещё не сожжённое	How much speed can a rocket gain by burning propellant? Each portion of gas carries away momentum, while the rocket must still accelerate the unburned
+топливо. В итоге Δv растёт как ЛОГАРИФМ отношения масс: удвоение топлива не удваивает Δv	propellant. As a result Δv grows as the LOGARITHM of the mass ratio: doubling the propellant does not double Δv
+Отсюда главная идея ракетостроения — ступени: сбрасывая пустые баки, ракета перестаёт разгонять мёртвый груз	Hence the main idea of rocketry — stages: by dropping empty tanks the rocket stops accelerating dead weight
+т, m_f	t, m_f
+т, Isp	t, Isp
+Добавим 40 % топлива	Add 40 % more propellant
+т): Δv	t): Δv
+м/с — прирост лишь	m/s — a gain of only
+Δv идеальн. остаток» в панели РАКЕТА и Δv ступеней в ангаре считаются этой формулой — одной и той же функцией ядра игры	Ideal Δv remaining” in the ROCKET panel and stage Δv in the hangar use this formula — one and the same game-core function
+Это уровень A — идеальный расчёт: без гравитации, сопротивления и потерь на управление. Реальный разгон при подъёме меньше	This is level A, an ideal calculation: no gravity, drag or steering losses. Real acceleration during ascent is lower
+на сумму потерь, которую панель РАКЕТА показывает отдельно	by the sum of the losses, which the ROCKET panel shows separately
+идеальное изменение скорости	ideal change of speed
+масса в начале работы	mass at start of burn
+масса в конце (без сожжённого топлива	mass at end (without burned propellant
+натуральный логарифм	natural logarithm
+Ступень: Isp	Stage: Isp
+с, масса при зажигании	s, mass at ignition
+т, после выгорания	t, after burnout
+т. Каков её идеальный Δv? Ответ в м/с	t. What is its ideal Δv? Answer in m/s
+Отношение масс безразмерно — тонны можно не переводить в килограммы	The mass ratio is dimensionless — tonnes need not be converted to kilograms
+ln — натуральный логарифм (по основанию e	ln is the natural logarithm (base e
+Скорость истечения vₑ = Isp·g₀	Exhaust speed vₑ = Isp·g₀
+У	At
+м/с: запас над идеальным требованием орбиты	m/s: margin over the ideal orbit requirement
+на потери подъёма этого, скорее всего, не хватит	this is probably not enough for ascent losses
+Хватит ли его на потери — проверит полёт	Whether it covers the losses, the flight will show
+Δv — бюджет миссии	Δv — the mission budget
+Δv — «валюта» космического полёта: каждая задача (подняться, выйти на орбиту, улететь) требует определённого изменения скорости	Δv is the “currency” of spaceflight: every task (climbing, reaching orbit, leaving) requires a certain change of speed
+Ракета несёт запас Δv — сумму Δv своих ступеней. Миссия возможна, если запас больше требования С УЧЁТОМ потерь	A rocket carries a Δv budget — the sum of its stages’ Δv. A mission is possible if the budget exceeds the requirement INCLUDING losses
+Идеальные требования (уровень A) — нижняя граница. Реально подъём через атмосферу стоит больше: часть тяги тратится на борьбу	Ideal requirements (level A) are the lower bound. In reality an ascent through the atmosphere costs more: part of the thrust goes to fighting
+с гравитацией, сопротивлением и на повороты (уровень B — это и есть полёт	gravity, drag and turning (level B is the flight itself
+Идеальные требования для планеты	Ideal requirements for planet
+старт на восток, вращение даёт	eastward launch, rotation gives
+Ангар: «Оценка возможностей» сравнивает Δv ракеты с этими требованиями. После полёта сравните «Δv израсходовано» и набранную скорость	Hangar: the capabilities estimate compares the rocket’s Δv with these requirements. After a flight compare “Δv spent” with the speed gained
+разница — потери, и панель РАКЕТА разбивает их на гравитационные, аэродинамические и на управление	the difference is the losses, and the ROCKET panel splits them into gravity, aerodynamic and steering
+Требования посчитаны для идеальных импульсов. Потери зависят от траектории и тяги/веса: медленная ракета теряет больше на гравитацию	Requirements are calculated for ideal burns. Losses depend on trajectory and thrust/weight: a slow rocket loses more to gravity
+быстрая в плотном воздухе — на сопротивление	a fast one in dense air, more to drag
+Δv_ракеты = Σ Isp_i·g₀·ln(m₀ᵢ / m_fᵢ	Δv_rocket = Σ Isp_i·g₀·ln(m₀ᵢ / m_fᵢ
+номер ступени	stage number
+масса всей ракеты при зажигании и выгорании ступени i	whole rocket mass at ignition and burnout of stage i
+m_топл = m_f·(e^(Δv/(Isp·g₀)) − 1	m_prop = m_f·(e^(Δv/(Isp·g₀)) − 1
+топливо для получения Δv	propellant needed for Δv
+масса без этого топлива	mass without this propellant
+Δv_израсх = Δv_набрано + потери_грав + потери_сопр + потери_упр	Δv_spent = Δv_gained + loss_grav + loss_drag + loss_steer
+потери	losses
+скорость, потраченная не на разгон (уровень B	speed not spent on acceleration (level B
+Ступень вместе с грузом весит без топлива	Without propellant, the stage with its load has mass
+с. Сколько тонн топлива нужно, чтобы она дала Δv	s. How many tonnes of propellant are needed to give Δv
+Переверните формулу Циолковского: найдите отношение масс m₀/m_f = e^(Δv/vₑ	Invert the Tsiolkovsky equation: find the mass ratio m₀/m_f = e^(Δv/vₑ
+Топливо — это m₀ − m_f = m_f·(m₀/m_f − 1	Propellant is m₀ − m_f = m_f·(m₀/m_f − 1
+Орбитальная скорость	Orbital velocity
+Орбита — это падение, при котором аппарат движется вбок так быстро, что поверхность «уходит» из-под него с той же скоростью, с какой он падает	An orbit is a fall in which the vehicle moves sideways so fast that the surface drops away beneath it as quickly as it falls
+Для круговой орбиты гравитация как раз обеспечивает нужное центростремительное ускорение: v²/r = μ/r²	For a circular orbit gravity provides exactly the needed centripetal acceleration: v²/r = μ/r²
+Нужна ГОРИЗОНТАЛЬНАЯ скорость. Ракета, летящая только вверх, поднимется и упадёт обратно, сколько бы топлива ни сожгла	HORIZONTAL speed is needed. A rocket flying only upward will rise and fall back, however much propellant it burns
+Чем выше орбита, тем меньше на ней скорость — но тем больше энергии нужно, чтобы на неё подняться	The higher the orbit, the lower its speed — but the more energy it takes to get there
+км, v = √(μ/r	km, v = √(μ/r
+м/с, период T	m/s, period T
+Орбита 400 км: v	400 km orbit: v
+м/с — медленнее	m/s — slower by
+Старт на восток экономит скорость вращения площадки	An eastward launch saves the pad’s rotational speed
+Телеметрия показывает «v горизонт.» и ε = v²/2 − μ/r. Орбита достигнута, когда перицентр выше атмосферы — фаза полёта станет «орбита	Telemetry shows “v horizontal” and ε = v²/2 − μ/r. Orbit is reached when periapsis is above the atmosphere — the flight phase becomes “orbit
+за первую орбиту — +20 000 кр. С навигационным компьютером НК-1 элементы орбиты видны по O; без него — считайте сами	the first orbit earns +20 000 cr. With the NK-1 navigation computer orbital elements are shown with O; without it, calculate them yourself
+Круговая орбита вокруг сферической планеты без атмосферы. Низкие реальные орбиты медленно тормозятся разреженным воздухом (в игре тоже: плотность нигде не обнуляется	Circular orbit around a spherical airless planet. Real low orbits slowly decay in thin air (in the game too: density never reaches zero
+v_круг = √(μ / r	v_circ = √(μ / r
+v_круг	v_circ
+скорость круговой орбиты (инерциальная	circular orbit speed (inertial
+радиус орбиты от центра	orbit radius from the centre
+период обращения	orbital period
+удельная орбитальная энергия; < 0 — орбита замкнута	specific orbital energy; < 0 — closed orbit
+Дж/кг	J/kg
+Какая скорость нужна для круговой орбиты на высоте	What speed is needed for a circular orbit at
+км над планетой	km above the planet
+км. Ответ в м/с	km. Answer in m/s
+Радиус орбиты отсчитывается от центра планеты	Orbit radius is measured from the planet’s centre
+r = R + h, в метрах; затем v = √(μ/r	r = R + h, in metres; then v = √(μ/r
+Вторая космическая скорость	Escape velocity
+Чтобы улететь навсегда, кинетической энергии должно хватить на подъём «до бесконечности»: v²/2 ≥ μ/r, то есть ε ≥ 0	To leave for good, kinetic energy must suffice to climb “to infinity”: v²/2 ≥ μ/r, that is ε ≥ 0
+Скорость ухода в √2 ≈ 1.414 раза больше круговой на той же высоте	Escape speed is √2 ≈ 1.414 times the circular speed at the same height
+Уходить выгоднее с орбиты, а не прямо с поверхности: там ракета уже имеет круговую скорость, и добавить нужно лишь разницу	It is cheaper to leave from orbit than straight from the surface: the rocket already has circular speed, and only the difference must be added
+У поверхности	At the surface
+v_уход = √(2μ/R	v_esc = √(2μ/R
+С орбиты	From orbit
+км: v_уход	km: v_esc
+м/с, круговая там	m/s, circular there
+м/с → добавить	m/s → add
+Фаза полёта «уход» включается, когда ε ≥ 0. Достижение «Уход с планеты» даёт +30 000 кр и открывает тяжёлую защиту в магазине	The “escape” flight phase turns on when ε ≥ 0. The “Leaving the planet” achievement gives +30 000 cr and unlocks heavy shielding in the shop
+Только притяжение планеты: притяжение звезды и других тел не учтено. С поверхности с атмосферой разогнаться до v_уход внизу невозможно	Planet’s attraction only: the star and other bodies are not included. From a surface with an atmosphere you cannot accelerate to v_esc low down
+сопротивление огромно; разгоняются выше атмосферы	drag is enormous; acceleration happens above the atmosphere
+v_уход = √(2μ / r) = √2 · v_круг	v_esc = √(2μ / r) = √2 · v_circ
+v_уход	v_esc
+скорость ухода (вторая космическая	escape speed
+расстояние от центра	distance from the centre
+удельная орбитальная энергия	specific orbital energy
+Найдите вторую космическую скорость у поверхности планеты	Find the escape velocity at the surface of the planet
+км, μ	km, μ
+м³/с²). Ответ в м/с	m³/s²). Answer in m/s
+Аппарат улетает, когда удельная энергия ε = v²/2 − μ/r становится нулевой	The vehicle escapes when specific energy ε = v²/2 − μ/r becomes zero
+Из v²/2 = μ/R: v = √(2μ/R	From v²/2 = μ/R: v = √(2μ/R
+м²/с²	m²/s²
+атмосфера	atmosphere
+земные значения (у	Earth values (at
+табличная атмосфера	tabulated atmosphere
+Сопротивление атмосферы	Atmospheric drag
+Плотность воздуха падает с высотой экспоненциально: каждые H километров (шкала высот) — в e ≈ 2.72 раза	Air density falls exponentially with height: every H kilometres (scale height) by e ≈ 2.72 times
+Сила сопротивления пропорциональна плотности и КВАДРАТУ скорости, поэтому быстро лететь низко — дорого	Drag force is proportional to density and to the SQUARE of speed, so flying fast down low is expensive
+Скоростной напор q = ½ρv² сначала растёт (ракета разгоняется), потом падает (воздух редеет) — максимум называют Max Q	Dynamic pressure q = ½ρv² first rises (the rocket accelerates), then falls (air thins) — the peak is called Max Q
+Поэтому ракеты сначала поднимаются почти вертикально и набирают горизонтальную скорость уже в разреженном воздухе	That is why rockets first climb almost vertically and gain horizontal speed in thin air
+Источник	Source
+кг/м³, H	kg/m³, H
+ρ(10 км	ρ(10 km
+ρ(30 км	ρ(30 km
+кг/м³	kg/m³
+На 10 км при 500 м/с: q	At 10 km and 500 m/s: q
+кПа, сила на ракету (C_d	kPa, force on the rocket (C_d
+Телеметрия: «Плотность ρ», «Скоростной напор q», «Сопротивление a_drag»; панель РАКЕТА — «Потери: сопрот	Telemetry: “Density ρ”, “Dynamic pressure q”, “Drag a_drag”; ROCKET panel — “Losses: drag
+Воздух вращается вместе с планетой, поэтому сопротивление считается от скорости относительно воздуха	The air rotates with the planet, so drag is calculated from speed relative to the air
+Изотермическая модель, постоянный C_d (на сверхзвуке он выше), без ветра и нагрева. На границе космоса плотность мала, но не ноль	Isothermal model, constant C_d (higher when supersonic), no wind or heating. At the edge of space density is small but not zero
+плотность воздуха	air density
+плотность у поверхности	surface density
+шкала высот	scale height
+скоростной напор	dynamic pressure
+скорость относительно воздуха	speed relative to air
+сила сопротивления	drag force
+коэффициент сопротивления	drag coefficient
+площадь поперечного сечения	cross-section area
+v_пред = √(2·m·g / (ρ·C_d·A	v_term = √(2·m·g / (ρ·C_d·A
+v_пред	v_term
+предельная скорость падения: сопротивление = вес	terminal velocity: drag = weight
+Ракета летит на высоте 10 км со скоростью 600 м/с. ρ₀	A rocket flies at 10 km at 600 m/s. ρ₀
+км. Каков скоростной напор q? Ответ в кПа	km. What is the dynamic pressure q? Answer in kPa
+кПа	kPa
+Сначала найдите плотность на высоте 10 км: ρ = ρ₀·e^(−h/H), h и H — в одних единицах	First find the density at 10 km: ρ = ρ₀·e^(−h/H), h and H in the same units
+Паскали → килопаскали: делите на 1000	Pascals → kilopascals: divide by 1000
+Выход на орбиту	Orbit insertion
+Пока двигатель выключен, аппарат летит по эллипсу (или его куску). Если перицентр этого эллипса под поверхностью или в атмосфере	While the engine is off, the vehicle follows an ellipse (or part of one). If its periapsis is below the surface or in the atmosphere
+это ещё не орбита, аппарат упадёт. Выход на орбиту — разгон В АПОЦЕНТРЕ по направлению движения: он поднимает противоположную точку — перицентр	it is not an orbit yet and the vehicle will fall. Orbit insertion is a burn AT APOAPSIS along the direction of motion: it raises the opposite point, the periapsis
+Чем более пологой (горизонтальной) была траектория подъёма, тем выше перицентр и тем дешевле этот последний манёвр	The flatter (more horizontal) the ascent trajectory, the higher the periapsis and the cheaper this last manoeuvre
+Поэтому ракету постепенно наклоняют на восток — «гравитационный разворот	That is why the rocket is gradually tilted east — the “gravity turn
+Апоцентр	Apoapsis
+перицентр на уровне поверхности: Δv	periapsis at surface level: Δv
+м/с в апоцентре	m/s at apoapsis
+Если подъём был почти вертикальным (перицентр на половине радиуса от центра) — уже	If the ascent was almost vertical (periapsis at half the radius from the centre), already
+Без НК-1 апоцентр и перицентр вычисляйте сами по r, v и v_r (темы 7 и 8); с НК-1 нажмите O. У апоцентра v_r ≈ 0	Without NK-1 calculate apoapsis and periapsis yourself from r, v and v_r (topics 7 and 8); with NK-1 press O. At apoapsis v_r ≈ 0
+Разгон — тангаж 90° (горизонтально), курс 90° (на восток	The burn: pitch 90° (horizontal), heading 90° (east
+Импульсный манёвр. Реальный двигатель работает конечное время — начинайте разгон чуть раньше апоцентра. Сопротивление при низком перицентре не учтено	Impulsive manoeuvre. A real engine burns for a finite time — start slightly before apoapsis. Drag at a low periapsis is not included
+большая полуось эллипса	ellipse semi-major axis
+радиусы апоцентра и перицентра от центра	apoapsis and periapsis radii from the centre
+скорость на эллипсе на расстоянии r (формула vis-viva	speed on the ellipse at distance r (vis-viva equation
+разгон в апоцентре до круговой скорости	burn at apoapsis to circular speed
+Аппарат над	The vehicle above
+летит по траектории с апоцентром	follows a trajectory with apoapsis
+км и перицентром	km and periapsis
+км (высоты над R	km (heights above R
+Какой разгон нужен в апоцентре, чтобы орбита стала круговой? Ответ в м/с	What burn at apoapsis makes the orbit circular? Answer in m/s
+Переведите высоты в радиусы от центра и найдите полуось a = (r_a + r_p)/2	Convert heights to radii from the centre and find the semi-major axis a = (r_a + r_p)/2
+Скорость в апоцентре — по формуле vis-viva	Speed at apoapsis comes from the vis-viva equation
+Нужный разгон — разница круговой скорости на r_a и скорости в апоцентре	The needed burn is the difference between circular speed at r_a and speed at apoapsis
+м, r_p	m, r_p
+м, a	m, a
+v_круг = √(μ/r_a	v_circ = √(μ/r_a
+Вокруг звезды	Around the star
+м/с, Δv₂	m/s, Δv₂
+м/с, перелёт	m/s, transfer
+Гомановский переход	Hohmann transfer
+Самый экономный способ перейти между двумя круговыми орбитами в одной плоскости — по половине эллипса, касающегося обеих	The most economical way between two coplanar circular orbits is along half an ellipse tangent to both
+первый импульс на r₁ вытягивает орбиту до r₂, второй на r₂ скругляет её	the first burn at r₁ stretches the orbit to r₂, the second at r₂ circularises it
+Переход медленный: ровно полпериода переходного эллипса. Тот же принцип работает и вокруг планеты, и вокруг звезды — меняется только μ	The transfer is slow: exactly half the period of the transfer ellipse. The same principle works around a planet and around a star — only μ changes
+Над	Above
+км: Δv₁	km: Δv₁
+всего	total
+м/с за	m/s in
+Подъём и смена орбиты; основа межпланетных перелётов (навигация, M5) — она будет использовать эти же функции	Raising and changing orbits; the basis of interplanetary transfers (navigation, M5), which use these same functions
+Круговые компланарные орбиты и мгновенные импульсы. При r₂/r₁ > 11.94 выгоднее трёхимпульсный (биэллиптический) переход	Circular coplanar orbits and instantaneous burns. For r₂/r₁ > 11.94 a three-burn (bi-elliptic) transfer is better
+радиусы начальной и конечной орбит от центра	initial and final orbit radii from the centre
+первый импульс (на r₁	first burn (at r₁
+второй импульс (на r₂	second burn (at r₂
+время перехода	transfer time
+Перелёт с круговой орбиты 200 км на круговую 2000 км над	Transfer from a circular 200 km orbit to a circular 2000 km orbit above
+Каков суммарный Δv двух импульсов? Ответ в м/с	What is the total Δv of the two burns? Answer in m/s
+Начните с полуоси переходного эллипса — радиусы считаются от центра	Start with the semi-major axis of the transfer ellipse — radii are measured from the centre
+Первый импульс: скорость на эллипсе в перицентре минус круговая на r₁	First burn: speed on the ellipse at periapsis minus circular speed at r₁
+Второй: круговая на r₂ минус скорость эллипса в апоцентре. Сложите	Second: circular speed at r₂ minus ellipse speed at apoapsis. Add them
+м, r₂	m, r₂
+перелёт	transfer
+сут, окно каждые	d, window every
+Окна запуска	Launch windows
+Цель не стоит на месте: пока аппарат летит по переходному эллипсу, планета-цель проходит часть своей орбиты	The target does not stand still: while the vehicle flies the transfer ellipse, the target planet travels part of its orbit
+Улетать нужно, когда цель опережает (или отстаёт) на фазовый угол θ — тогда к концу перелёта вы окажетесь в одной точке	You must leave when the target leads (or trails) by the phase angle θ — then you meet at one point at the end of the transfer
+Такая расстановка планет повторяется раз в синодический период — это и есть окна запуска. Пропустили окно — ждите следующего	This arrangement of planets repeats once per synodic period — these are the launch windows. Miss one and wait for the next
+или платите за перелёт гораздо большим Δv	or pay for the transfer with much more Δv
+Перелёты с	Transfers from
+по Гоману	by Hohmann
+Нет данных о планетах системы	No data on the system’s planets
+Навигация (M5) будет проверять окно запуска по положениям планет. Уже сейчас оцените окна калькулятором «Оценка межпланетного перелёта	Navigation (M5) checks the launch window against planet positions. You can already estimate windows with the “Interplanetary transfer estimate” calculator
+Круговые компланарные орбиты: реальные эллиптичность и наклоны орбит сдвигают окна и меняют Δv. Отлёт и захват — по сопряжённым коническим сечениям	Circular coplanar orbits: real eccentricity and inclination shift the windows and change Δv. Departure and capture use patched conics
+θ = π − n₂·t_перелёта,  n₂ = √(μ★ / r₂³	θ = π − n₂·t_transfer,  n₂ = √(μ★ / r₂³
+фазовый угол цели при отлёте	target phase angle at departure
+рад	rad
+угловая скорость цели	target angular speed
+рад/с	rad/s
+гравитационный параметр звезды	star’s gravitational parameter
+T_син = 1 / |1/T₁ − 1/T₂	T_syn = 1 / |1/T₁ − 1/T₂
+T_син	T_syn
+синодический период — интервал между окнами	synodic period — the interval between windows
+периоды обращения планет вокруг звезды	orbital periods of the planets around the star
+Δv_отл = √(v∞² + 2μ/r) − √(μ/r	Δv_dep = √(v∞² + 2μ/r) − √(μ/r
+нужный избыток скорости относительно планеты	required excess speed relative to the planet
+радиус орбиты ожидания	parking orbit radius
+вокруг звезды	around the star
+сут. Как часто повторяются окна запуска между ними? Ответ в сутках	d. How often do launch windows repeat between them? Answer in days
+Важна разность угловых скоростей: за сутки одна планета «обгоняет» другую на (1/T₁ − 1/T₂) оборота	The difference of angular speeds matters: per day one planet “overtakes” the other by (1/T₁ − 1/T₂) of a revolution
+Окно повторяется, когда разница набегает на целый оборот	The window repeats when the difference adds up to a full revolution
+об/сут	rev/d
+T_син = 1	T_syn = 1
+Орбитальная встреча	Orbital rendezvous
+Встреча (стыковка) — та же задача окна запуска, только вокруг планеты: нужно прибыть на орбиту цели туда, где в этот момент окажется цель	Rendezvous (docking) is the same launch-window task, only around a planet: you must arrive on the target’s orbit where the target will be at that moment
+Парадокс орбитальной механики: чтобы догнать цель впереди на той же орбите, нужно ПРИТОРМОЗИТЬ — более низкая орбита короче и быстрее по угловой скорости	The paradox of orbital mechanics: to catch a target ahead on the same orbit you must SLOW DOWN — a lower orbit is shorter and faster in angular speed
+Чтобы пропустить цель вперёд — разогнаться и подняться	To let the target get ahead, speed up and climb
+Вы на 200 км, станция на 400 км над	You are at 200 km, the station at 400 km above
+переход	transfer
+мин, Δv	min, Δv
+Станция должна опережать вас на	The station must lead you by
+такая расстановка повторяется каждые	this arrangement repeats every
+ч	h
+Пригодится для встреч на орбите в следующих этапах. Сейчас — тренируйте расчёт фазового угла и ожидания калькулятором «Гомановский переход	Useful for orbital rendezvous in later stages. For now practise the phase angle and waiting time with the “Hohmann transfer” calculator
+Круговые компланарные орбиты. Сближение на последних сотнях метров описывается уравнениями относительного движения — их здесь нет	Circular coplanar orbits. Approach over the last hundreds of metres is described by relative-motion equations, not included here
+θ = π − n_ц·t_перехода,  n_ц = √(μ / r_ц³	θ = π − n_t·t_transfer,  n_t = √(μ / r_t³
+на сколько цель должна опережать вас	how far the target must lead you
+n_ц	n_t
+r_ц	r_t
+радиус орбиты цели	target orbit radius
+t_ожид = Δθ / |n₁ − n₂	t_wait = Δθ / |n₁ − n₂
+t_ожид	t_wait
+сколько ждать нужного угла	how long to wait for the right angle
+сколько угла осталось набрать	angle left to make up
+угловые скорости орбит	orbital angular speeds
+Вы на круговой орбите 200 км над	You are in a circular 200 km orbit above
+станция — на 400 км (R	the station is at 400 km (R
+На какой угол станция должна опережать вас в момент первого импульса? Ответ в градусах	By what angle must the station lead you at the first burn? Answer in degrees
+Найдите время гомановского перехода t = π√(a³/μ	Find the Hohmann transfer time t = π√(a³/μ
+За это время станция пройдёт угол n₂·t, где n₂ = √(μ/r₂³) — в радианах	In this time the station travels angle n₂·t, where n₂ = √(μ/r₂³) — in radians
+Вы за переход проходите ровно 180°: θ = 180° − n₂·t	During the transfer you travel exactly 180°: θ = 180° − n₂·t
+м, t	m, t
+рад/с, n₂·t	rad/s, n₂·t
+Учебная ступень 1	Training stage 1
+Учебная ступень 2	Training stage 2
+Моя ракета	My rocket
+Тяга двигателя	Engine thrust
+F = ṁ·Isp·g₀: тяга — это расход топлива, умноженный на скорость истечения	F = ṁ·Isp·g₀: thrust is propellant flow multiplied by exhaust speed
+Удельный импульс	Specific impulse
+Скорость истечения	Exhaust speed
+Тяга	Thrust
+g₀ = 9.80665 м/с² — постоянная пересчёта Isp в скорость, а не местная гравитация	g₀ = 9.80665 m/s² is the constant converting Isp to speed, not local gravity
+У поверхности Isp ниже (давление мешает истечению), поэтому при том же расходе тяга меньше. В игре это учитывается	Near the surface Isp is lower (pressure hinders the exhaust), so thrust is lower at the same flow. The game includes this
+вакуум	vacuum
+у поверхности	at the surface
+Сила тяжести	Gravity force
+F = G·M·m/r²: притяжение планеты на расстоянии r от её центра	F = G·M·m/r²: the planet’s attraction at distance r from its centre
+Масса планеты	Planet mass
+Радиус планеты	Planet radius
+Высота над R	Height above R
+Масса аппарата	Vehicle mass
+Гравитационный параметр	Gravitational parameter
+Расстояние от центра	Distance from centre
+Ускорение свободного падения	Gravitational acceleration
+Сферическая планета, без вращения: на экваторе вращающейся планеты вес чуть меньше	Spherical planet, no rotation: at the equator of a rotating planet weight is slightly less
+поверхность	surface
+высота 400 км	altitude 400 km
+Ускорение ракеты	Rocket acceleration
+a = F/m: ускорение от тяги, и сколько остаётся на подъём после вычета гравитации	a = F/m: acceleration from thrust, and what is left for climbing after subtracting gravity
+Местная гравитация	Local gravity
+Ускорение от тяги	Thrust acceleration
+Перегрузка от тяги	Thrust G-load
+Ускорение вверх (вертикальный подъём	Upward acceleration (vertical ascent
+a_верт = (F − m·g)/m	a_vert = (F − m·g)/m
+Без сопротивления воздуха. Масса падает по мере расхода топлива, поэтому ускорение растёт к концу работы ступени	No air drag. Mass falls as propellant burns, so acceleration grows towards the end of the stage
+Тяга не больше веса: вертикально вверх ракета не ускоряется (тяга/вес ≤ 1	Thrust does not exceed weight: the rocket does not accelerate vertically (thrust/weight ≤ 1
+отрыв	liftoff
+конец работы (вакуум	end of burn (vacuum
+Тяга/вес (TWR	Thrust/weight (TWR
+TWR = F/(m·g): может ли ракета оторваться от поверхности	TWR = F/(m·g): can the rocket lift off the surface
+Вес	Weight
+Тяга/вес	Thrust/weight
+Наибольшая масса для отрыва	Largest mass for liftoff
+кг (при ней TWR = 1	kg (TWR = 1 at this mass
+TWR < 1: двигатели не могут преодолеть местную гравитацию — ракета не оторвётся. Снизьте массу на	TWR < 1: the engines cannot overcome local gravity — the rocket will not lift off. Reduce the mass by
+т или поставьте двигатель мощнее	t or install a stronger engine
+TWR чуть больше 1: отрыв очень медленный, почти вся тяга уходит на удержание веса — огромные гравитационные потери	TWR just above 1: liftoff is very slow, almost all thrust goes to holding the weight — huge gravity losses
+Используйте тягу У ПОВЕРХНОСТИ (Isp там ниже) и полную стартовую массу со всеми ступенями	Use SEA-LEVEL thrust (Isp is lower there) and the full launch mass with all stages
+старт с	launch from
+Та же ракета на	The same rocket on
+Расход топлива и время работы	Propellant flow and burn time
+ṁ = F/(Isp·g₀), t = m_топл/ṁ: сколько секунд проработает ступень и какой Δv она даст	ṁ = F/(Isp·g₀), t = m_prop/ṁ: how many seconds the stage burns and what Δv it gives
+Масса при зажигании	Mass at ignition
+Топлива не может быть столько же или больше, чем вся масса при зажигании	Propellant cannot equal or exceed the whole mass at ignition
+Расход	Mass flow
+Время работы	Burn time
+t_мин	t_min
+Масса после выгорания	Mass after burnout
+Идеальный Δv ступени	Ideal stage Δv
+t = m_топл/ṁ	t = m_prop/ṁ
+m_f = m₀ − m_топл	m_f = m₀ − m_prop
+Полная тяга всё время. На половинной тяге расход и время меняются вдвое, а Δv — нет: он зависит только от масс и Isp	Full thrust all the time. At half thrust flow and time change twofold, but Δv does not: it depends only on masses and Isp
+Δv (формула Циолковского	Δv (Tsiolkovsky equation
+Δv = Isp·g₀·ln(m₀/m_f): идеальный запас изменения скорости	Δv = Isp·g₀·ln(m₀/m_f): the ideal budget of speed change
+Начальная масса	Initial mass
+Конечная масса	Final mass
+Конечная масса больше начальной: ракета не может потяжелеть, сжигая топливо	Final mass exceeds initial: a rocket cannot get heavier by burning propellant
+Отношение масс	Mass ratio
+Доля топлива	Propellant fraction
+Идеальный Δv	Ideal Δv
+Уровень A: без гравитационных и аэродинамических потерь. Реальный разгон при подъёме меньше — см. «Потери» в панели ракеты	Level A: no gravity or aerodynamic losses. Real acceleration during ascent is lower — see “Losses” in the rocket panel
+Δv многоступенчатой ракеты — сумма Δv ступеней: у вашей ракеты	Δv of a multi-stage rocket is the sum of stage Δv: your rocket has
+м/с (вакуум, ангар	m/s (vacuum, hangar
+Топливо для заданного Δv	Propellant for a given Δv
+m_топл = m_f·(e^(Δv/(Isp·g₀)) − 1): сколько топлива нужно, чтобы получить Δv	m_prop = m_f·(e^(Δv/(Isp·g₀)) − 1): how much propellant is needed to get Δv
+Нужный Δv	Required Δv
+Масса без топлива (сухая + груз	Mass without propellant (dry + load
+Нужно топлива	Propellant needed
+m_топл/m₀	m_prop/m₀
+m_топл = m_f·(m₀/m_f − 1	m_prop = m_f·(m₀/m_f − 1
+m₀ = m_f + m_топл	m₀ = m_f + m_prop
+Уровень A: это минимум. Для подъёма через атмосферу добавьте к Δv потери (обычно 1–2 км/с) — или проверьте полётом	Level A: this is the minimum. For an ascent through the atmosphere add losses to Δv (usually 1–2 km/s) — or check by flying
+топливо — больше 90 % ракеты. Баки и двигатели столько не выдержат — поэтому ракеты делают многоступенчатыми	propellant — over 90 % of the rocket. Tanks and engines cannot withstand that — which is why rockets have several stages
+тот же Δv	the same Δv
+v = √(μ/r), T = 2π√(r³/μ): скорость и период круговой орбиты	v = √(μ/r), T = 2π√(r³/μ): speed and period of a circular orbit
+Высота орбиты над R	Orbit height above R
+Радиус орбиты	Orbit radius
+Круговая скорость	Circular speed
+Период	Period
+Гравитация на орбите	Gravity in orbit
+Скорость — инерциальная. Стартуя на восток, вы уже имеете скорость вращения площадки: на	The speed is inertial. Launching east, you already have the pad’s rotational speed: at
+Нужна именно горизонтальная скорость: вертикальная скорость орбиты не даёт	Horizontal speed is what is needed: vertical speed does not give an orbit
+Вторая космическая	Escape velocity
+v = √(2μ/r): скорость, при которой аппарат уходит от планеты навсегда	v = √(2μ/r): the speed at which the vehicle leaves the planet for good
+Скорость вращения площадки (старт на восток	Pad rotation speed (eastward launch
+v_вр	v_rot
+Круговая скорость там же	Circular speed at the same place
+Отношение v_уход/v_круг	Ratio v_esc/v_circ
+Нужно добавить при старте на восток	To add when launching east
+v_уход − v_вр	v_esc − v_rot
+v_уход = √(2μ/r) = √(2	v_esc = √(2μ/r) = √(2
+v_круг = √(μ/r	v_circ = √(μ/r
+м/с;  v_уход/v_круг	m/s;  v_esc/v_circ
+с учётом вращения	with rotation
+Уровень A: удельная энергия ε = v²/2 − μ/r = 0. Без атмосферы и гравитационных потерь; притяжение звезды не учтено	Level A: specific energy ε = v²/2 − μ/r = 0. No atmosphere or gravity losses; the star’s attraction is not included
+ρ(h) = ρ₀·e^(−h/H), F = ½·ρ·v²·C_d·A: сила сопротивления на высоте h при скорости v	ρ(h) = ρ₀·e^(−h/H), F = ½·ρ·v²·C_d·A: drag force at height h and speed v
+Плотность у поверхности	Surface density
+Шкала высот	Scale height
+Высота	Height
+Скорость относительно воздуха	Speed relative to air
+Коэффициент сопротивления	Drag coefficient
+Площадь сечения	Cross-section area
+Плотность на высоте	Density at height
+Скоростной напор	Dynamic pressure
+Сила сопротивления	Drag force
+Торможение	Deceleration
+Предельная скорость падения	Terminal velocity
+v_пред = √(2·m·g/(ρ·C_d·A	v_term = √(2·m·g/(ρ·C_d·A
+м/с (сопротивление = вес	m/s (drag = weight
+Нет атмосферы — нет сопротивления	No atmosphere, no drag
+Изотермическая атмосфера и постоянный C_d (в игре так же). На сверхзвуке реальный C_d выше	Isothermal atmosphere and constant C_d (same in the game). Real C_d is higher when supersonic
+атмосфера задана таблицей — по умолчанию взяты земные ρ₀ и H	the atmosphere is tabulated — Earth ρ₀ and H are used by default
+нет атмосферы — по умолчанию взяты земные ρ₀ и H	no atmosphere — Earth ρ₀ and H are used by default
+Подъём: 10 км, 500 м/с	Ascent: 10 km, 500 m/s
+Плотные слои: 3 км, 300 м/с	Dense layers: 3 km, 300 m/s
+Граница космоса	Edge of space
+км, 2 000 м/с	km, 2 000 m/s
+Выход на орбиту (скругление	Orbit insertion (circularisation
+Δv = √(μ/r_a) − √(μ·(2/r_a − 1/a)): разгон в апоцентре, превращающий траекторию в круговую орбиту	Δv = √(μ/r_a) − √(μ·(2/r_a − 1/a)): burn at apoapsis that turns the trajectory into a circular orbit
+Высота апоцентра	Apoapsis height
+Высота перицентра (может быть < 0	Periapsis height (may be < 0
+r_p = R + h_p должно быть больше нуля: перицентр не может быть глубже центра планеты	r_p = R + h_p must be above zero: periapsis cannot be deeper than the planet’s centre
+Перицентр выше апоцентра — поменяйте их местами	Periapsis is above apoapsis — swap them
+Большая полуось	Semi-major axis
+Скорость в апоцентре	Speed at apoapsis
+Круговая скорость в апоцентре	Circular speed at apoapsis
+Нужный разгон в апоцентре	Required burn at apoapsis
+м,  r_p = R + h_p	m,  r_p = R + h_p
+м/с  (vis-viva	m/s  (vis-viva
+Δv = v_круг − v_a	Δv = v_circ − v_a
+м/с — горизонтально, по направлению движения	m/s — horizontally, along the direction of motion
+Импульсный манёвр. Реальный двигатель работает секунды-минуты — начинайте чуть до апоцентра	Impulsive manoeuvre. A real engine burns for seconds to minutes — start slightly before apoapsis
+Перицентр под поверхностью: без этого манёвра аппарат упадёт	Periapsis below the surface: without this manoeuvre the vehicle will fall
+Перицентр в атмосфере: на каждом проходе аппарат тормозится и в итоге упадёт	Periapsis in the atmosphere: the vehicle brakes on each pass and eventually falls
+Апоцентр ниже границы космоса — круговая орбита там быстро затормозится атмосферой	Apoapsis below the edge of space — a circular orbit there quickly decays in the atmosphere
+км, перицентр 0 км	km, periapsis 0 km
+Почти вертикальный подъём: перицентр	Almost vertical ascent: periapsis
+км, перицентр	km, periapsis
+Два импульса между круговыми орбитами r₁ и r₂ по эллипсу a = (r₁ + r₂)/2; фазовый угол для встречи	Two burns between circular orbits r₁ and r₂ along an ellipse a = (r₁ + r₂)/2; phase angle for rendezvous
+Гравитационный параметр центра	Central body gravitational parameter
+Радиус начальной орбиты (от центра	Initial orbit radius (from centre
+Радиус конечной орбиты (от центра	Final orbit radius (from centre
+Большая полуось перехода	Transfer semi-major axis
+Первый импульс	First burn
+Второй импульс	Second burn
+Сумма	Sum
+Фазовый угол цели при старте	Target phase angle at departure
+Синодический период (повтор окна	Synodic period (window repeat
+θ > 0: в момент первого импульса цель должна быть ВПЕРЕДИ на θ	θ > 0: at the first burn the target must be AHEAD by θ
+θ < 0: в момент первого импульса цель должна быть ПОЗАДИ на |θ	θ < 0: at the first burn the target must be BEHIND by |θ
+Уровень A: круговые компланарные орбиты, мгновенные импульсы	Level A: circular coplanar orbits, instantaneous burns
+r₁ = r₂: переход не нужен	r₁ = r₂: no transfer needed
+Подъём орбиты	Orbit raise
+Встреча: орбита 200 км → станция на 400 км	Rendezvous: 200 km orbit → station at 400 km
+Оценка межпланетного перелёта	Interplanetary transfer estimate
+Гомановский переход вокруг звезды + отлёт с орбиты ожидания и захват у цели (метод сопряжённых конических сечений	Hohmann transfer around the star + departure from a parking orbit and capture at the target (patched conics
+μ звезды	Star μ
+Орбита планеты отлёта	Departure planet orbit
+Орбита планеты цели	Target planet orbit
+μ планеты отлёта	Departure planet μ
+Радиус планеты отлёта	Departure planet radius
+Высота орбиты ожидания	Parking orbit height
+μ планеты цели	Target planet μ
+Радиус планеты цели	Target planet radius
+Высота орбиты у цели	Orbit height at target
+Ваш импульс отлёта (0 — не проверять	Your departure burn (0 — do not check
+Δv_план	Δv_plan
+Избыток скорости при отлёте	Excess speed at departure
+Избыток скорости у цели	Excess speed at target
+Импульс отлёта с орбиты ожидания	Departure burn from parking orbit
+Δv_отл	Δv_dep
+Импульс захвата у цели	Capture burn at target
+Δv_зах	Δv_cap
+Итого от орбиты до орбиты	Total orbit to orbit
+Окна повторяются каждые	Windows repeat every
+Δv_отл = √(v∞₁² + 2μ₁/r_орб) − √(μ₁/r_орб	Δv_dep = √(v∞₁² + 2μ₁/r_orb) − √(μ₁/r_orb
+м/с  (r_орб = R₁ + h₁	m/s  (r_orb = R₁ + h₁
+Δv_зах = √(v∞₂² + 2μ₂/r_орб) − √(μ₂/r_орб	Δv_cap = √(v∞₂² + 2μ₂/r_orb) − √(μ₂/r_orb
+м/с  (r_орб = R₂ + h₂	m/s  (r_orb = R₂ + h₂
+T_син = 1/|1/T₁ − 1/T₂	T_syn = 1/|1/T₁ − 1/T₂
+Уровень A: круговые компланарные орбиты планет, мгновенные импульсы. Подъём с поверхности на орбиту ожидания сюда не входит	Level A: circular coplanar planetary orbits, instantaneous burns. The ascent from the surface to the parking orbit is not included
+θ > 0: при отлёте цель должна опережать планету отлёта на θ	θ > 0: at departure the target must lead the departure planet by θ
+θ < 0: при отлёте цель должна отставать на |θ	θ < 0: at departure the target must trail by |θ
+Скорость отлёта недостаточна для выхода на переходную орбиту: не хватает	Departure speed insufficient to enter the transfer orbit: short by
+Импульса отлёта хватает (запас	The departure burn is enough (margin
+м/с). Лишняя скорость изменит время перелёта и точку встречи	m/s). Extra speed changes the transfer time and meeting point
+Тяга/вес вашей ракеты ниже 1 (TWR	Your rocket’s thrust/weight is below 1 (TWR
+Её двигатели не могут преодолеть местную гравитацию — ракета стоит и сжигает топливо	Its engines cannot overcome local gravity — the rocket stands and burns propellant
+Тяга/вес вашей ракеты у старта ниже 1 (TWR	Your rocket’s launch thrust/weight is below 1 (TWR
+если включить двигатель, она не оторвётся	if you ignite the engine it will not lift off
+Ракета не может оторваться	The rocket cannot lift off
+TWR = F/(m·g). Какую из трёх величин вы можете изменить	TWR = F/(m·g). Which of the three quantities can you change
+Массу — в ангаре (меньше топлива, модулей, груза); тягу — другим двигателем. Гравитацию планеты не изменить	Mass — in the hangar (less propellant, modules, payload); thrust — with another engine. The planet’s gravity cannot be changed
+Найдите массу, при которой TWR = 1: m_max = F/g	Find the mass at which TWR = 1: m_max = F/g
+кН, m	kN, m
+т → снимите не меньше	t → remove at least
+т или добавьте тяги	t or add thrust
+Для уверенного старта нужен TWR ≈ 1.3: масса не больше	A confident launch needs TWR ≈ 1.3: mass no more than
+Этой ракете не хватит Δv на орбиту	This rocket does not have the Δv for orbit
+Идеальный Δv ракеты	The rocket’s ideal Δv
+м/с) меньше идеального требования для орбиты	m/s) is below the ideal orbit requirement
+м/с): даже без потерь орбиты не будет. На суборбитальный подъём может хватить	m/s): even without losses there will be no orbit. It may be enough for a suborbital climb
+Идеальное требование — это минимум; реальный подъём требует ещё больше (потери	The ideal requirement is the minimum; a real ascent needs even more (losses
+Δv растёт с Isp и с отношением масс m₀/m_f: больше топлива, легче конструкция или ступени	Δv grows with Isp and the mass ratio m₀/m_f: more propellant, a lighter structure, or stages
+Сколько топлива добавить — посчитайте по формуле Циолковского «наоборот» (калькулятор «Топливо для заданного Δv	Work out how much propellant to add with the Tsiolkovsky equation in reverse (the “Propellant for a given Δv” calculator
+Не хватает идеального Δv	Ideal Δv short by
+м/с (плюс потери подъёма, обычно 1–2 км/с	m/s (plus ascent losses, usually 1–2 km/s
+Например, ступени с Isp	For example, a stage with Isp
+с для	s for
+м/с нужно отношение масс e^(Δv/(Isp·g₀	m/s needs a mass ratio e^(Δv/(Isp·g₀
+Ступень пуста	Stage empty
+кончилось. Пустые баки и двигатель — мёртвый груз: отделите ступень (Пробел) и включите следующую (Enter	is out of propellant. Empty tanks and engine are dead weight: separate the stage (Space) and ignite the next (Enter
+Посмотрите на формулу Циолковского: что будет с массой m₀ следующей ступени, если пустую не сбросить	Look at the Tsiolkovsky equation: what happens to the next stage’s m₀ if the empty one is not dropped
+Сухая масса пустой ступени входит и в m₀, и в m_f следующей	The empty stage’s dry mass is in both m₀ and m_f of the next stage
+Сбросив её, вы уменьшаете обе массы на одну и ту же величину — отношение m₀/m_f растёт, а с ним Δv	Dropping it reduces both masses by the same amount — the ratio m₀/m_f grows, and Δv with it
+Подъём почти вертикальный	Ascent is almost vertical
+Вы на высоте	You are at
+и летите почти вертикально (тангаж	and flying almost vertically (pitch
+Для орбиты нужна горизонтальная скорость	Orbit needs horizontal speed
+а вертикальный подъём копит гравитационные потери (уже	and a vertical climb piles up gravity losses (already
+Какая скорость нужна для орбиты — вертикальная или горизонтальная? (тема «Орбитальная скорость	What speed does orbit need — vertical or horizontal? (topic “Orbital velocity
+Наклоняйте ракету на восток (W) постепенно: чем выше и реже воздух, тем ближе к горизонту	Tilt the rocket east (W) gradually: the higher and thinner the air, the closer to the horizon
+Ориентир: к границе космоса тангаж около 60–80°, горизонтальная скорость растёт к круговой	Guideline: by the edge of space pitch about 60–80°, horizontal speed growing towards circular
+Круговая скорость на	Circular speed at
+м/с — и она горизонтальная	m/s — and it is horizontal
+Сейчас горизонтальная (инерциальная) скорость	Current horizontal (inertial) speed
+м/с: не хватает	m/s: short by
+Каждая секунда вертикального полёта стоит около g	Each second of vertical flight costs about g
+м/с Δv	m/s of Δv
+Плотный воздух на большой скорости	Dense air at high speed
+кПа: вы разгоняетесь в плотной атмосфере, и сопротивление съедает Δv (уже	kPa: you are accelerating in dense atmosphere, and drag eats Δv (already
+q = ½·ρ·v²: сопротивление растёт как квадрат скорости, а плотность падает с высотой экспоненциально	q = ½·ρ·v²: drag grows as the square of speed, and density falls exponentially with height
+Можно уменьшить тягу (Ctrl) в нижних слоях или подниматься круче, пока воздух плотный, а горизонтально разгоняться выше	You can reduce thrust (Ctrl) low down, or climb steeper while the air is dense and accelerate horizontally higher up
+При той же плотности вдвое меньшая скорость даёт вчетверо меньшее сопротивление	At the same density half the speed gives a quarter of the drag
+Плотность падает в e раз на каждую шкалу высот H — несколько километров подъёма заметно снижают q	Density falls e times per scale height H — a few kilometres of climb noticeably lowers q
+от центра); a = (r_a + r_p)/2	from the centre); a = (r_a + r_p)/2
+Скорость в апоцентре v_a = √(μ(2/r_a − 1/a	Speed at apoapsis v_a = √(μ(2/r_a − 1/a
+Круговая там v_круг = √(μ/r_a	Circular there v_circ = √(μ/r_a
+Разгон в апоцентре Δv	Burn at apoapsis Δv
+м/с (запас ракеты	m/s (rocket budget
+На полной тяге это	At full thrust this is
+с работы двигателя — начните примерно на	s of engine time — start about
+с раньше апоцентра	s before apoapsis
+Это ещё не орбита	This is not an orbit yet
+выше границы космоса, но перицентр	above the edge of space, but periapsis
+Без манёвра аппарат вернётся вниз	Without a manoeuvre the vehicle will come back down
+Какая точка траектории поднимется, если разогнаться в апоцентре	Which trajectory point rises if you burn at apoapsis
+Разгоняйтесь у апоцентра горизонтально, по направлению движения: тангаж 90°, курс 90° (восток). У апоцентра v_r ≈ 0	Burn near apoapsis horizontally, along the direction of motion: pitch 90°, heading 90° (east). At apoapsis v_r ≈ 0
+Сколько разгоняться? Сравните круговую скорость на высоте апоцентра со скоростью, которая будет там у вас (формула vis-viva	How much to burn? Compare the circular speed at apoapsis height with the speed you will have there (vis-viva equation
+Идеальное требование орбиты	Ideal orbit requirement
+идеальный Δv ракеты	rocket’s ideal Δv
+Израсходовано	Spent
+м/с, из них потери: гравитационные	m/s, of which losses: gravity
+сопротивление	drag
+С такими потерями нужно	With such losses you need
+Последней ступени (Isp	The last stage (Isp
+с, без топлива	s, without propellant
+т) для этого нужно ещё	t) needs another
+т топлива — и тяга, чтобы его поднять	t of propellant for this — and the thrust to lift it
+Δv ракеты хватало — дело в траектории: слишком большие потери. Наклоняйтесь раньше и плавнее, не разгоняйтесь в плотном воздухе	The rocket had enough Δv — the trajectory is the problem: losses are too large. Tilt earlier and more smoothly, do not accelerate in dense air
+Топливо кончилось до орбиты	Out of propellant before orbit
+Топливо кончилось, а орбиты нет. Текущая конфигурация ракеты не даёт достаточного Δv для этой миссии (или он потрачен на потери	Propellant is gone and there is no orbit. The current configuration does not give enough Δv for this mission (or it went to losses
+Сравните идеальный Δv ракеты с идеальным требованием орбиты — и вспомните о потерях	Compare the rocket’s ideal Δv with the ideal orbit requirement — and remember the losses
+Панель РАКЕТА показывает, сколько ушло на гравитационные потери и сопротивление. Какие из них можно уменьшить траекторией	The ROCKET panel shows how much went to gravity losses and drag. Which of them can a trajectory reduce
+Варианты: больше топлива (бак К-140 в магазине), выше Isp, легче груз — или более пологий подъём	Options: more propellant (K-140 tank in the shop), higher Isp, lighter payload — or a flatter ascent
+Пора тормозить	Time to brake
+Тяги не хватит, чтобы сесть	Thrust is not enough to land
+Снижение	Descending
+м/с на высоте	m/s at
+м, двигатель выключен. Без торможения удар будет на	m, engine off. Without braking the impact will be at
+м/с (опоры держат 6 м/с	m/s (the legs hold 6 m/s
+м/с²) не больше местной гравитации	m/s²) does not exceed local gravity
+м/с²): остановить падение двигателем нельзя	m/s²): the engine cannot stop the fall
+Чтобы погасить скорость v при торможении с ускорением (a − g), нужен путь d = v²/(2(a − g	To cancel speed v braking at (a − g) takes distance d = v²/(2(a − g
+Включите двигатель (Enter) вертикально вверх (тангаж 0°), когда высота станет близка к d — с запасом на неточность	Ignite the engine (Enter) straight up (pitch 0°) when the height nears d, with a margin for error
+Перед касанием снизьте тягу (Ctrl), чтобы не взлететь снова: вертикальная скорость у земли — до 6 м/с	Before touchdown reduce thrust (Ctrl) so you do not take off again: vertical speed at the ground up to 6 m/s
+м/с, a_тяги = F/m	m/s, a_thrust = F/m
+м/с², g	m/s², g
+м — двигатель нужен не позже этой высоты	m — the engine is needed no later than this height
+a − g ≤ 0: торможения нет — сбросьте массу (пустая ступень) или сядьте на тело с меньшей g	a − g ≤ 0: no braking — drop mass (empty stage) or land on a body with lower g
+Без двигателя: v_удара = √(v² + 2gh	Without the engine: v_impact = √(v² + 2gh
+Перицентр	Periapsis
+Проверьте себя: сколько минут займёт один оборот	Test yourself: how many minutes does one revolution take
+Период эллиптической орбиты зависит только от большой полуоси: T = 2π√(a³/μ	The period of an elliptical orbit depends only on the semi-major axis: T = 2π√(a³/μ
+a = (r_a + r_p)/2 — радиусы от центра планеты	a = (r_a + r_p)/2 — radii from the planet’s centre
+Скорость ухода достигнута	Escape speed reached
+Удельная энергия ε ≥ 0: аппарат больше не вернётся — он уходит от планеты. Убедитесь сами, сравнив скорость со второй космической на этой высоте	Specific energy ε ≥ 0: the vehicle will not return — it is leaving the planet. Check it yourself against the escape velocity at this height
+Вторая космическая на расстоянии r от центра: √(2μ/r). Высоту переведите в r = R + h	Escape velocity at distance r from the centre: √(2μ/r). Convert height to r = R + h
+v_уход = √(2μ/r	v_esc = √(2μ/r
+Ваша скорость	Your speed
+м/с → ε ≥ 0	m/s → ε ≥ 0
+Введите число, например 7788.5 или 3.2e4	Enter a number, for example 7788.5 or 3.2e4
+Введите конечное число	Enter a finite number
+Верно	Correct
+Почти: метод верный, но расхождение	Almost: the method is right, but the difference is
+Проверьте округления и константы (g₀ = 9.80665, G = 6.6743·10⁻¹¹	Check rounding and constants (g₀ = 9.80665, G = 6.6743·10⁻¹¹
+Неверно: знак не тот. Проверьте, что из чего вычитается	Wrong: the sign is off. Check what is subtracted from what
+Неверно: ответ отличается в 1000 раз — похоже, перепутаны километры и метры (или тонны и килограммы	Wrong: the answer differs by a factor of 1000 — kilometres and metres (or tonnes and kilograms) seem mixed up
+Неверно: ответ отличается в миллион раз — проверьте перевод км → м: в квадрате (км² → м²) это 10⁶	Wrong: the answer differs by a factor of a million — check the km → m conversion: squared (km² → m²) that is 10⁶
+Неверно: отличие ровно в g₀ ≈ 9.81 раза — не забыт ли множитель g₀ (или он лишний	Wrong: differs by exactly g₀ ≈ 9.81 — is the factor g₀ missing (or extra
+Неверно: отличие в √2 — перепутаны круговая скорость √(μ/r) и вторая космическая √(2μ/r	Wrong: differs by √2 — circular speed √(μ/r) and escape velocity √(2μ/r) are mixed up
+Неверно: ответ отличается в 2 раза — проверьте множитель ½ или сумму двух импульсов	Wrong: the answer differs by a factor of 2 — check the factor ½ or the sum of the two burns
+Неверно: отличие в 60 раз — секунды и минуты	Wrong: differs by a factor of 60 — seconds and minutes
+Неверно: отличие в 57.3 раза — радианы и градусы	Wrong: differs by a factor of 57.3 — radians and degrees
+Неверно. Откройте подсказку — она не выдаёт ответ, а подсказывает следующий шаг	Wrong. Open a hint — it does not give the answer, it suggests the next step
+Базальт	Basalt
+Гранит	Granite
+Песчаник	Sandstone
+Кварц	Quartz
+Пироксен	Pyroxene
+Полевой шпат	Feldspar
+Кристалл фиолетового флюорита	Violet fluorite crystal
+Пустынный песок	Desert sand
+Почва степи	Steppe soil
+Береговой песок	Coastal sand
+Железистая латеритная почва	Ferruginous laterite soil
+Органический ил	Organic silt
+Силикатная кора	Silicate crust
+Серо-коричневый базальт	Grey-brown basalt
+Железо-никелевое включение	Iron-nickel inclusion
+Оливин	Olivine
+Импактное стекло	Impact glass
+Реголит	Regolith
+Железистый реголит	Ferruginous regolith
+Вулканическая сера	Volcanic sulphur
+Окисленный базальт	Oxidised basalt
+Ржавая брекчия	Rusty breccia
+Гематит	Hematite
+Магнетит	Magnetite
+Ударный расплав «сердечка	Impact melt of the “heart
+Ржавый реголит	Rusty regolith
+Оксидная пыль	Oxide dust
+Перхлоратная корка	Perchlorate crust
+Вулканический андезит	Volcanic andesite
+Пирит	Pyrite
+Ангидрит	Anhydrite
+Сульфатный кристалл	Sulphate crystal
+Сернистый грунт	Sulphurous soil
+Органическая плёнка из дымки	Organic film from the haze
+Конденсат серной кислоты	Sulphuric acid condensate
+Расплав серы	Molten sulphur
+Обломок спутника	Moon fragment
+Оливин спутника	Moon olivine
+Хондрит	Chondrite
+Пыль спутника	Moon dust
+Порода	Rock
+Минерал	Mineral
+Грунт	Soil
+Фиолетовая морская вода	Violet sea water
+горная порода	rock
+редкий геологический материал	rare geological material
+поверхностный грунт	surface soil
+минерализованный грунт	mineralised soil
+жидкость	liquid
+Этот образец уже взят	This sample has already been taken
+Нет пробоотборника: поставьте ПБ-1 в ангаре (камни и грунт, бесплатно	No sampler: install PB-1 in the hangar (rocks and soil, free
+Пробоотборник не умеет брать	The sampler cannot take
+нужен ПБ-2 (магазин	PB-2 needed (shop
+Нет места: в контейнере	No room: in the container
+кг, образец	kg, sample
+Давление	Pressure
+атм — скафандр не выдержит (предел 2 атм	atm — the suit cannot withstand it (limit 2 atm
+Температура	Temperature
+C — скафандр перегреется (предел 207 °C	C — the suit will overheat (limit 207 °C
+C — ниже предела скафандра (−183 °C	C — below the suit’s limit (−183 °C
+Кислотная среда разъест скафандр	The acid environment will corrode the suit
+Радиация уровня	Radiation level
+опасная доза за минуты	dangerous dose within minutes
+Единицы и обозначения	Units and notation
+Все расчёты симулятора ведутся в системе СИ; интерфейс только округляет числа	All simulator calculations use SI units; the interface only rounds the numbers
+расстояние — метры (м); время — секунды (с); масса — килограммы (кг	distance — metres (m); time — seconds (s); mass — kilograms (kg
+скорость — м/с; ускорение — м/с²; сила — ньютоны (Н = кг·м/с²	speed — m/s; acceleration — m/s²; force — newtons (N = kg·m/s²
+энергия — джоули (Дж); удельная энергия — Дж/кг = м²/с²	energy — joules (J); specific energy — J/kg = m²/s²
+давление — паскали (Па); плотность — кг/м³; температура — кельвины (К	pressure — pascals (Pa); density — kg/m³; temperature — kelvins (K
+b>Обозначения</b	b>Notation</b
+G — гравитационная постоянная = 6.67430·10⁻¹¹ м³/(кг·с²	G — gravitational constant = 6.67430·10⁻¹¹ m³/(kg·s²
+M — масса планеты; μ = G·M — гравитационный параметр [м³/с²	M — planet mass; μ = G·M — gravitational parameter [m³/s²
+R — средний (опорный) радиус планеты; r — расстояние от ЦЕНТРА планеты до аппарата	R — mean (reference) planet radius; r — distance from the planet’s CENTRE to the vehicle
+h = r − R — высота над опорной сферой; v — модуль скорости; v_r — её радиальная (вертикальная) часть	h = r − R — height above the reference sphere; v — speed magnitude; v_r — its radial (vertical) part
+Для текущей планеты: μ	For the current planet: μ
+м, g(R	m, g(R
+Частая ошибка	Common mistake
+смешивать км и м в одной формуле. Переводите всё в метры до вычислений	mixing km and m in one formula. Convert everything to metres before calculating
+Высота, радиус орбиты, расстояние от центра	Height, orbit radius, distance from centre
+Формулы гравитации и орбит работают с расстоянием от центра	Gravity and orbit formulas work with the distance from the centre
+а не с высотой	not with height
+Приборы показывают три величины	The instruments show three quantities
+b>Высота над поверхностью</b> — до реального рельефа под аппаратом (горы, океан). Нужна для посадки	b>Height above surface</b> — to the actual terrain under the vehicle (mountains, ocean). Needed for landing
+b>Высота над R</b> — над опорной сферой радиуса R. Так задаются орбиты и граница космоса	b>Height above R</b> — above the reference sphere of radius R. Orbits and the edge of space are defined this way
+b>От центра (r)</b> — то, что подставляется в формулы	b>From centre (r)</b> — what goes into the formulas
+b>Пример.</b> Орбита на высоте 400 км: r	b>Example.</b> An orbit at 400 km: r
+подставить h = 400 000 м вместо r в √(μ/r). Получится	putting h = 400 000 m instead of r into √(μ/r). You get
+м/с вместо	m/s instead of
+Скорость и ускорение	Speed and acceleration
+b>Скорость</b> — как быстро и куда меняется положение (вектор, м/с). <b>Ускорение</b> — как быстро меняется сама скорость (вектор, м/с²	b>Velocity</b> — how fast and where position changes (vector, m/s). <b>Acceleration</b> — how fast velocity itself changes (vector, m/s²
+Гравитация задаёт ускорение, а не скорость: на орбите тело всё время ускоряется к центру, но модуль скорости почти не меняется — меняется её направление	Gravity sets acceleration, not velocity: in orbit a body constantly accelerates towards the centre, but its speed hardly changes — its direction does
+b>Три скорости на приборах</b	b>Three speeds on the instruments</b
+инерциальная — относительно звёзд; именно она входит в орбитальные формулы	inertial — relative to the stars; this is the one in orbital formulas
+относительно поверхности — v − ω×r, то, что видит наблюдатель на земле	relative to the surface — v − ω×r, what an observer on the ground sees
+относительно воздуха — для сопротивления (при отсутствии ветра совпадает с предыдущей	relative to the air — for drag (with no wind it equals the previous one
+Покоящийся на стартовой площадке аппарат (широта	A vehicle resting on the launch pad (latitude
+уже движется инерциально на восток со скоростью	already moves inertially east at
+Старт на восток экономит эту скорость, на запад — добавляет её к требуемой	An eastward launch saves this speed, a westward one adds it to the requirement
+b>Перегрузка</b> (акселерометр) — ускорение без учёта гравитации. На площадке ≈ 1 g₀, в свободном полёте (в том числе на орбите) = 0, хотя g(r) ≠ 0	b>G-load</b> (accelerometer) — acceleration excluding gravity. On the pad ≈ 1 g₀, in free flight (including orbit) = 0, although g(r) ≠ 0
+на орбите нет гравитации». На 400 км g	there is no gravity in orbit”. At 400 km g
+от поверхностной. Невесомость — это свободное падение	of the surface value. Weightlessness is free fall
+Закон всемирного тяготения	Law of universal gravitation
+r⃗ направлен от центра планеты к аппарату, знак «−» означает притяжение к центру. Масса аппарата m в ускорение не входит — все тела падают одинаково	r⃗ points from the planet’s centre to the vehicle, the minus sign means attraction to the centre. Vehicle mass m does not enter the acceleration — all bodies fall alike
+b>Когда применимо:</b> сферически-симметричная планета, точка вне её. Не учитываются сплюснутость (J2), неоднородности масс, приливы, другие тела	b>When applicable:</b> a spherically symmetric planet, point outside it. Flattening (J2), mass irregularities, tides and other bodies are not included
+b>Пример.</b> g(R	b>Example.</b> g(R
+м/с²;  g(R+400 км	m/s²;  g(R+400 km
+Привычные 9.81 м/с² на Земле включают центробежный эффект вращения и сплюснутость; чистая гравитация на среднем радиусе ≈ 9.82	The familiar 9.81 m/s² on Earth includes the centrifugal effect of rotation and flattening; pure gravity at the mean radius is ≈ 9.82
+считать g постоянным на любой высоте. Используйте g(r) = μ/r²	treating g as constant at any height. Use g(r) = μ/r²
+Почему орбите нужна горизонтальная скорость	Why an orbit needs horizontal speed
+Орбита — это непрерывное падение, при котором аппарат «промахивается» мимо планеты. За время падения он успевает сместиться вбок настолько, что поверхность изгибается вниз вместе с ним	An orbit is a continuous fall in which the vehicle “misses” the planet. While falling it moves sideways so far that the surface curves away with it
+Вертикальная скорость только поднимает аппарат: без горизонтальной составляющей он упадёт обратно по той же линии	Vertical speed only raises the vehicle: without a horizontal component it falls back along the same line
+Чтобы подняться на	To climb to
+вертикально (без атмосферы), нужно около	vertically (no atmosphere) you need about
+из ε = const: v² = 2μ(1/R − 1/(R+h	from ε = const: v² = 2μ(1/R − 1/(R+h
+Чтобы на той же высоте не упасть, нужно около	Not to fall at the same height you need about
+горизонтально	horizontally
+Радиальная скорость v_r на приборах показывает, сближаетесь ли вы с центром (v_r < 0) или удаляетесь (v_r > 0). На круговой орбите v_r ≈ 0	Radial speed v_r on the instruments shows whether you are approaching the centre (v_r < 0) or receding (v_r > 0). In a circular orbit v_r ≈ 0
+набрать высоту и ждать, что аппарат «останется в космосе». Попробуйте в инструменте начальных условий (I): h = 150 000, все скорости 0 — и посмотрите, что произойдёт	gaining height and expecting the vehicle to “stay in space”. Try the initial conditions tool (I): h = 150 000, all speeds 0 — and see what happens
+Круговая орбитальная скорость	Circular orbital speed
+Получается из равенства центростремительного ускорения v²/r и гравитационного μ/r²	Follows from equating centripetal acceleration v²/r and gravitational μ/r²
+b>Пример.</b> h = 200 км: r	b>Example.</b> h = 200 km: r
+м, v	m, v
+h = 400 км: v	h = 400 km: v
+м/с — выше орбита, ниже скорость	m/s — higher orbit, lower speed
+b>Предположения:</b> двухтельная задача, без атмосферы; скорость инерциальная и направлена строго горизонтально	b>Assumptions:</b> two-body problem, no atmosphere; speed is inertial and strictly horizontal
+Частые ошибки	Common mistakes
+подставить высоту вместо r; (2) задать скорость «относительно поверхности» и забыть, что инерциальная скорость будет больше на ω·R·cos φ при движении на восток; (3) добавить вертикальную составляющую — орбита станет эллиптической	using height instead of r; (2) setting speed “relative to the surface” and forgetting that inertial speed is higher by ω·R·cos φ when moving east; (3) adding a vertical component — the orbit becomes elliptical
+Вторая космическая (скорость убегания	Escape velocity
+Минимальная скорость, при которой ε ≥ 0 и аппарат не вернётся (в идеальной модели — без атмосферы, без вращения, без других тел). Направление не важно, если траектория не пересекает планету	The minimum speed at which ε ≥ 0 and the vehicle does not return (ideal model: no atmosphere, rotation or other bodies). Direction does not matter unless the trajectory hits the planet
+b>Пример.</b> С поверхности	b>Example.</b> From the surface
+м/с; с высоты 400 км	m/s; from 400 km
+считать её скоростью, которую нужно набрать у поверхности в реальной атмосфере: сопротивление и потери на гравитацию требуют больше	treating it as the speed to reach at the surface in a real atmosphere: drag and gravity losses require more
+Удельная орбитальная энергия	Specific orbital energy
+Сумма кинетической и потенциальной энергии на килограмм. Без сопротивления и двигателей ε постоянна — это хороший контроль точности симуляции	The sum of kinetic and potential energy per kilogram. Without drag and engines ε is constant — a good check of simulation accuracy
+ε < 0 — движение связанное (эллипс), аппарат не может уйти бесконечно далеко	ε < 0 — bound motion (ellipse), the vehicle cannot go infinitely far
+ε = 0 — параболическая граница	ε = 0 — the parabolic boundary
+ε > 0 — гипербола, уход от планеты	ε > 0 — hyperbola, leaving the planet
+Для круговой орбиты ε = −μ/(2r); на 400 км	For a circular orbit ε = −μ/(2r); at 400 km
+Важно	Important
+ε < 0 НЕ означает устойчивую орбиту. Тело, неподвижно зависшее на 100 км, имеет ε	ε < 0 does NOT mean a stable orbit. A body hovering motionless at 100 km has ε
+Дж/кг < 0 — и падает. Нужно ещё, чтобы перицентр r_p = h²/(μ(1+e)) был выше поверхности и плотной атмосферы	J/kg < 0 — and falls. Periapsis r_p = h²/(μ(1+e)) must also be above the surface and dense atmosphere
+Период круговой орбиты	Circular orbit period
+Для эллипса вместо r подставляется большая полуось a = −μ/(2ε) (третий закон Кеплера	For an ellipse use the semi-major axis a = −μ/(2ε) instead of r (Kepler’s third law
+b>Пример.</b> h = 400 км: T = 2π	b>Example.</b> h = 400 km: T = 2π
+забыть возвести r в куб или использовать километры с μ в м³/с²	forgetting to cube r or using kilometres with μ in m³/s²
+Модель плотности	Density model
+сейчас — табличная модель	currently a tabulated model
+ρ(50 км	ρ(50 km
+ρ(100 км	ρ(100 km
+ρ(200 км	ρ(200 km
+Плотность убывает плавно и не обращается в ноль ни на какой высоте	Density decreases smoothly and never reaches zero at any height
+b>Сопротивление</b	b>Drag</b
+направлено против скорости относительно воздуха	directed against the speed relative to the air
+Скоростной напор q = ½ρv² [Па] показан на приборах	Dynamic pressure q = ½ρv² [Pa] is shown on the instruments
+Для тестового зонда (m = 500 кг, Cd = 1.05, A = π м²) у поверхности	For the test probe (m = 500 kg, Cd = 1.05, A = π m²) at the surface
+b>Не учитывается:</b> подъёмная сила, зависимость Cd от числа Маха, нагрев, ветер, суточные изменения атмосферы	b>Not included:</b> lift, dependence of Cd on Mach number, heating, wind, daily atmospheric changes
+У этой планеты нет атмосферы: сопротивления нет, орбиты возможны на любой высоте выше рельефа	This planet has no atmosphere: no drag, orbits are possible at any height above the terrain
+Атмосфера и сопротивление	Atmosphere and drag
+брать в формулу сопротивления инерциальную скорость. Воздух вращается вместе с планетой: на площадке инерциальная скорость	using inertial speed in the drag formula. The air rotates with the planet: on the pad the inertial speed is
+м/с, а сопротивления нет	m/s, yet there is no drag
+Почему 100 км — ещё не орбита	Why 100 km is not an orbit yet
+b>условная</b> граница космоса (линия Кармана). Это соглашение, а не физический край: атмосфера продолжается выше, просто становится очень разреженной	b>nominal</b> edge of space (Kármán line). This is a convention, not a physical boundary: the atmosphere continues above, just very thin
+Достичь высоты и выйти на орбиту — разные задачи	Reaching height and reaching orbit are different tasks
+для высоты нужна энергия на подъём	height takes energy to climb
+м/с вертикально	m/s vertically
+для орбиты нужна горизонтальная скорость	orbit takes horizontal speed
+м/с — в несколько раз больше	m/s — several times more
+на высоте ~100–140 км сопротивление ещё заметно: орбита с таким перицентром быстро снижается. Симулятор называет орбиту устойчивой, только если ε < 0 и перицентр выше порога (по умолчанию 140 км	at ~100–140 km drag is still noticeable: an orbit with such a periapsis decays quickly. The simulator calls an orbit stable only if ε < 0 and periapsis is above the threshold (140 km by default
+Поэтому интерфейс сообщает о пересечении границы, но фазу «Орбитальный полёт» показывает только по орбитальным критериям	So the interface reports crossing the boundary, but shows the “Orbital flight” phase only by orbital criteria
+Как пользоваться приборами при планировании	How to use the instruments for planning
+Выберите целевую высоту h и посчитайте r = R + h	Choose a target height h and calculate r = R + h
+Посчитайте v_круг = √(μ/r) и период T	Calculate v_circ = √(μ/r) and the period T
+Учтите вращение: если задаёте скорость относительно поверхности на восток, вычтите ω·R·cos φ	Allow for rotation: if you set speed relative to the surface eastward, subtract ω·R·cos φ
+м/с на площадке	m/s on the pad
+Откройте начальные условия (I), задайте h и горизонтальную скорость, вертикальную = 0. Примените	Open the initial conditions (I), set h and the horizontal speed, vertical = 0. Apply
+Проверьте: ε должна быть ≈ −μ/(2r), v_r должна колебаться около нуля, высота — оставаться почти постоянной	Check: ε should be ≈ −μ/(2r), v_r should oscillate around zero, height should stay almost constant
+Сравните со значениями анализа орбиты (O). Расхождение — повод найти ошибку в расчёте	Compare with the orbit analysis values (O). A difference is a reason to look for a mistake in the calculation
+Попробуйте ускорение времени (.) — физический шаг не меняется, результаты не зависят от FPS	Try time warp (.) — the physics step does not change, results do not depend on FPS
+b>Эксперименты:</b> скорость на 5% меньше круговой (эллипс с перицентром ниже), на 5% больше; запуск с v = v_уход; орбита на 110 км со включённым сопротивлением	b>Experiments:</b> speed 5% below circular (ellipse with a lower periapsis), 5% above; launch with v = v_esc; a 110 km orbit with drag on
+Ракета: тяга, топливо, выход на орбиту	Rocket: thrust, propellant, reaching orbit
+Ракета многоступенчатая; управляете ею только вы — автопилота нет	The rocket has several stages; only you control it — there is no autopilot
+кг/с], g₀ = 9.80665 м/с² — единица, а не местная гравитация	kg/s], g₀ = 9.80665 m/s² is a unit, not local gravity
+у поверхности I_sp меньше (давление на срезе сопла), поэтому тяга растёт с высотой	near the surface I_sp is lower (pressure at the nozzle exit), so thrust grows with height
+масса m(t) = m₀ − ṁ·t; ускорение от тяги F/m растёт по мере выгорания топлива	mass m(t) = m₀ − ṁ·t; thrust acceleration F/m grows as propellant burns
+запас скорости — формула Циолковского	speed budget — the Tsiolkovsky equation
+Δv = I_sp · g₀ · ln(m₀ / m_к	Δv = I_sp · g₀ · ln(m₀ / m_f
+суммируется по ступеням	summed over the stages
+старт возможен, только если тяга/вес = F/(m·g) > 1	launch is possible only if thrust/weight = F/(m·g) > 1
+b>Как выйти на орбиту (вы решаете сами):</b	b>How to reach orbit (you decide):</b
+ЗАПУСК вертикально. 2. Через ~10–20 с начните плавно наклонять (W) на восток (курс 90°) — так используется вращение планеты	LAUNCH vertically. 2. After ~10–20 s start tilting smoothly (W) east (heading 90°) — this uses the planet’s rotation
+м/с на экваторе	m/s at the equator
+Следите за скоростным напором q — слишком резкий наклон в плотном воздухе даёт большие потери	Watch dynamic pressure q — too sharp a tilt in dense air causes large losses
+Выше атмосферы нужна горизонтальная скорость ≈ √(μ/r	Above the atmosphere horizontal speed ≈ √(μ/r
+м/с на 200 км). Смотрите на ε и v_r	m/s at 200 km). Watch ε and v_r
+Пустую ступень отделяйте (Пробел) и включайте следующую (Enter	Separate the empty stage (Space) and ignite the next (Enter
+Потери	Losses
+гравитационные ∫g·cos(тангажа)dt и аэродинамические ∫D/m dt — поэтому реальный Δv до орбиты больше, чем v_круг	gravity ∫g·cos(pitch)dt and aerodynamic ∫D/m dt — so real Δv to orbit exceeds v_circ
+Текст меню, приборов и окон меняется сразу	Menus, instruments, windows and Academy lessons change at once
+под поверхностью	below the surface
+нет (траектория незамкнута	none (open trajectory
+за сферой влияния	beyond the sphere of influence
+Аппарат	Vehicle
+приближение	zoom
+вращение	rotate
+клик по телу	click a body
+в центр	to centre
+закрыть	close
+КАРТА	MAP
+Центр карты	Map centre
+До центра	To centre
+ПОКАЗАТЬ	SHOW
+вся система	whole system
+ОРБИТА · вокруг	ORBIT · around
+ОРБИТА	ORBIT
+Аппарат на поверхности — орбиты нет	Vehicle on the surface — no orbit
+Эксцентриситет	Eccentricity
+Высоты — над средним радиусом тела	Heights are above the body's mean radius
+Самые мелкие тела показаны крупнее, чтобы их было видно; расстояния — в истинном масштабе	The smallest bodies are drawn larger so they can be seen; distances are to true scale
+схема	schematic
+Орбита: аппарат на поверхности	Orbit: vehicle on the surface
+Орбита вокруг	Orbit around
+период	period
+Кабины	Cabins
+Аэродинамика	Aerodynamics
+Вспомогательное оборудование	Auxiliary equipment
+Коммуникация	Communication
+Механика	Mechanics
+Грузовые модули	Cargo modules
+Дистанционного управления	Remote control
+С экипажем	Crewed
+Жидкостные	Liquid
+Твердотопливные	Solid
+Ядерные	Nuclear
+Электрические	Electric
+Жидкое топливо	Liquid fuel
+Боковые стабилизаторы	Side fins
+Верхние стабилизаторы	Top fins
+РСУ	RCS
+Научный зонд: связь, питание, управление по радио. На борту нет людей	Science probe: communications, power, radio control. No one on board
+Зонд Ласточка	Probe Lastochka
+Малый блок управления для лёгких аппаратов. Дёшев по массе, но для приборов и антенн почти нет запаса мощности	A small control unit for light craft. Costs little mass, but leaves almost no power for instruments and antennas
+Капсула Чайка-1	Capsule Chaika-1
+Одноместная капсула: кресло, скафандр, система жизнеобеспечения и питание от топливных элементов	Single-seat capsule: seat, spacesuit, life support and fuel-cell power
+Капсула Чайка-3	Capsule Chaika-3
+Трёхместная капсула для полётов к другим мирам: вес настоящих лунных кораблей	Three-seat capsule for flights to other worlds: as heavy as real lunar spacecraft
+Кабина Альбатрос-7	Cabin Albatross-7
+Семиместная кабина: большой экипаж стоит многих тонн на всех ступенях	Seven-seat cabin: a large crew costs many tonnes on every stage
+Стриж-Т	Strizh-T
+Малый твердотопливный двигатель, 2 т заряда внутри. После зажигания не выключается и не дросселируется: горит около 85 с на полной тяге	Small solid motor with 2 t of grain inside. Once lit it can be neither stopped nor throttled: burns for about 85 s at full thrust
+Кречет-Т	Krechet-T
+Средний твердотопливный ускоритель, 49 т заряда. Просто и мощно, но управлять тягой нельзя: горит около 80 с	Medium solid booster with 49 t of grain. Simple and powerful, but the thrust cannot be controlled: burns for about 80 s
+Беркут-Т	Berkut-T
+Большой твердотопливный ускоритель первой ступени, 142 т заряда. Огромная стартовая тяга на 85 с — и никакого способа остановить её	Large first-stage solid booster with 142 t of grain. Huge liftoff thrust for 85 s — and no way to stop it
+Атом-70	Atom-70
+Ядерный тепловой двигатель малой тяги: реактор нагревает жидкий водород. Isp 850 с в вакууме, у поверхности меньше половины	Low-thrust nuclear thermal engine: a reactor heats liquid hydrogen. Isp 850 s in vacuum, less than half near the surface
+Атом-250	Atom-250
+Тяжёлый ядерный тепловой двигатель: 18 т реактора и защиты. Для больших межпланетных кораблей	Heavy nuclear thermal engine: 18 t of reactor and shielding. For large interplanetary ships
+Луч-Х	Luch-H
+Холловский двигатель на ксеноне: 0,6 Н при 13,7 кВт. Работает только в вакууме и только с питанием	Xenon Hall thruster: 0.6 N at 13.7 kW. Works only in vacuum and only with power
+Луч-И	Luch-I
+Ионный двигатель: 0,24 Н при 6,9 кВт, Isp 4150 с. Разгоняется месяцами, зато экономит топливо лучше всех	Ion thruster: 0.24 N at 6.9 kW, Isp 4150 s. Takes months to accelerate, but saves propellant better than anything
+Луч-М	Luch-M
+Магнитоплазменный двигатель: 5,7 Н при 196 кВт. Нужна большая солнечная батарея или реактор	Magnetoplasma thruster: 5.7 N at 196 kW. Needs a large solar array or a reactor
+Бак LH-8	Tank LH-8
+Жидкий водород для ядерных двигателей, 8 т. Плотность водорода 71 кг/м³: бак огромный для своей массы	Liquid hydrogen for nuclear engines, 8 t. Hydrogen is only 71 kg/m³: the tank is huge for its mass
+Бак LH-25	Tank LH-25
+Жидкий водород для ядерных двигателей, 25 т. Длиной почти с первую ступень обычной ракеты	Liquid hydrogen for nuclear engines, 25 t. Nearly as long as the first stage of an ordinary rocket
+Бак Xe-1	Tank Xe-1
+Жидкий ксенон для электрических двигателей, 1 т. Плотный и компактный	Liquid xenon for electric thrusters, 1 t. Dense and compact
+Бак Xe-8	Tank Xe-8
+Жидкий ксенон для электрических двигателей, 8 т: запас на дальний перелёт	Liquid xenon for electric thrusters, 8 t: enough for a long transfer
+Стабилизаторы КС-1	Fins KS-1
+Четыре боковых киля, 1,6 м² в сумме: смещают центр давления назад на лёгкой ракете	Four side fins, 1.6 m² in total: move the centre of pressure aft on a light rocket
+Стабилизаторы КС-2	Fins KS-2
+Четыре больших боковых киля, 6 м² в сумме: для тяжёлых ступеней	Four large side fins, 6 m² in total: for heavy stages
+Решётчатые рули РР-1	Grid fins RR-1
+Четыре решётчатых руля наверху ступени, 1,2 м²: управление на спуске двигателями вперёд	Four grid fins at the top of the stage, 1.2 m²: control during an engines-first descent
+Решётчатые рули РР-2	Grid fins RR-2
+Четыре больших титановых решётчатых руля, 6,4 м²: возвращаемая первая ступень	Four large titanium grid fins, 6.4 m²: a returning first stage
+Блок РСУ-100	RCS-100 block
+Набор малых двигателей ориентации: 100 Н по каждой оси. Для зондов и лёгких кораблей	A set of small attitude thrusters: 100 N on each axis. For probes and light craft
+Блок РСУ-1800	RCS-1800 block
+Набор мощных двигателей ориентации: 1800 Н по каждой оси. Для тяжёлых кораблей и стыковки	A set of powerful attitude thrusters: 1800 N on each axis. For heavy ships and docking
+Термометр ТМ-1	Thermometer TM-1
+Температура среды за бортом	Outside temperature
+Барометр БМ-1	Barometer BM-1
+Давление атмосферы	Atmospheric pressure
+Гравиметр ГР-1	Gravimeter GR-1
+Точное измерение ускорения свободного падения: внутреннее строение тела	Precise measurement of gravity: the interior of the body
+Сейсмометр СМ-1	Seismometer SM-1
+Слушает толчки недр. Работает только на поверхности	Listens to quakes in the interior. Works only on the surface
+Дозиметр ДЗ-1	Dosimeter DZ-1
+Измеряет дозу излучения на борту и за бортом	Measures the radiation dose on board and outside
+Магнитометр МГ-1	Magnetometer MG-1
+Магнитное поле тела. Датчик вынесен на штанге, подальше от электроники	The body's magnetic field. The sensor sits on a boom, away from the electronics
+Камера КМ-1	Camera KM-1
+Съёмка поверхности и неба высокого разрешения	High-resolution imaging of the surface and the sky
+Парашют ПС-10	Parachute PS-10
+Купол 10 м для малых зондов. Бесполезен там, где нет атмосферы	A 10 m canopy for small probes. Useless where there is no atmosphere
+Парашют ПС-25	Parachute PS-25
+Купол 25 м для капсул на несколько тонн	A 25 m canopy for capsules of a few tonnes
+Парашют ПС-45	Parachute PS-45
+Купол 45 м для тяжёлых кабин и ступеней	A 45 m canopy for heavy cabins and stages
+Посадочные опоры ОП-1	Landing legs OP-1
+Четыре лёгкие опоры, мягкая посадка до 3 м/с. Крепятся к посадочной ступени	Four light legs, soft landing up to 3 m/s. Mounted on the landing stage
+Посадочные опоры ОП-2	Landing legs OP-2
+Четыре тяжёлые опоры для посадки целой ступени, мягкая посадка до 6 м/с	Four heavy legs for landing a whole stage, soft landing up to 6 m/s
+Термощит ТЩ-1	Heat shield TSch-1
+Абляционный щит на 1,5 МВт/м²: возвращение с низкой орбиты	Ablative shield for 1.5 MW/m²: return from low orbit
+Термощит ТЩ-5	Heat shield TSch-5
+Абляционный щит на 5 МВт/м²: вход в атмосферу на межпланетной скорости	Ablative shield for 5 MW/m²: atmospheric entry at interplanetary speed
+Фонарь ФН-1	Light FN-1
+Светодиодный фонарь, 1500 лм	LED light, 1500 lm
+Прожектор ПЖ-20	Floodlight PZh-20
+Мощный прожектор, 20000 лм: ночная посадка и работа в тени	Powerful floodlight, 20000 lm: night landings and work in shadow
+Солнечная панель СБ-2	Solar panel SB-2
+Даёт 2 кВт у родной планеты. Дальше от звезды мощность падает как квадрат расстояния	Gives 2 kW near the home planet. Farther from the star the power falls as the square of the distance
+Солнечная панель СБ-20	Solar panel SB-20
+Большая складная батарея, 20 кВт: хватит на холловский двигатель	Large folding array, 20 kW: enough for a Hall thruster
+Солнечная панель СБ-200	Solar panel SB-200
+Огромная батарея площадью 700 м², 200 кВт: для магнитоплазменного двигателя	Huge array of 700 m², 200 kW: for a magnetoplasma thruster
+РИТЭГ-300	RTG-300
+Радиоизотопный генератор: 300 Вт в любом месте системы, но для электродвигателей слишком мало	Radioisotope generator: 300 W anywhere in the system, but far too little for electric thrusters
+Реактор РК-40	Reactor RK-40
+Компактный ядерный реактор с радиаторами, 40 кВт: питание вдали от звезды	Compact nuclear reactor with radiators, 40 kW: power far from the star
+Батарея АБ-10	Battery AB-10
+Литий-ионная батарея: 10 кВт·ч, разряд до 10 кВт	Lithium-ion battery: 10 kWh, discharge up to 10 kW
+Батарея АБ-100	Battery AB-100
+Большая батарея: 100 кВт·ч, разряд до 100 кВт	Large battery: 100 kWh, discharge up to 100 kW
+Антенна АН-1	Antenna AN-1
+Всенаправленная антенна: связь без наведения, до 10 тыс. км при 5 Вт	Omnidirectional antenna: a link without pointing, up to 10 thousand km at 5 W
+Тарелка ТР-1	Dish TR-1
+Метровая направленная антенна: 50 млн км при 15 Вт. Соседние планеты	One-metre directional antenna: 50 million km at 15 W. Neighbouring planets
+Тарелка ТР-4	Dish TR-4
+Большая антенна 3,7 м: 5 млрд км при 25 Вт. Край системы	Large 3.7 m antenna: 5 billion km at 25 W. The edge of the system
+Ретранслятор РТ-2	Relay RT-2
+Принимает сигнал других аппаратов и передаёт дальше: 200 млн км при 30 Вт	Receives the signal of other craft and passes it on: 200 million km at 30 W
+Колесо КЛ-40	Wheel KL-40
+Лёгкое колесо 40 см: нагрузка до 1,2 кН, скорость до 3 м/с. Ровер собирается минимум на четырёх	Light 40 cm wheel: load up to 1.2 kN, speed up to 3 m/s. A rover needs at least four
+Колесо КЛ-100	Wheel KL-100
+Большое колесо метрового диаметра: нагрузка до 8 кН, скорость до 5 м/с	Large one-metre wheel: load up to 8 kN, speed up to 5 m/s
+Шасси ШС-1	Chassis ShS-1
+Рама ровера: на неё ставятся колёса, приборы и бур	The rover frame: wheels, instruments and a drill go on it
+Привод ПД-1	Drive PD-1
+Электроприводы колёс ровера с редукторами, 300 Вт	Electric wheel drives with gearboxes for a rover, 300 W
+Бур БУ-1	Drill BU-1
+Лёгкий бур: керн грунта с глубины 15 см, до 2 кг	Light drill: soil cores from 15 cm deep, up to 2 kg
+Бур БУ-2	Drill BU-2
+Глубокий бур: керн грунта и пород с глубины 2 м, до 8 кг	Deep drill: soil and rock cores from 2 m deep, up to 8 kg
+Манипулятор МН-1	Manipulator MN-1
+Рука с тремя суставами, вылет 1,5 м: подвести прибор к образцу или взять груз	Arm with three joints and a 1.5 m reach: bring an instrument to a sample or pick up cargo
+Контейнер КГ-2	Container KG-2
+Пустой цилиндр на 2 м³ для приборов и малых аппаратов	An empty 2 m³ cylinder for instruments and small craft
+Отсек КГ-12	Bay KG-12
+Негерметичный грузовой отсек на 12 м³	Unpressurised 12 m³ cargo bay
+Отсек КГ-40	Bay KG-40
+Большой негерметичный отсек на 40 м³	Large unpressurised 40 m³ bay
+Гермоотсек ГО-20	Pressurised bay GO-20
+Герметичный отсек на 20 м³ с атмосферой: для людей, образцов и живых экспериментов	Pressurised 20 m³ bay with an atmosphere: for people, samples and living experiments
+Нет кабины — добавлен зонд с дистанционным управлением	No cabin — a remote-controlled probe was added
+нельзя крепить на борт ступени	cannot be mounted on the side of a stage
+Батарей хватит примерно на	The batteries will last about
+Батарей нет: системы останутся без питания	No batteries: the systems will lose power
+Системы потребляют	Systems draw
+Вт, генераторы дают	W, generators give
+кВт, доступно	kW, available
+кВт	kW
+нет питания для электродвигателя	no power for the electric thruster
+тяга равна нулю	thrust is zero
+не хватает питания	not enough power
+тяга только	thrust is only
+от полной	of full
+Ровер не соберётся: нужны шасси, привод и не меньше	The rover cannot be built: it needs a chassis, a drive and at least
+колёс (сейчас колёс	wheels (wheels now
+твёрдое топливо	solid propellant
+жидкий водород	liquid hydrogen
+ксенон	xenon
+Заряд внутри	Grain inside
+Мощность	Power
+Закрепить на ступени	Mount on stage
+Крепится снаружи ступени и улетает вместе с ней при разделении	Mounted outside the stage and leaves with it at separation
+Модули добавляются из каталога. Без кабины будет поставлен зонд. «Найти» — показать на ракете	Modules are added from the catalog. With no cabin, a probe is installed. “Find” shows one on the rocket
+На борту	On the side
+кабина	cabin
+аэродинамика	aerodynamics
+вспомогательное	auxiliary
+коммуникация	communication
+механика	mechanics
+грузовой модуль	cargo module
+нет аппарата	no vehicle
+аппарат разрушен	the vehicle is destroyed
+ракета в ангаре	the rocket is in the hangar
+на аппарате нет пилотируемой кабины: зонд управляется по радио	the vehicle has no crewed cabin: the probe is radio-controlled
+камера занята (выход на поверхность или ангар	the camera is busy (surface walk or hangar
+камера смотрит на планету	the camera is looking at the planet
+Вид из кабины недоступен	Cabin view unavailable
+Кабина разрушена — вид снаружи	The cabin is destroyed — outside view
+ВЫСОТА	ALTITUDE
+ВЕРТ. СКОР	VERT. SPEED
+СКОР	SPEED
+нет двигателя	no engine
+ДВИГ. РАБОТАЕТ	ENGINE ON
+двиг. выключен	engine off
+ТЯГА	THRUST
+дроссель	throttle
+ПЕРЕГР	G-LOAD
+ТОПЛИВО	PROPELLANT
+ступеней нет	no stages
+ступени	of the stage
+Связь с Четвёртой планетой потеряна: аппарат вне дальности антенн. Управление пока сохраняется	Link to the Fourth Planet lost: the vehicle is beyond its antennas' range. Control is kept for now
+Связь с Четвёртой планетой восстановлена	Link to the Fourth Planet restored
+НЕТ СВЯЗИ	NO LINK
+СЛАБАЯ СВЯЗЬ	WEAK LINK
+СВЯЗЬ	LINK
+нет антенн	no antennas
+сигнал	signal
+от минимума	of the minimum
+запас сигнала > 10⁴	signal margin > 10⁴
+запас сигнала	signal margin
+задержка света	light delay
+туда-обратно	round trip
+мкс	µs
+мс	ms
+Вид из кабины / снаружи	Cabin view / outside
+Керн минерализованного грунта	Mineralised soil core
+Керн грунта	Soil core
+Керн с редкими минералами коренной породы	Bedrock core with rare minerals
+Керн с минеральными жилами	Core with mineral veins
+Керн коренной породы	Bedrock core
+кг · с глубины	kg · from a depth of
+Нет бура: поставьте БУ-1 или БУ-2 в ангаре	No drill: install BU-1 or BU-2 in the hangar
+предел мощности: v = ηP/F	power limit: v = ηP/F
+буксует: нужно больше μ·m·g·cos θ	wheels spin: more than μ·m·g·cos θ is needed
+скатывается: склон круче	sliding down: the slope is steeper than
+колёса не держат вес: m·g	the wheels cannot carry the weight: m·g
+едет	driving
+Бур уже работает	The drill is already running
+Бурить можно только стоя на грунте	Drilling is only possible while standing on the ground
+Бур управляется из аппарата: вернитесь внутрь	The drill is operated from the vehicle: go back inside
+Двигатель работает — бурение невозможно	The engine is running — no drilling
+Остановите ровер перед бурением	Stop the rover before drilling
+Приборы повреждены — бур не работает	Instruments damaged — the drill does not work
+Под аппаратом вода — бурить нечего	Water under the vehicle — nothing to drill
+Нет профиля игрока	No player profile
+Здесь уже бурили: отъедьте на	Already drilled here: drive away by
+Нет питания для бура	No power for the drill
+Бурение до	Drilling to
+м (грунт	m (soil
+м, ниже порода): энергия на долоте	m, rock below): energy at the bit
+кДж при	kJ at
+Вт — около	W — about
+Бурение прервано	Drilling interrupted
+аппарат не на грунте	the vehicle is not on the ground
+запущен двигатель	the engine was started
+экипаж вышел наружу	the crew went outside
+аппарат сдвинулся	the vehicle moved
+Режим ровера — только на грунте	Rover mode works only on the ground
+Сначала вернитесь в аппарат	Go back into the vehicle first
+Работает двигатель	The engine is running
+Это не ровер: нужны шасси ШС-1, привод ПД-1 и не меньше	This is not a rover: it needs the ShS-1 chassis, the PD-1 drive and at least
+колёс (вкладка «Механика» в ангаре	wheels (the Mechanics tab in the hangar
+Ровер не собран: шасси	The rover is incomplete: chassis
+привод	drive
+колёс	wheels
+Колёса не выдержат: вес m·g	The wheels will not hold: weight m·g
+кН (масса	kN (mass
+т), колёса держат	t), the wheels carry
+кН. Отделите пустые ступени или поставьте колёса КЛ-100	kN. Drop the empty stages or fit KL-100 wheels
+Идёт бурение	Drilling in progress
+Режим ровера выключен	Rover mode off
+Режим ровера	Rover mode
+газ/руль	throttle/steering
+выйти. g	leave. g
+м/с², масса	m/s², mass
+кг, по ровному до	kg, on level ground up to
+м/с (колёса — до	m/s (wheels up to
+м/с), подъём до	m/s), climbs up to
+Режим ровера выключен: аппарат не на грунте	Rover mode off: the vehicle is not on the ground
+Режим ровера выключен: экипаж снаружи	Rover mode off: the crew is outside
+Режим ровера выключен: запущен двигатель	Rover mode off: the engine was started
+Режим ровера выключен: зажигание	Rover mode off: ignition
+Приборы повреждены — манипулятор не работает	Instruments damaged — the manipulator does not work
+Из ровера образцы берёт манипулятор МН-1 — его нет. Выйти наружу	From the rover samples are taken by the MN-1 manipulator — there is none. To go outside
+затем	then
+Манипулятор достаёт на	The manipulator reaches
+м, до образца	m, the sample
+м — подъедьте ближе	m away — drive closer
+ОБОРУДОВАНИЕ	EQUIPMENT
+режим ровера	rover mode
+Ровер	Rover
+РОВЕР	ROVER
+Скорость	Speed
+м/с · предел здесь	m/s · limit here
+м/с (колёса	m/s (wheels
+уклон по курсу	grade ahead
+подъём до	climbs up to
+держит до	holds up to
+батареи	batteries
+кВт·ч	kWh
+батарей нет	no batteries
+Привод	Drive
+Вт · израсходовано	W · used
+Вт·ч за	Wh over
+питания хватает на	power covers
+кг · вес	kg · weight
+кН из	kN of
+манипулятор	manipulator
+выйти	leave
+Бурение	Drilling
+м, осталось	m, remaining
+бурить до	drill to
+Фонари	Lamps
+вкл	on
+выкл	off
+лм	lm
+Фонарей нет: поставьте ФН-1 или ПЖ-20 в ангаре (вспомогательное оборудование	No lamps: install FN-1 or PZh-20 in the hangar (auxiliary equipment
+Фонари включены	Lamps on
+на модели нет креплений фонарей — свет не виден	the model has no lamp mounts — the light is not visible
+Фонари выключены	Lamps off
+Бурение (керн	Drilling (core
+tg θ > μ	tg θ > μ
+Файл проектов повреждён	The projects file is damaged
+сохранён как	kept as
+Профиль только для чтения — проект не сохранён	The profile is read-only — the project was not saved
+перезаписан	overwritten
+сохранён	saved
+Открыть его можно кнопкой «Открыть	Open it with the «Open
+не найден	not found
+Открыт проект	Opened project
+Вывезти на старт», чтобы поставить его на площадку	Roll out to the pad» to put it on the launch pad
+Профиль только для чтения — проект не удалён	The profile is read-only — the project was not deleted
+удалён	deleted
+Не удалось записать файл проектов	Could not write the projects file
+После установки: Δv	After installing: Δv
+не куплено	not bought
+куплено	bought
+на ракете	on the rocket
+Клик	Click
+перетащите	drag it
+открыть магазин	open the shop
+деталь ещё не куплена	the part is not bought yet
+обернуть зонд защитным слоем	wrap the probe in a protective layer
+установить в головной отсек	install in the head section
+или	or
+на ракету	onto the rocket
+Сначала добавьте ступень (справа, «+ Ступень	First add a stage (on the right, «+ Stage
+двигателя нет	no engine
+поставить двигателем на	install as the engine of
+на другую ступень справа или на ракету	onto another stage on the right or onto the rocket
+добавить бак сверху на	add the tank on top of
+заправленным полностью, или	fully fuelled, or
+на другую ступень	onto another stage
+закрепить комплект на	mount the set on
+улетает вместе с ней), или	it leaves with it), or
+Управление	Control
+экипаж	crew
+чел	people
+дистанционное	remote
+Тип	Type
+не работает	does not work
+КПД η	Efficiency η
+Дроссель	Throttle
+нет: горит до конца	no: burns to the end
+Площадь комплекта	Set area
+Тяга РСУ	RCS thrust
+Комплект	Set
+на всю ступень	for the whole stage
+Площадь купола	Canopy area
+Коэфф. сопротивления	Drag coeff.
+Опоры	Legs
+Мягкая посадка до	Soft touchdown up to
+Тепловой поток до	Heat flux up to
+МВт/м²	MW/m²
+Световой поток	Luminous flux
+Солнечное питание	Solar power
+Выдаёт постоянно	Steady output
+Разряд до	Discharge up to
+Запас энергии	Stored energy
+Потребляет	Consumes
+Дальность связи	Communication range
+при	at
+Ретранслятор	Relay
+Нагрузка на колесо	Load per wheel
+Скорость до	Speed up to
+Глубина бурения	Drilling depth
+Назначение	Purpose
+рама ровера	rover frame
+привод колёс ровера	rover wheel drive
+рука для образцов	arm for samples
+Объём	Volume
+м³	m³
+Герметичный	Pressurised
+Измеряет	Measures
+Крепление	Mount
+деталей	parts
+Поиск по всему каталогу	Search the whole catalog
+Поиск по названию и описанию	Search by name and description
+Все	All
+Ничего не найдено. Попробуйте другое слово	Nothing found. Try another word
+В этой группе деталей нет	There are no parts in this group
+Стоимость проекта	Project cost
+Ещё купить	Still to buy
+ничего	nothing
+Бюджет	Budget
+Отпустите деталь над ракетой или над ступенью справа, чтобы установить её	Release the part over the rocket or over a stage on the right to install it
+сюда нельзя	cannot go here
+головной отсек	head section
+Имя	Name
+Размер	Size
+Двигатель: нет — выберите ступень и кликните двигатель в каталоге (или перетащите его на ступень	Engine: none — select the stage and click an engine in the catalog (or drag it onto the stage
+Питание: выдаёт / потребляет	Power: output / consumption
+Батареи	Batteries
+Парашюты	Parachutes
+Посадочные опоры	Landing legs
+шт., до	pcs, up to
+Стабилизаторы	Fins
+Термощит	Heat shield
+Грузовой объём	Cargo volume
+собран	assembled
+не собран	not assembled
+ещё не куплен — купите его в магазине	is not bought yet — buy it in the shop
+ставится на ступень	goes on a stage
+Установлено	Installed
+ещё замечаний	more remarks
+Новая ракета	New rocket
+Новый проект: одна пустая ступень и зонд. Добавьте двигатель и баки из каталога	New project: one empty stage and a probe. Add an engine and tanks from the catalog
+МВт	MW
+температура	temperature
+давление	pressure
+состав атмосферы	atmosphere composition
+гравитация	gravity
+сейсмика	seismic activity
+магнитное поле	magnetic field
+съёмка	imaging
+минералогия	mineralogy
+твердотопливный	solid-fuel
+ядерный	nuclear
+электрический	electric
+жидкостный	liquid-fuel
+двигатель ступени	stage engine
+бак ступени	stage tank
+на борт ступени (комплект	on the side of a stage (set
+Новый	New
+Открыть	Open
+Сохранить	Save
+Выйти	Exit
+ВЫВЕЗТИ НА СТАРТ	ROLL OUT TO THE PAD
+Клик по детали каталога ставит её на выбранную ступень; деталь можно и перетащить на ракету или на ступень справа	Clicking a catalog part installs it on the selected stage; you can also drag a part onto the rocket or onto a stage on the right
+Проекты ангара	Hangar projects
+Проекты хранятся рядом с профилем игрока. Открытый проект заменяет текущий в ангаре; на площадку он попадёт после «Вывезти на старт	Projects are stored next to the player profile. An opened project replaces the current one in the hangar; it reaches the pad after «Roll out to the pad
+В текущем проекте есть неприменённые изменения — сохраните его, если он ещё нужен	The current project has unapplied changes — save it if you still need it
+Профиль только для чтения: сохранять и удалять проекты нельзя	The profile is read-only: projects cannot be saved or deleted
+Стандартная ракета	Standard rocket
+Образец: 2 ступени, зонд. Можно взять за основу	Template: 2 stages, a probe. A good starting point
+Сохранённых проектов пока нет — «Сохранить» в верхней полосе сохраняет текущий под его именем	No saved projects yet — «Save» in the top bar saves the current one under its name
+Точно удалить	Delete for sure
+Удалить	Delete
+Сохранить текущий	Save current
+СТУПЕНИ	STAGES
+снизу вверх: ступень 1 работает первой	bottom to top: stage 1 burns first
+Ступень сверху	Stage on top
+Ступеней нет — ракете нечем взлетать	No stages — the rocket has nothing to lift off with
+Всего Δv	Total Δv
+TWR на старте	TWR at liftoff
+Головной отсек	Head section
+пусто — будет поставлен зонд	empty — a probe will be added
+старт	launch
+Купол	Canopy
+порван: скоростной напор	torn: dynamic pressure
+Па (предел	Pa (limit
+скорость	speed
+м/с (предел	m/s (limit
+Перегрев: тепловой поток	Overheating: heat flux
+МВт/м² выше допустимого	MW/m² above the allowed
+термощит	heat shield
+корпус без термощита	hull without a heat shield
+оборудование повреждается	the equipment is being damaged
+на опорах	on the legs
+опоры не выпущены — на корпус	legs not extended — on the hull
+опор нет (отделены) — на корпус	no legs (dropped) — on the hull
+мягко до	soft up to
+м/с, авария выше	m/s, crash above
+Вбок до	Sideways up to
+м/с, наклон до	m/s, tilt up to
+склон до	slope up to
+Мягкая — вбок до	Soft — sideways up to
+м/с, наклон и склон до	m/s, tilt and slope up to
+Твердотопливный двигатель: тягу нельзя регулировать — он работает на полной тяге, пока не выгорит заряд	Solid motor: the thrust cannot be throttled — it runs at full thrust until the grain burns out
+Твердотопливный двигатель нельзя заглушить: он горит, пока не выгорит заряд	A solid motor cannot be shut down: it burns until the grain is gone
+Твердотопливный: не выключается и не дросселируется	Solid motor: no shut-down, no throttling
+Парашютов на борту нет	No parachutes on board
+Парашюты уже выпущены	The parachutes are already out
+Парашюты выпущены: купола наполнятся, когда хватит воздуха. Слишком большой напор или скорость их порвут	Parachutes released: the canopies fill once there is enough air. Too high a dynamic pressure or speed will tear them
+Опоры выпущены	Legs extended
+Опоры убраны	Legs retracted
+Посадочных опор нет (или они отделены со ступенью	No landing legs (or they were dropped with their stage
+Блоков РСУ нет (или они отделены со ступенью	No RCS blocks (or they were dropped with their stage
+РСУ включена: поворот быстрее, расходуется топливо	RCS on: faster turns, propellant is used
+РСУ выключена	RCS off
+работает двигатель (малая тяга ускоряется только на безопасной орбите	engine running (low thrust is sped up only on a safe orbit
+парашюты	parachutes
+опоры	legs
+ГОРИТ (твердотопл., не выкл	BURNING (solid, cannot stop
+нет питания	no power
+не регулируется	not throttleable
+Тяга сейчас / макс	Thrust now / max
+Питание: баланс	Power: balance
+отделены — посадка на корпус	dropped — landing on the hull
+ВЫПУЩЕНЫ, мягко до	EXTENDED, soft up to
+убраны (мягко до	retracted (soft up to
+м/с на корпус	m/s on the hull
+раскрыты	open
+уложены	packed
+порваны	torn
+отделена	dropped
+выключена	off
+нет топлива	no propellant
+готова	ready
+израсх	used
+отделены	dropped
+кили	fins
+реш. рули	grid fins
+работают	working
+мало напора	too little air
+мН	mN
+мг/с	mg/s
+г/с	g/s
+Электродвигатель: план рассчитан как мгновенный импульс — для малой тяги это лишь приближение (разгон идёт по спирали	Electric thruster: the plan assumes an instant impulse — for low thrust this is only an approximation (the vehicle spirals out
+кВт/м² из	kW/m² of
+щит	shield
+корпус	hull
+малая тяга на безопасной траектории	low thrust on a safe trajectory
+Электродвигатель: манёвр рассчитан как мгновенный импульс — при малой тяге это приближение, разгон идёт по спирали и займёт	Electric thruster: the manoeuvre assumes an instant impulse — with low thrust this is an approximation, the vehicle spirals out and it will take
+долгое время	a long time
+Раскрыть парашюты	Release the parachutes
+Выпустить / убрать опоры	Extend / retract the legs
+РСУ вкл. / выкл	RCS on / off
+Колимпри (Kolimpri	Kolimpri
+Тромос (Tromos	Tromos
+Ближний спутник стартовой планеты. Красновато-розовый из-за больших отложений железа на поверхности. Образовался, как Луна: при гипотетическом столкновении двух планет. Приливно захвачен, без атмосферы (близко к планете, малая гравитация). Вся поверхность в массивных кратерах, тёмно-серые участки — «моря». −111 … −156 °C, g = 0.53 м/с², сутки = обращение = 1.7 земных	Inner moon of the starting planet. Reddish-pink from large iron deposits on the surface. Formed like the Moon: in a hypothetical collision of two planets. Tidally locked, no atmosphere (close to the planet, low gravity). The whole surface is covered with massive craters; the dark grey areas are “seas”. −111 … −156 °C, g = 0.53 m/s², day = revolution = 1.7 Earth days
+Второй по дальности спутник стартовой планеты. Температура поверхности (−42.6 °C) выживаема для человека благодаря слегка видимой атмосфере из аргона с небольшой примесью гелия и неона. Больших кратеров нет, поверхность гладкая, есть один широкий каньон. Происхождение неизвестно. g = 0.31 м/с², сутки 2.55 земных, обращение 3.8 земных	The starting planet's second moon by distance. Its surface temperature (−42.6 °C) is survivable for humans thanks to a faintly visible atmosphere of argon with a little helium and neon. No large craters; the surface is smooth, with one wide canyon. Origin unknown. g = 0.31 m/s², day 2.55 Earth days, revolution 3.8 Earth days
+Ar ≈ 90 %, Ne ≈ 6 %, He ≈ 4 % (давление не задано — допущение 100 Па	Ar ≈ 90 %, Ne ≈ 6 %, He ≈ 4 % (pressure not specified — assumed 100 Pa
+Анортозит нагорий	Highland anorthosite
+Базальт «моря	“Sea” basalt
+Самородное железо	Native iron
+Импактная брекчия столкновения планет	Impact breccia of the planetary collision
+Розовый реголит	Pink regolith
+Гладкая порода равнин	Smooth plains rock
+Порода стены каньона	Canyon wall rock
+Плагиоклаз	Plagioclase
+Минерал неизвестного происхождения	Mineral of unknown origin
+Серый реголит	Grey regolith
+Аргон в порах породы	Argon trapped in rock pores

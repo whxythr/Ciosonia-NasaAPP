@@ -1,0 +1,252 @@
+using System;
+using SpaceSim.Mathematics;
+using UnityEngine;
+#if SPACESIM_URP
+using UnityEngine.Rendering.Universal;
+#endif
+
+namespace SpaceSim.Runtime
+{
+    /// <summary>
+    /// Orbit camera around the flight body (or the planet). Its position is computed in double precision in the
+    /// simulation frame and drives the floating origin. Only the camera moves — it never influences physics.
+    ///
+    /// Frames: LocalHorizon keeps the local vertical "up" (natural near the ground); Inertial keeps orientation
+    /// fixed relative to the stars (useful in orbit). Near/far planes adapt to altitude to keep depth precision.
+    /// </summary>
+    [DefaultExecutionOrder(-50)]
+    public sealed class SpaceCameraController : MonoBehaviour
+    {
+        /// <summary>A first-person view supplied by someone else (the astronaut on foot). Simulation-frame vectors at render time.</summary>
+        public interface IFirstPersonView
+        {
+            void GetView(double renderTime, out Vector3d eye, out Vector3d forward, out Vector3d up);
+        }
+
+        /// <summary>
+        /// A first-person view from inside a small room (the cabin of a crewed vehicle): the near plane comes in to a few
+        /// centimetres for the panel, the far plane follows the eye's real altitude (the world is seen through the windows).
+        /// </summary>
+        public interface IInteriorView : IFirstPersonView { }
+
+        public enum ReferenceFrame { LocalHorizon, Inertial }
+        public enum FocusTarget { FlightBody, Planet }
+
+        [Header("Control")]
+        [Tooltip("Degrees per pixel of mouse movement (hold right mouse button).")]
+        [SerializeField] float mouseSensitivity = 0.15f;
+        [Tooltip("Rotation smoothing rate [1/s]. Higher = snappier.")]
+        [SerializeField] float rotationSmoothing = 14f;
+        [Tooltip("Zoom smoothing rate [1/s].")]
+        [SerializeField] float zoomSmoothing = 8f;
+        [Tooltip("Logarithmic zoom per scroll notch.")]
+        [SerializeField] float zoomPerNotch = 0.18f;
+
+        [Header("Limits")]
+        [SerializeField] double minDistance = 4.0;
+        [SerializeField] double maxDistance = 1.5e8;
+        [Tooltip("Minimum camera height above the physical surface [m].")]
+        [SerializeField] double minGroundClearance = 1.6;
+
+        [SerializeField] ReferenceFrame frame = ReferenceFrame.LocalHorizon;
+        [SerializeField] FocusTarget focus = FocusTarget.FlightBody;
+
+        Camera cam;
+        PlanetRuntime planet;
+        FlightBody body;
+        FloatingOrigin origin;
+        SimulationController simulation;
+
+        float yaw = 200f, pitch = 8f, targetYaw = 200f, targetPitch = 8f;
+        double distance = 28.0, targetDistance = 28.0;
+        double centerHeight; // smoothed FlightBody.VisualCenterHeight [m]
+
+        public Camera Camera => cam;
+        public ReferenceFrame Frame => frame;
+        public FocusTarget Focus => focus;
+        public Vector3d SimulationPosition { get; private set; }
+        public double Distance => distance;
+        /// <summary>Where the zoom is heading [m] (the wheel moves this; <see cref="Distance"/> follows it smoothly).</summary>
+        public double TargetDistance => targetDistance;
+        /// <summary>Closest the orbit camera comes to the vehicle [m].</summary>
+        public double MinDistance => minDistance;
+        public float Yaw => targetYaw;
+        public float Pitch => targetPitch;
+        /// <summary>When set, the camera looks through these eyes instead of orbiting the vehicle.</summary>
+        public IFirstPersonView FirstPerson { get; set; }
+
+        public void Initialize(Camera camera, PlanetRuntime planetRuntime, FlightBody flightBody, FloatingOrigin floatingOrigin, SimulationController sim)
+        {
+            cam = camera;
+            planet = planetRuntime;
+            body = flightBody;
+            origin = floatingOrigin;
+            simulation = sim;
+
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = Color.black;
+            cam.allowHDR = true;
+            cam.depthTextureMode |= DepthTextureMode.Depth; // Built-in pipeline: atmosphere needs scene depth
+#if SPACESIM_URP
+            var data = cam.GetUniversalAdditionalCameraData();
+            if (data != null)
+            {
+                data.requiresDepthTexture = true;
+                data.renderShadows = true;
+            }
+#endif
+        }
+
+        public void ToggleFrame() => frame = frame == ReferenceFrame.LocalHorizon ? ReferenceFrame.Inertial : ReferenceFrame.LocalHorizon;
+
+        /// <summary>Sets the orbit-camera view directly (yaw/pitch in degrees, distance in metres).</summary>
+        public void SetView(float yawDegrees, float pitchDegrees, double distanceMetres)
+        {
+            yaw = targetYaw = yawDegrees;
+            pitch = targetPitch = Mathf.Clamp(pitchDegrees, -89f, 89f);
+            distance = targetDistance = MathD.Clamp(distanceMetres, minDistance, maxDistance);
+        }
+
+        public void ToggleFocus()
+        {
+            focus = focus == FocusTarget.FlightBody ? FocusTarget.Planet : FocusTarget.FlightBody;
+            if (focus == FocusTarget.Planet)
+            {
+                frame = ReferenceFrame.Inertial;
+                targetDistance = Math.Max(targetDistance, planet.Model.Radius * 3.0);
+            }
+            else targetDistance = Math.Min(targetDistance, 200.0);
+        }
+
+        void LateUpdate()
+        {
+            if (planet == null || planet.Model == null || body == null || body.Simulation == null) return;
+            if (FirstPerson != null)
+            {
+                FirstPerson.GetView(simulation.RenderTime, out Vector3d eye, out Vector3d look, out Vector3d upFp);
+                SimulationPosition = eye;
+                origin.SetViewer(eye);
+                transform.SetPositionAndRotation(origin.ToUnityPosition(eye),
+                    Quaternion.LookRotation(CoordinateSystem.ToUnityVector(look), CoordinateSystem.ToUnityVector(upFp)));
+                if (FirstPerson is IInteriorView)
+                {
+                    double eyeAlt = planet.Model.AltitudeAboveSurface(eye, simulation.RenderTime);
+                    UpdateClipPlanes(eye, Math.Max(1.6, eyeAlt), 0.2);
+                }
+                else UpdateClipPlanes(eye, 1.6, 1.0);
+                return;
+            }
+            float dt = Mathf.Max(Time.unscaledDeltaTime, 1e-4f);
+            HandleInput();
+
+            float kr = 1f - Mathf.Exp(-rotationSmoothing * dt);
+            float kz = 1f - Mathf.Exp(-zoomSmoothing * dt);
+            yaw = Mathf.LerpAngle(yaw, targetYaw, kr);
+            pitch = Mathf.Lerp(pitch, targetPitch, kr);
+            distance = Math.Exp(MathD.Lerp(Math.Log(distance), Math.Log(targetDistance), kz));
+
+            var model = planet.Model;
+            double renderTime = simulation.RenderTime;
+            // The rocket is orbited and zoomed about the middle of its visible stack; after staging the aim glides to the new middle.
+            double wantCenter = body.VisualCenterHeight;
+            centerHeight = Math.Abs(wantCenter - centerHeight) > 500.0 ? wantCenter : MathD.Lerp(centerHeight, wantCenter, kz);
+            Vector3d target = focus == FocusTarget.Planet ? model.Position : body.RenderCenter(simulation.InterpolationAlpha, renderTime, centerHeight);
+
+            BuildBasis(target, model, out Vector3d up, out Vector3d north, out Vector3d east);
+            double yawR = yaw * MathD.DegToRad, pitchR = pitch * MathD.DegToRad;
+            Vector3d horizontal = north * Math.Cos(yawR) + east * Math.Sin(yawR);
+            Vector3d offset = (-horizontal * Math.Cos(pitchR) + up * Math.Sin(pitchR)) * distance;
+            Vector3d camPos = target + offset;
+
+            // Keep the camera above the ground (purely visual constraint).
+            double alt = model.AltitudeAboveSurface(camPos, renderTime);
+            if (alt < minGroundClearance)
+            {
+                Vector3d radial = (camPos - model.Position).Normalized;
+                camPos += radial * (minGroundClearance - alt);
+                alt = minGroundClearance;
+            }
+
+            SimulationPosition = camPos;
+            origin.SetViewer(camPos);
+
+            Vector3 forward = CoordinateSystem.ToUnityVector((target - camPos).Normalized);
+            Vector3 upHint = CoordinateSystem.ToUnityVector(up);
+            transform.SetPositionAndRotation(origin.ToUnityPosition(camPos), Quaternion.LookRotation(forward, upHint));
+            UpdateClipPlanes(camPos, alt, (target - camPos).Magnitude);
+        }
+
+        void HandleInput()
+        {
+            if (FlightInput.IsTyping || FlightInput.MapOpen) return;
+            if (FlightInput.RightMouseHeld || FlightInput.MiddleMouseHeld)
+            {
+                Vector2 d = FlightInput.LookDelta; // x player sensitivity, optional inverted Y
+                targetYaw += d.x * mouseSensitivity;
+                targetPitch = Mathf.Clamp(targetPitch - d.y * mouseSensitivity, -89f, 89f);
+            }
+            float notches = FlightInput.ScrollNotches;
+            if (FlightInput.GetKey(InputKey.Equals)) notches += 2f * Time.unscaledDeltaTime * 10f;
+            if (FlightInput.GetKey(InputKey.Minus)) notches -= 2f * Time.unscaledDeltaTime * 10f;
+            if (Mathf.Abs(notches) > 0f)
+            {
+                double min = focus == FocusTarget.Planet ? planet.Model.Radius * 1.05 : minDistance;
+                targetDistance = MathD.Clamp(targetDistance * Math.Exp(-notches * zoomPerNotch), min, maxDistance);
+            }
+            if (FlightInput.GetKeyDown(InputKey.C)) ToggleFrame();
+            if (FlightInput.GetKeyDown(InputKey.F)) ToggleFocus();
+        }
+
+        void BuildBasis(Vector3d target, SpaceSim.Planets.PlanetModel model, out Vector3d up, out Vector3d north, out Vector3d east)
+        {
+            Vector3d axis = model.Rotation.SpinAxis;
+            if (frame == ReferenceFrame.LocalHorizon && focus == FocusTarget.FlightBody)
+            {
+                up = (target - model.Position).Normalized;
+                Vector3d e = Vector3d.Cross(axis, up);
+                if (e.SqrMagnitude < 1e-12) e = Vector3d.Cross(Vector3d.UnitX, up);
+                east = e.Normalized;
+                north = Vector3d.Cross(up, east);
+            }
+            else
+            {
+                // Inertial: fixed relative to the stars; "up" = planet's north pole direction.
+                up = axis;
+                east = Vector3d.Cross(Vector3d.UnitZ, axis).SqrMagnitude > 1e-12 ? Vector3d.Cross(Vector3d.UnitZ, axis).Normalized : Vector3d.UnitX;
+                east = Vector3d.Cross(up, Vector3d.Cross(east, up)).Normalized;
+                north = Vector3d.Cross(up, east);
+            }
+        }
+
+        /// <summary>
+        /// Far plane low over the ground [m]. URP's main-light shadow cascades fail when the far plane is several thousand
+        /// kilometres away (measured: shadows at 1 000 km, none at 3 000 km), so near the surface — where shadows matter —
+        /// the far plane only reaches past the horizon. The sky shell, the stars and the Sun are clamped to the far plane in
+        /// their shaders, and other bodies are drawn in scaled space inside it (<see cref="StarSystemRuntime"/>).
+        /// </summary>
+        public const double ShadowSafeFar = 9.0e5;
+
+        void UpdateClipPlanes(Vector3d camPos, double altitude, double focusDistance)
+        {
+            var model = planet.Model;
+            double r = (camPos - model.Position).Magnitude;
+            double far = r + model.Radius + planet.VisualShellHeight + 1000.0;
+            // Line of sight to the horizon plus the highest peaks rising behind it.
+            double h = Math.Max(0.0, altitude), mountains = Math.Max(0.0, model.Surface.MaxSurfaceHeight);
+            double horizon = Math.Sqrt(2.0 * model.Radius * h + h * h) + Math.Sqrt(2.0 * model.Radius * mountains + mountains * mountains);
+            if (horizon * 1.1 < ShadowSafeFar) far = Math.Min(far, ShadowSafeFar);
+            double near = MathD.Clamp(altitude * 0.002, 0.05, 2000.0);
+            near = Math.Min(near, Math.Max(0.05, focusDistance * 0.25));
+            if (DebugClipOverride.x > 0f)
+            {
+                near = DebugClipOverride.x;
+                far = DebugClipOverride.y;
+            }
+            cam.nearClipPlane = (float)near;
+            cam.farClipPlane = (float)Math.Max(far, near * 10.0);
+        }
+
+        /// <summary>Diagnostics only: fixed near/far planes (x = 0 — automatic).</summary>
+        public Vector2 DebugClipOverride { get; set; }
+    }
+}
