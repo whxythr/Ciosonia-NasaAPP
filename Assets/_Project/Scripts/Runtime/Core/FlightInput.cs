@@ -24,7 +24,9 @@ namespace SpaceSim.Runtime
         /// <summary>The 2D schematic of the star system (Tab now opens the crew screen).</summary>
         Y,
         /// <summary>The science map window (orbital scanning results).</summary>
-        F2
+        F2,
+        /// <summary>Warp to the selected trajectory point or the manoeuvre node (again: cancel).</summary>
+        WarpToTarget
     }
 
     /// <summary>

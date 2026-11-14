@@ -54,6 +54,7 @@ namespace SpaceSim.Runtime
             new KeyAction(InputKey.Period, GroupCamera, "Ускорить время"),
             new KeyAction(InputKey.Comma, GroupCamera, "Замедлить время"),
             new KeyAction(InputKey.P, GroupCamera, "Пауза симуляции"),
+            new KeyAction(InputKey.WarpToTarget, GroupCamera, "Ускорить до точки / манёвра"),
 
             new KeyAction(InputKey.B, GroupWindows, "Ангар"),
             new KeyAction(InputKey.K, GroupWindows, "Магазин"),
@@ -139,6 +140,7 @@ namespace SpaceSim.Runtime
                 case InputKey.LeftShift: return KeyCode.LeftShift;
                 case InputKey.LeftCtrl: return KeyCode.LeftControl;
                 case InputKey.Return: return KeyCode.Return;
+                case InputKey.WarpToTarget: return KeyCode.Slash;
                 default:
                     // Single letters: InputKey.W ↔ KeyCode.W.
                     return Enum.TryParse(key.ToString(), out KeyCode code) ? code : KeyCode.None;
