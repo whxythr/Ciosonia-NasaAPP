@@ -17,7 +17,11 @@ namespace UnityEngine
         public static T Instantiate<T>(T original, Transform parent, bool instantiateInWorldSpace) where T : Object => original;
         public static T Instantiate<T>(T original) where T : Object => original;
         public static implicit operator bool(Object o) => o != null;
+        public static void DontDestroyOnLoad(Object target) { }
+        public static T[] FindObjectsByType<T>(FindObjectsSortMode sortMode) where T : Object => new T[0];
     }
+
+    public enum FindObjectsSortMode { None = 0, InstanceID = 1 }
 
     public class Component : Object
     {
@@ -412,6 +416,8 @@ namespace UnityEngine
         public static int targetFrameRate { get; set; }
         public static RuntimePlatform platform => RuntimePlatform.WindowsPlayer;
         public static string persistentDataPath => "";
+        public static string streamingAssetsPath => "";
+        public static void OpenURL(string url) { }
         public static bool CanStreamedLevelBeLoaded(string levelName) => false;
         public static void Quit() { }
     }
@@ -749,7 +755,25 @@ namespace UnityEngine
     public class Joint : Component { }
     public sealed class CharacterController : Collider { }
     public sealed class Rigidbody : Component { }
-    public sealed class AudioSource : Behaviour { }
+    public sealed class AudioSource : Behaviour
+    {
+        public AudioClip clip { get; set; }
+        public float volume { get; set; }
+        public float time { get; set; }
+        public bool loop { get; set; }
+        public bool playOnAwake { get; set; }
+        public bool ignoreListenerPause { get; set; }
+        public float spatialBlend { get; set; }
+        public int priority { get; set; }
+        public bool isPlaying => false;
+        public void Play() { }
+        public void Stop() { }
+        public void Pause() { }
+        public void UnPause() { }
+    }
+    public sealed class AudioClip : Object { public float length => 0f; }
+    public sealed class AudioListener : Behaviour { public static bool pause { get; set; } }
+    public enum AudioType { UNKNOWN = 0, MPEG = 13, OGGVORBIS = 14, WAV = 20 }
     public sealed class ParticleSystemRenderer : Renderer { }
     public sealed class TrailRenderer : Renderer { }
     public sealed class LineRenderer : Renderer { }
@@ -762,5 +786,37 @@ namespace UnityEngine
     {
         public static float value => 0f;
         public static float Range(float min, float max) => min;
+    }
+}
+
+namespace UnityEngine
+{
+    public class YieldInstruction { }
+    public class AsyncOperation : YieldInstruction { public bool isDone => false; }
+}
+
+namespace UnityEngine.Networking
+{
+    public class DownloadHandler : IDisposable { public void Dispose() { } }
+    public sealed class DownloadHandlerAudioClip : DownloadHandler
+    {
+        public bool compressed { get; set; }
+        public bool streamAudio { get; set; }
+        public AudioClip audioClip => null;
+        public static AudioClip GetContent(UnityWebRequest www) => null;
+    }
+    public sealed class UnityWebRequestAsyncOperation : AsyncOperation { public UnityWebRequest webRequest => null; }
+    public class UnityWebRequest : IDisposable
+    {
+        public enum Result { InProgress, Success, ConnectionError, ProtocolError, DataProcessingError }
+        public Result result => Result.Success;
+        public string error => null;
+        public DownloadHandler downloadHandler { get; set; }
+        public UnityWebRequestAsyncOperation SendWebRequest() => null;
+        public void Dispose() { }
+    }
+    public static class UnityWebRequestMultimedia
+    {
+        public static UnityWebRequest GetAudioClip(string uri, AudioType audioType) => null;
     }
 }

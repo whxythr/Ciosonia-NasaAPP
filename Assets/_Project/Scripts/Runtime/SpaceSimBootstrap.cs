@@ -77,6 +77,7 @@ namespace SpaceSim.Runtime
             transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             transform.localScale = Vector3.one;
             GameSettings.ApplyAtStart();
+            MusicDirector.Ensure()?.AttachGame(this); // soundtrack by location (persistent player, survives scene loads)
             ResolveShaders();
             Gravity = new GravityField();
 

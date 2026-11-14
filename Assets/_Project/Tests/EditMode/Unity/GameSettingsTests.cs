@@ -156,5 +156,33 @@ namespace SpaceSim.Tests
             Assert.AreEqual(2f, d.x, 1e-6f);
             Assert.AreEqual(3f, d.y, 1e-6f);
         }
+
+        [Test]
+        public void MusicSettings_PersistClampAndRestore()
+        {
+            Assert.AreEqual(GameSettings.DefaultMusicVolume, GameSettings.MusicVolume, 1e-6f);
+            Assert.IsFalse(GameSettings.MusicMuted);
+            Assert.AreEqual(GameSettings.DefaultMusicCrossfade, GameSettings.MusicCrossfade, 1e-6f);
+            GameSettings.Snapshot before = GameSettings.Capture();
+
+            GameSettings.MusicVolume = 2f;
+            GameSettings.MusicMuted = true;
+            GameSettings.MusicCrossfade = 100f;
+            Assert.AreEqual(1f, GameSettings.MusicVolume, 1e-6f);
+            Assert.AreEqual(0f, GameSettings.EffectiveMusicVolume, 1e-6f, "muted");
+            Assert.AreEqual(GameSettings.MaxMusicCrossfade, GameSettings.MusicCrossfade, 1e-6f);
+
+            GameSettings.Store = store; // reload from the saved values
+            Assert.AreEqual(1f, GameSettings.MusicVolume, 1e-6f);
+            Assert.IsTrue(GameSettings.MusicMuted);
+
+            GameSettings.Restore(before);
+            Assert.AreEqual(GameSettings.DefaultMusicVolume, GameSettings.MusicVolume, 1e-6f);
+            Assert.IsFalse(GameSettings.MusicMuted);
+
+            store.Values[GameSettings.MusicVolumeKey] = "garbage";
+            GameSettings.Store = store;
+            Assert.AreEqual(GameSettings.DefaultMusicVolume, GameSettings.MusicVolume, 1e-6f);
+        }
     }
 }
