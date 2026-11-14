@@ -2562,3 +2562,109 @@ C — робот перегреется (предел	C — the robot will overh
 Химзащита	Chemical protection
 химзащита разрушена	chemical protection destroyed
 электроника робота откажет	the robot's electronics would fail
+v∞ прилёта / захват	arrival v∞ / capture
+X прогрейд	X prograde
+Y нормаль	Y normal
+Z радиально	Z radial
+Δv ВСЕГО, М/С	TOTAL Δv, M/S
+Аппарат уже в сфере влияния цели	The vehicle is already inside the target's sphere of influence
+Аппарат уже покидает сферу влияния: перелёт считается с замкнутой орбиты ожидания	The vehicle is already escaping: the transfer is planned from a closed parking orbit
+Вручную: развернитесь на тангаж	Manually: turn to pitch
+Выберите цель — другое тело	Choose a target — another body
+Выберите цель: Гоман, окно запуска и решение Ламберта с реальными положениями тел	Choose a target: Hohmann, launch window and a Lambert solution with the bodies' real positions
+Выполнение манёвра отменено	Manoeuvre execution cancelled
+ВЫПОЛНИТЬ С ПОМОЩНИКОМ (ДВИГАТЕЛЬ	EXECUTE WITH ASSIST (ENGINE
+ВЫПОЛНЯЕТСЯ	EXECUTING
+Гоман: Δv отлёта / захвата	Hohmann: departure / capture Δv
+Гоман: время полёта	Hohmann: flight time
+До апоцентра	To apoapsis
+ДО ЗАЖИГАНИЯ	TO IGNITION
+До манёвра меньше, чем нужно на разворот и половину прожига — ускорять время некуда	The node is closer than the turn plus half the burn — nothing to warp
+До перицентра	To periapsis
+До точки	To the point
+доворот	aligning
+Запас Δv	Δv available
+и включите двигатель за половину прожига до узла; остаток Δv — в HUD	and light the engine half a burn before the node; remaining Δv is in the HUD
+ИДЁТ	IN PROGRESS
+ИЗМЕНИТЬ	EDIT
+Израсходовано Δv	Δv used
+или вокруг него самого: сначала долетите до	or around it: first fly to
+Ламберт: Δv отлёта	Lambert: departure Δv
+Ламберт: время полёта	Lambert: flight time
+Ламберт: импульс через	Lambert: burn in
+м/с добавлен мгновенно, без топлива	m/s added instantly, no propellant used
+манёвр	manoeuvre
+Манёвр выполнен	Manoeuvre complete
+Манёвр выполняется в полёте	Manoeuvres are executed in flight
+МГНОВЕННО — ПЕСОЧНИЦА / ЧИТ (без топлива	INSTANT — SANDBOX / CHEAT (no propellant
+мгновенно в момент узла (песочница	instantly at the node (sandbox
+над поверхностью	above the surface
+Наклонение	Inclination
+Не удалось найти точку отлёта на орбите ожидания	Could not find a departure point on the parking orbit
+нет (незамкнута	none (open
+Нет двигателя или топлива: манёвр выполнить нечем	No engine or propellant: nothing to execute the manoeuvre with
+нет тяги	no thrust
+ожидание зажигания	waiting for ignition
+Окно (Гоман) через	Window (Hohmann) in
+окно манёвра прошло	the manoeuvre window has passed
+Окно рассчитано	Window computed
+Окно уже наступает — пересчитайте через минуту	The window is starting now — recompute in a minute
+ОРБИТА ПОСЛЕ МАНЁВРА	ORBIT AFTER THE BURN
+осталось	left
+Осталось времени	Time left
+ОСТАНОВИТЬ УСКОРЕНИЕ	STOP WARP
+остаток Δv	remaining Δv
+ОТМЕНИТЬ УСКОРЕНИЕ	CANCEL WARP
+Ошибка расчёта перелёта	Transfer computation error
+ПЕРЕЛЁТ К ТЕЛУ	TRANSFER TO A BODY
+Перелёт не найден	No transfer found
+Перелёт планируется с орбиты (аппарат на поверхности	Transfers are planned from orbit (the vehicle is on the surface
+Перелёт рассчитывается к телу, которое обращается вокруг того же центра, что и	Transfers are computed to a body orbiting the same centre as
+ПЕСОЧНИЦА	SANDBOX
+Песочница: импульс	Sandbox: impulse of
+ПОДТВЕРДИТЬ	CONFIRM
+ПОДТВЕРЖДЁН	CONFIRMED
+Помощник: разворот к узлу манёвра; двигатель включится за половину прожига до узла	Assist: turning to the node; the engine will light half a burn before the node
+ПОСЛЕ МАНЁВРА (ПУНКТИР	AFTER THE BURN (DASHED
+ПРЕРВАТЬ МАНЁВР	ABORT MANOEUVRE
+Прибыли	Arrived
+Прибытие (часы симуляции	Arrival (simulation clock
+прожиг	burning
+разворот к узлу	turning to the node
+Расчёт перелёта (Ламберт	Computing the transfer (Lambert
+РЕДАКТИРУЕТСЯ	EDITING
+Решение задачи Ламберта не найдено	No Lambert solution found
+сближение	closest approach
+Скорость в точке	Speed at the point
+Скорость сейчас	Speed now
+Состояние	State
+СТОЛКНОВЕНИЕ	IMPACT
+ступ	stg
+ступень пуста — отделите её	stage empty — separate it
+Сфера	Sphere of
+Считаю	Computing
+Тангаж / курс узла	Node pitch / heading
+Твердотопливная ступень не дросселируется и не выключается: точный прожиг невозможен. Отделите её или летите вручную	A solid stage cannot be throttled or shut down: a precise burn is impossible. Separate it or fly manually
+Твердотопливная ступень: помощник отключён, ступень горит до конца	Solid stage: assist disengaged, the stage burns to the end
+Топливо (Циолковский	Propellant (Tsiolkovsky
+ТОЧКА	POINT
+ТОЧКА / УЗЕЛ	POINT / NODE
+ТОЧКА НА ТРАЕКТОРИИ	POINT ON THE TRAJECTORY
+точка орбиты	orbit point
+Тяните ручки X/Y/Z на карте: чем дальше, тем быстрее меняется Δv	Drag the X/Y/Z handles on the map: the farther you pull, the faster Δv changes
+УЗЕЛ В ОКНЕ	NODE AT WINDOW
+Узел в окне перелёта (Ламберт	Node at the transfer window (Lambert
+Узел в окне создан (решение Ламберта; уточните его ручками	Node created at the window (Lambert solution; fine-tune it with the handles
+Узел в окне создан и уточнён по прогнозу	Node created at the window and refined against the prediction
+УЗЕЛ ЗДЕСЬ	NODE HERE
+Узел манёвра ставится в будущей точке траектории	A manoeuvre node goes on a future point of the trajectory
+УСКОРЕНИЕ ДО	WARPING TO
+Ускорение до точки — только в полёте	Warp to a point works only in flight
+Ускорение до точки остановлено: работает двигатель	Warp to the point stopped: the engine is running
+УСКОРИТЬ ДО МАНЁВРА	WARP TO NODE
+УСКОРИТЬ ДО ТОЧКИ	WARP TO POINT
+УСКОРИТЬ СЮДА	WARP HERE
+Ускорить до точки / манёвра	Warp to point / manoeuvre
+Фазовый угол: нужен / сейчас	Phase angle: required / now
+Щёлкните по траектории: точка для ускорения времени или узла манёвра	Click the trajectory: a point to warp to or to place a manoeuvre node
+Эта точка уже пройдена	This point has already been passed

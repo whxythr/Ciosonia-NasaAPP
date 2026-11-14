@@ -23,6 +23,8 @@ namespace SpaceSim.Runtime
         /// <summary>Attitude that points the thrust along the remaining Δv.</summary>
         public double Pitch, Heading;
         public bool Started;
+        /// <summary>Remaining Δv as a vector [m/s] (translation-only frames: the same in every frame of the system).</summary>
+        public Vector3d RemainingVector;
     }
 
     /// <summary>The vehicle's current orbit around its primary, with its periapsis and apoapsis ready for display.</summary>
@@ -102,7 +104,33 @@ namespace SpaceSim.Runtime
         {
             boot = bootstrap;
             Plan.Target = PatchedConicSystem.Star;
+            // Manoeuvre nodes, warp to a point, assisted burns and transfer planning (map, flight overlay).
+            Maneuvers = gameObject.AddComponent<ManeuverController>();
+            Maneuvers.Initialize(bootstrap, this);
+            gameObject.AddComponent<ManeuverOverlay>().Initialize(bootstrap, this);
         }
+
+        /// <summary>Node editing, warp to a point/node, burn execution and transfer planning.</summary>
+        public ManeuverController Maneuvers { get; private set; }
+
+        /// <summary>Prediction without the planned node (the trajectory the vehicle is on now); equals <see cref="Prediction"/> without a node.</summary>
+        public TrajectoryPrediction BasePrediction { get; private set; }
+
+        /// <summary>
+        /// Changes the node while it is being dragged or typed: the plan check is reset and the prediction (with the node) is
+        /// recomputed within a tenth of a second instead of every half second.
+        /// </summary>
+        public void UpdateNodeLive(ManeuverNode node)
+        {
+            Plan.Departure = node?.Clone();
+            LastResult = null;
+            havePlannedAfter = frozen = false;
+            nextPredict = Mathf.Min(nextPredict, Time.unscaledTime + 0.1f);
+            Changed?.Invoke();
+        }
+
+        /// <summary>Recompute the predictions now.</summary>
+        public void RefreshNow() => Refresh();
 
         public void SetAssisted(bool assisted)
         {
@@ -272,46 +300,20 @@ namespace SpaceSim.Runtime
             UpdateWarpToBurn();
         }
 
-        /// <summary>«Ускорить до манёвра» of the map: time runs fast until the ignition is near (the player flies the burn).</summary>
-        public bool WarpingToBurn { get; private set; }
+        /// <summary>«Ускорить до манёвра»: time runs fast until the ignition is near (<see cref="ManeuverController.WarpToNode"/>).</summary>
+        public bool WarpingToBurn => Maneuvers != null && Maneuvers.Warping && Maneuvers.WarpIsToNode;
 
-        /// <summary>Lead time left when the warp drops back to ×1 [s of simulation time].</summary>
+        /// <summary>Margin before the ignition (half the burn before the node) where the warp drops back to ×1 [s of simulation time].</summary>
         public const double WarpToBurnLead = 20.0;
 
-        public void WarpToBurn()
-        {
-            if (!Guidance.Active || Guidance.Started || Guidance.TimeToIgnition <= WarpToBurnLead) return;
-            WarpingToBurn = true;
-            boot.Simulation.SetPaused(false);
-        }
+        public void WarpToBurn() => Maneuvers?.WarpToNode();
 
         public void CancelWarpToBurn()
         {
-            if (!WarpingToBurn) return;
-            WarpingToBurn = false;
-            boot.Simulation.ResetWarp();
+            if (WarpingToBurn) Maneuvers.CancelWarp();
         }
 
-        /// <summary>
-        /// Each frame picks a warp that covers about a tenth of the remaining time per real second, clamped by the zone limit of the
-        /// Core policy (the controller clamps it too), so the approach slows down smoothly; at <see cref="WarpToBurnLead"/> it is ×1.
-        /// </summary>
-        void UpdateWarpToBurn()
-        {
-            if (!WarpingToBurn) return;
-            if (!Guidance.Active || Guidance.Started || boot.Simulation.Paused)
-            {
-                WarpingToBurn = false;
-                return;
-            }
-            double left = Guidance.TimeToIgnition - WarpToBurnLead;
-            if (left <= 0.0)
-            {
-                CancelWarpToBurn();
-                return;
-            }
-            boot.Simulation.SetWarp(Math.Max(1.0, Math.Min(boot.Simulation.WarpLimit, left / 10.0)));
-        }
+        void UpdateWarpToBurn() { }
 
         /// <summary>Recomputes the live requirements and prediction.</summary>
         void Refresh()
@@ -322,17 +324,20 @@ namespace SpaceSim.Runtime
             Requirements = Plan.Target >= 0 ? FlightPlanner.Requirements(sys, Origin, Plan, Now, vehicle) : null;
             if (!vehicle.HasState || vehicle.Landed)
             {
-                Prediction = null;
+                Prediction = BasePrediction = null;
                 return;
             }
             double horizon = PredictionHorizon(sys, vehicle);
             try
             {
                 Prediction = TrajectoryPredictor.Predict(sys, vehicle.State, horizon, Plan.Target, Plan.Departure);
+                // The trajectory without the node: drawn solid on the map, the node's preview dashed over it.
+                BasePrediction = Plan.Departure == null ? Prediction
+                    : TrajectoryPredictor.Predict(sys, vehicle.State, Math.Max(horizon, Plan.Departure.Time - vehicle.State.Time + 60.0), Plan.Target);
             }
             catch (ArgumentException e)
             {
-                Prediction = null;
+                Prediction = BasePrediction = null;
                 Debug.LogWarning("[SpaceSim] prediction: " + e.Message);
             }
         }
@@ -388,6 +393,7 @@ namespace SpaceSim.Runtime
                 sys.Transform(s.Primary, sim.FrameBody, s.Time, ref nodePosInFrame, ref nodeVelInFrame);
                 sim.AttitudeFor(dv, nodePosInFrame, out Guidance.Pitch, out Guidance.Heading);
                 Guidance.Remaining = node.Magnitude;
+                Guidance.RemainingVector = dv;
                 Guidance.Started = false;
                 if (Guidance.TimeToIgnition <= 0.0 || (r != null && r.IsBurning && Guidance.TimeToNode < Guidance.BurnTime)) frozen = true;
                 return;
@@ -405,6 +411,7 @@ namespace SpaceSim.Runtime
             sys.Transform(current.Primary, planned.Primary, now, ref actualR, ref actualV);
             Vector3d remaining = planned.Velocity - actualV;
             Guidance.Remaining = remaining.Magnitude;
+            Guidance.RemainingVector = remaining;
             Guidance.Started = true;
             if (Guidance.Remaining > 1e-6) sim.AttitudeFor(remaining, sim.State.Position, out Guidance.Pitch, out Guidance.Heading);
         }
