@@ -13,6 +13,8 @@ namespace SpaceSim.Runtime
     [DefaultExecutionOrder(210)]
     public sealed class InitialConditionsPanel : MonoBehaviour
     {
+        const int WindowId = 0x53494350; // "SICP": unique among the project's IMGUI windows
+
         FlightBody body;
         PlanetRuntime planet;
         FlightStateController state;
@@ -45,7 +47,8 @@ namespace SpaceSim.Runtime
         {
             if (!open || body == null || FlightInput.PauseMenuOpen) return;
             HudStyle.Begin();
-            window = GUILayout.Window(GetInstanceID(), window, Draw, Loc.T("Начальные условия (тестовый инструмент)"));
+            // Fixed IMGUI window id (one panel per scene): GetInstanceID() is a compile error from Unity 6.2 on.
+            window = GUILayout.Window(WindowId, window, Draw, Loc.T("Начальные условия (тестовый инструмент)"));
         }
 
         void Draw(int id)

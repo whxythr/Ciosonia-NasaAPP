@@ -146,7 +146,14 @@ namespace SpaceSim.Runtime
             set
             {
                 EnsureLoaded();
-                if (value == language) return;
+                if (value == language && Loc.Current == value) return;
+                if (value == language)
+                {
+                    // Settings and the translator disagreed: put the chosen language into effect anyway.
+                    LocalizationTables.Apply(language);
+                    Commit();
+                    return;
+                }
                 language = value;
                 Store.Set(LanguageKey, value.ToString());
                 LocalizationTables.Apply(language);

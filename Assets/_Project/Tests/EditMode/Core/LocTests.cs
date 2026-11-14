@@ -47,6 +47,25 @@ namespace SpaceSim.Tests
         }
 
         [Test]
+        public void OtherLetterCaseUsesTheEntryAndKeepsTheCase()
+        {
+            // Regression: «ЗАКРЫТЬ» (caps button) had no entry of its own and stayed Russian in English.
+            Assert.AreEqual("CLOSE", Loc.T("ЗАКРЫТЬ"));
+            Assert.AreEqual("CLOSE  →", Loc.T("ЗАКРЫТЬ  →"));
+            Assert.AreEqual("Close", Loc.T("закрыть".Substring(0, 1).ToUpperInvariant() + "акрыть"));
+        }
+
+        [Test]
+        public void SwitchingBackAndForthTranslatesAgain()
+        {
+            Assert.AreEqual("Close", Loc.T("Закрыть"));
+            Loc.SetLanguage(Language.Russian);
+            Assert.AreEqual("Закрыть", Loc.T("Закрыть"));
+            Loc.SetLanguage(Language.English);
+            Assert.AreEqual("Close", Loc.T("Закрыть"), "the cache of the previous language must not survive the switch");
+        }
+
+        [Test]
         public void ParseReadsTabSeparatedLines()
         {
             var table = Loc.Parse("а\tb\r\nбез таба\n\tпусто\nстрока\\n2\tline\\n2\n");

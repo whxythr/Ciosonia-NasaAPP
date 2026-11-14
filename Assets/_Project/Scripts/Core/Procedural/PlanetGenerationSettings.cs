@@ -21,7 +21,14 @@ namespace SpaceSim.Procedural
         /// <summary>Earth-like: oceans, climate and moisture biomes.</summary>
         Terrestrial,
         /// <summary>Airless/dry rocky body: lowland/highland albedo, stains, darkened crater floors.</summary>
-        Rocky
+        Rocky,
+        /// <summary>
+        /// Gas giant: no solid surface. The reference sphere is the 1-bar level (the cloud tops); colours are zonal bands
+        /// (belts = <see cref="PlanetGenerationSettings.lowland"/>, zones = <see cref="PlanetGenerationSettings.highland"/>,
+        /// storms = <see cref="PlanetGenerationSettings.stain"/>) sheared by turbulence. Relief comes only from the amplitudes,
+        /// which a gas giant sets to 0.
+        /// </summary>
+        GasGiant
     }
 
     /// <summary>A hand-placed crater (e.g. a recognisable landmark).</summary>
@@ -93,6 +100,8 @@ namespace SpaceSim.Procedural
         public bool hasOcean = true;
         /// <summary>Sea level relative to the reference radius [m].</summary>
         public double seaLevel = 0.0;
+        // On a Rocky body with an ocean (lakes over an artist map) the liquid is seen over its bed: shallow water shows the
+        // bed colour × shallowOcean (transmission of a clear liquid), deep water fades to deepOcean.
 
         // ---- Craters ----
         public int craterCount = 24;
@@ -153,6 +162,14 @@ namespace SpaceSim.Procedural
         /// <summary>How much darker canyon floors are (0..1).</summary>
         public double canyonDarkening = 0.25;
 
+        // ---- Gas giant bands (used when surfaceStyle = GasGiant) ----
+        /// <summary>Number of belt/zone pairs from pole to pole.</summary>
+        public double bandCount = 7.0;
+        /// <summary>How strongly turbulence bends the band edges [rad of band phase]; 0 = ruler-straight bands.</summary>
+        public double bandTurbulence = 1.2;
+        /// <summary>East–west stretch of the turbulence (streaks along the bands): latitude frequency / longitude frequency.</summary>
+        public double bandStretch = 8.0;
+
         // ---- Artist colour map (equirectangular image of the whole body; empty = fully procedural) ----
         /// <summary>
         /// Key of the colour map in <see cref="SurfaceAlbedoMaps"/> (in Unity: Resources/PlanetMaps/&lt;key&gt;). Empty = none.
@@ -195,6 +212,9 @@ namespace SpaceSim.Procedural
             if (albedoMap == null) albedoMap = "";
             albedoMapDetail = MathD.Clamp01(albedoMapDetail);
             canyonDarkening = MathD.Clamp01(canyonDarkening);
+            bandCount = MathD.Clamp(bandCount, 0.0, 64.0);
+            bandTurbulence = MathD.Clamp(bandTurbulence, 0.0, 10.0);
+            bandStretch = MathD.Clamp(bandStretch, 1.0, 50.0);
             stainCoverage = MathD.Clamp01(stainCoverage);
             craterFloorDarkening = MathD.Clamp01(craterFloorDarkening);
         }

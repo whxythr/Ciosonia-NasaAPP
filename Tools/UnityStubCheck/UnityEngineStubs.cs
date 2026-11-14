@@ -14,6 +14,7 @@ namespace UnityEngine
         public static void Destroy(Object obj) { }
         public static void DestroyImmediate(Object obj) { }
         public static T Instantiate<T>(T original, Transform parent) where T : Object => original;
+        public static T Instantiate<T>(T original, Transform parent, bool instantiateInWorldSpace) where T : Object => original;
         public static T Instantiate<T>(T original) where T : Object => original;
         public static implicit operator bool(Object o) => o != null;
     }
@@ -26,6 +27,7 @@ namespace UnityEngine
         public T GetComponentInChildren<T>() => default;
         public T GetComponentInParent<T>() => default;
         public T[] GetComponentsInChildren<T>() => new T[0];
+        public T[] GetComponentsInChildren<T>(bool includeInactive) => new T[0];
     }
 
     public class Behaviour : Component { public bool enabled { get; set; } }
@@ -51,6 +53,8 @@ namespace UnityEngine
         public T AddComponent<T>() where T : Component => null;
         public T GetComponent<T>() => default;
         public T[] GetComponentsInChildren<T>() => new T[0];
+        public T[] GetComponentsInChildren<T>(bool includeInactive) => new T[0];
+        public T GetComponentInChildren<T>() => default;
         public void SetActive(bool value) { }
         public static GameObject CreatePrimitive(PrimitiveType type) => null;
         public static GameObject Find(string name) => null;
@@ -70,6 +74,10 @@ namespace UnityEngine
         public Vector3 TransformPoint(Vector3 p) => p;
         public Vector3 InverseTransformPoint(Vector3 p) => p;
         public Vector3 InverseTransformDirection(Vector3 d) => d;
+        public Vector3 TransformDirection(Vector3 d) => d;
+        public void Rotate(Vector3 axis, float angle, Space relativeTo) { }
+        public int childCount => 0;
+        public Transform GetChild(int index) => null;
     }
 
     public struct Vector2
@@ -177,6 +185,8 @@ namespace UnityEngine
         public Vector3 size => default;
         public Vector3 extents => default;
         public void Encapsulate(Bounds b) { }
+        public void Encapsulate(Vector3 p) { }
+        public float SqrDistance(Vector3 p) => 0f;
     }
 
     public struct Ray
@@ -194,10 +204,12 @@ namespace UnityEngine
 
 
 
-    public struct Matrix4x4 { public static Matrix4x4 TRS(Vector3 p, Quaternion q, Vector3 s) => default; }
+    public struct Matrix4x4 { public static Matrix4x4 TRS(Vector3 p, Quaternion q, Vector3 s) => default; public static Matrix4x4 identity => default; }
 
     public static class Mathf
     {
+        public static int FloorToInt(float f) => 0;
+        public static int CeilToInt(float f) => 0;
         public const float PI = 3.14159265f;
         public const float Deg2Rad = PI / 180f, Rad2Deg = 180f / PI;
         public static float Sqrt(float a) => a;
@@ -252,6 +264,7 @@ namespace UnityEngine
     {
         public bool enabled { get; set; }
         public Material sharedMaterial { get; set; }
+        public Material[] sharedMaterials { get; set; }
         public Rendering.ShadowCastingMode shadowCastingMode { get; set; }
         public bool receiveShadows { get; set; }
         public void SetPropertyBlock(MaterialPropertyBlock block) { }
@@ -259,7 +272,7 @@ namespace UnityEngine
     }
 
     public sealed class MeshRenderer : Renderer { }
-    public sealed class SkinnedMeshRenderer : Renderer { public Bounds localBounds { get; set; } }
+    public sealed class SkinnedMeshRenderer : Renderer { public Bounds localBounds { get; set; } public Mesh sharedMesh { get; set; } }
     public sealed class MeshFilter : Component { public Mesh sharedMesh { get; set; } }
     public class Collider : Component { }
 
@@ -278,11 +291,21 @@ namespace UnityEngine
         public Shader shader => null;
         public Color GetColor(string n) => default;
         public bool HasProperty(string n) => false;
+        public float GetFloat(string n) => 0f;
+        public Texture GetTexture(string n) => null;
+        public void SetTexture(string n, Texture t) { }
+        public Vector2 GetTextureScale(string n) => default;
+        public Vector2 GetTextureOffset(string n) => default;
+        public void SetTextureScale(string n, Vector2 v) { }
+        public void SetTextureOffset(string n, Vector2 v) { }
+        public bool IsKeywordEnabled(string keyword) => false;
+        public MaterialGlobalIlluminationFlags globalIlluminationFlags { get; set; }
     }
 
     public sealed class Shader : Object
     {
         public static Shader Find(string n) => null;
+        public bool isSupported => true;
         public static int PropertyToID(string n) => 0;
         public static void SetGlobalVector(int id, Vector4 v) { }
         public static void SetGlobalFloat(int id, float v) { }
@@ -546,6 +569,7 @@ namespace UnityEngine
 
     public static class GUI
     {
+        public static void DrawTextureWithTexCoords(Rect position, Texture image, Rect texCoords) { }
         public delegate void WindowFunction(int id);
         public static Matrix4x4 matrix { get; set; }
         public static GUISkin skin { get; set; }
@@ -687,4 +711,56 @@ namespace UnityEngine.TestTools
 namespace UnityEngine
 {
     public static class GUILayoutUtility { public static Rect GetRect(float width, float height, params GUILayoutOption[] o) => default; public static Rect GetLastRect() => default; }
+}
+
+// ---- Added for the surface robot (RobotBodyModel / RobotVisorOverlay) ----
+namespace UnityEngine
+{
+    public class RuntimeAnimatorController : Object { }
+    public enum AnimatorControllerParameterType { Float = 1, Int = 3, Bool = 4, Trigger = 9 }
+    public enum AnimatorCullingMode { AlwaysAnimate = 0, CullUpdateTransforms = 1, CullCompletely = 2 }
+    public sealed class AnimatorControllerParameter
+    {
+        public string name { get; set; }
+        public int nameHash => 0;
+        public AnimatorControllerParameterType type { get; set; }
+    }
+    public sealed class Animator : Behaviour
+    {
+        public bool applyRootMotion { get; set; }
+        public AnimatorCullingMode cullingMode { get; set; }
+        public RuntimeAnimatorController runtimeAnimatorController { get; set; }
+        public AnimatorControllerParameter[] parameters => new AnimatorControllerParameter[0];
+        public float speed { get; set; }
+        public bool isActiveAndEnabled => true;
+        public static int StringToHash(string name) => 0;
+        public void SetFloat(int id, float value) { }
+        public void SetBool(int id, bool value) { }
+        public bool HasState(int layerIndex, int stateID) => false;
+        public void CrossFadeInFixedTime(string stateName, float fixedTransitionDuration, int layer) { }
+    }
+    public sealed class AnimationState { public string name { get; set; } public float speed { get; set; } }
+    public sealed class Animation : Behaviour, System.Collections.IEnumerable
+    {
+        public AnimationState this[string name] => null;
+        public void CrossFade(string animation, float fadeLength) { }
+        public System.Collections.IEnumerator GetEnumerator() { yield break; }
+    }
+    public class Joint : Component { }
+    public sealed class CharacterController : Collider { }
+    public sealed class Rigidbody : Component { }
+    public sealed class AudioSource : Behaviour { }
+    public sealed class ParticleSystemRenderer : Renderer { }
+    public sealed class TrailRenderer : Renderer { }
+    public sealed class LineRenderer : Renderer { }
+    [Flags] public enum MaterialGlobalIlluminationFlags { None = 0, RealtimeEmissive = 1, BakedEmissive = 2, EmissiveIsBlack = 4 }
+    public enum Space { World = 0, Self = 1 }
+}
+namespace UnityEngine
+{
+    public static class Random
+    {
+        public static float value => 0f;
+        public static float Range(float min, float max) => min;
+    }
 }

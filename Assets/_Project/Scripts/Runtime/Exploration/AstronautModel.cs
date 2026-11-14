@@ -17,7 +17,7 @@ namespace SpaceSim.Runtime
     /// person the helmet is drawn into the shadow map only (the camera sits inside it), so the shadow on the ground keeps
     /// the head while the view stays clear; the chest, arms and legs are visible when looking down.
     /// </summary>
-    public sealed class AstronautModel
+    public sealed class AstronautModel : IExplorerBody
     {
         // Proportions [m]. Rest: sole → ankle 0.0875, shin 0.42, thigh 0.44 → hips 0.9475; eye 0.66 above the hips.
         const float Thigh = 0.44f, Shin = 0.42f, AnkleHeight = 0.0875f;

@@ -33,6 +33,9 @@ MonoBehaviour:
       meanMolarMass: 0.052
       coRotationFactor: 1
       table: []
+      composition: "SO\u2082 \u0438 CO\u2082 \u0441 \u043F\u0440\u0438\u043C\u0435\u0441\u044C\u044E
+        O\u2082 \u0438 Ar; \u0441\u0435\u0440\u043D\u043E\u043A\u0438\u0441\u043B\u043E\u0442\u043D\u044B\u0435
+        \u043E\u0431\u043B\u0430\u043A\u0430"
     spaceBoundaryAltitude: 120000
   physicalGeneratorVersion: 0
   physicalSeed: 0
@@ -108,7 +111,11 @@ MonoBehaviour:
       r: 1
       g: 1
       b: 1
-    cloudCoverage: 0.45
+    cloudCoverage: 0.97
+    cloudTint:
+      r: 0.95
+      g: 0.86
+      b: 0.62
     flattenZones:
     - latitudeDegrees: 18
       longitudeDegrees: -40
@@ -133,9 +140,17 @@ MonoBehaviour:
     stainFrequency: 9
     craterFloorDarkening: 0.15
     featureCraters: []
+    featureCanyons: []
+    canyonDarkening: 0.25
+    bandCount: 7
+    bandTurbulence: 1.2
+    bandStretch: 8
+    albedoMap: 
+    albedoMapDetail: 0.35
+    albedoMapRelief: 0
   lod:
     chunkResolution: 32
-    maxLevel: 14
+    maxLevel: 17
     splitDistanceFactor: 2.2
     useWorkerThreads: 1
     maxConcurrentJobs: 6
@@ -167,9 +182,20 @@ MonoBehaviour:
   atmosphereRendering:
     enabled: 1
     sunIntensity: 22
-    exposure: 1
-    viewSamples: 16
-    lightSamples: 8
+    exposure: 0.4
+    viewSamples: 28
+    multipleScattering: 1
+    clouds:
+      enabled: 1
+      extinction: 0.012
+      primarySteps: 34
+      lightSteps: 4
+      ambient: 2.2
+      cirrus: 0.45
+      shadowStrength: 0.75
+      driftSpeed: 11
+      evolveSpeed: 4
+      weatherWidth: 2048
   launchSite:
     name: "\u041F\u043B\u043E\u0449\u0430\u0434\u043A\u0430 \xB7 \u0413\u0435\u0440\u043C\u0435\u0443\u0441
       \u041C\u043E\u0440\u0430 (Hermeous Mora)"
@@ -198,4 +224,7 @@ MonoBehaviour:
     g \u2248 14.5 \u043C/\u0441\xB2. \u0421\u0443\u0442\u043A\u0438 = 4.65 \u0437\u0435\u043C\u043D\u044B\u0445.
     \u041E\u0434\u0438\u043D \u043D\u0435\u0441\u0444\u0435\u0440\u0438\u0447\u0435\u0441\u043A\u0438\u0439
     \u0441\u043F\u0443\u0442\u043D\u0438\u043A \u043D\u0430 30 000 \u043A\u043C."
+  hazards:
+    radiationLevel: 1
+    acidLevel: 1
   flattenLaunchSite: 1

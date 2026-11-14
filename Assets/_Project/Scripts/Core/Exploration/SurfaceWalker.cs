@@ -68,6 +68,12 @@ namespace SpaceSim.Exploration
         /// <summary>Vertical speed at the last touchdown after a jump [m/s] and how many touchdowns there were.</summary>
         public double LastTouchdownSpeed { get; private set; }
         public int Touchdowns { get; private set; }
+        /// <summary>
+        /// Horizontal speed lost in the last abrupt stop [m/s] (the tether's end, the shore) and how many such stops there
+        /// were: a collision for whoever is walking (the robot's status model turns it into damage).
+        /// </summary>
+        public double LastImpactSpeed { get; private set; }
+        public int Impacts { get; private set; }
 
         public Vector3d Up => Position.Normalized;
         public double Gravity => PlanetaryGravity.AccelerationMagnitude(Mu, Position.Magnitude);
@@ -144,6 +150,7 @@ namespace SpaceSim.Exploration
             if (isWater != null && isWater(dir))
             {
                 // Deep violet water: no walking on it — stop at the shore.
+                RecordImpact(Vector3d.ProjectOnPlane(Velocity, up).Magnitude);
                 Velocity = up * Vector3d.Dot(Velocity, up);
                 next = Position + Velocity * dt;
                 dir = next.Normalized;
@@ -154,6 +161,7 @@ namespace SpaceSim.Exploration
             {
                 next = Anchor + fromAnchor.Normalized * TetherLength;
                 Vector3d along = fromAnchor.Normalized;
+                RecordImpact(Math.Max(0.0, Vector3d.Dot(Velocity, along)));
                 Velocity -= along * Math.Max(0.0, Vector3d.Dot(Velocity, along));
                 dir = next.Normalized;
                 Blocked = Loc.T("страховочный трос натянут (") + TetherLength + Loc.T(" м)");
@@ -189,6 +197,13 @@ namespace SpaceSim.Exploration
                 StridePhase += 0.5 * Locomotion.StepFrequency(v, g) * dt;
                 StridePhase -= Math.Floor(StridePhase);
             }
+        }
+
+        void RecordImpact(double speed)
+        {
+            if (speed < 0.05) return; // leaning on the tether or standing at the shore is no collision
+            LastImpactSpeed = speed;
+            Impacts++;
         }
     }
 }

@@ -23,6 +23,11 @@
             "name": "com.unity.render-pipelines.universal",
             "expression": "12.0.0",
             "define": "SPACESIM_URP"
+        },
+        {
+            "name": "com.unity.modules.animation",
+            "expression": "1.0.0",
+            "define": "SPACESIM_ANIMATION"
         }
     ],
     "noEngineReferences": false

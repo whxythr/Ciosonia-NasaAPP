@@ -131,11 +131,11 @@ namespace SpaceSim.Tests
         {
             store.Values[GameSettings.BrightnessKey] = "not a number";
             store.Values[GameSettings.MouseSensitivityKey] = "NaN";
-            store.Values[GameSettings.BindingsKey] = "garbage;W=NotAKey;=;B=;Escape=Q;G=Escape;K=Y";
+            store.Values[GameSettings.BindingsKey] = "garbage;W=NotAKey;=;B=;Escape=Q;G=Escape;K=F5";
             GameSettings.Store = store;
             Assert.AreEqual(1f, GameSettings.Brightness);
             Assert.AreEqual(1f, GameSettings.MouseSensitivity);
-            Assert.AreEqual(KeyCode.Y, GameSettings.GetBinding(InputKey.K), "the one valid entry is kept");
+            Assert.AreEqual(KeyCode.F5, GameSettings.GetBinding(InputKey.K), "the one valid entry is kept");
             Assert.AreEqual(KeyCode.W, GameSettings.GetBinding(InputKey.W));
             Assert.AreEqual(KeyCode.G, GameSettings.GetBinding(InputKey.G));
 

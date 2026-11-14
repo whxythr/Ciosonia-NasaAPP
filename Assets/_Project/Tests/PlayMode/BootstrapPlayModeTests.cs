@@ -45,7 +45,7 @@ namespace SpaceSim.Tests
             for (int i = 0; i < 20; i++) yield return null;
 
             // Start body: the fourth planet, rocket on the pad, space tools still locked.
-            Assert.AreEqual(7, boot.System.Bodies.Count, "4 planets + Mora I + Kolimpri + Tromos");
+            Assert.AreEqual(9, boot.System.Bodies.Count, "6 planets + Mora I + Kolimpri + Tromos");
             Assert.AreEqual(HomeSystemCatalog.HomeWorldId, boot.System.ActiveBody.Id);
             Assert.AreEqual(8.27, boot.Planet.Model.Gravity.SurfaceGravity, 0.03);
             Assert.IsTrue(boot.Body.Simulation.IsLanded, "rocket starts on the pad");

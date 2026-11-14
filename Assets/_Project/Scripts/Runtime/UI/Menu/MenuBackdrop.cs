@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SpaceSim.Mathematics;
+using SpaceSim.Planets;
 using SpaceSim.Procedural;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,9 +24,16 @@ namespace SpaceSim.Runtime.Menu
         readonly StarLayer stars;
         Task<Color32[]> planetJob, nebulaJob;
         Vector2 pointer, parallax;
+        /// <summary>Every texture this backdrop created (HideAndDontSave: nothing frees them unless we do).</summary>
+        readonly List<Texture2D> ownedTextures = new List<Texture2D>();
+        bool released;
+        /// <summary>Backdrops created so far whose textures are still alive.</summary>
+        static readonly List<MenuBackdrop> Alive = new List<MenuBackdrop>();
 
         public MenuBackdrop()
         {
+            ReleaseDetachedBackdrops();
+            Alive.Add(this);
             pickingMode = PickingMode.Ignore;
             AddToClassList("backdrop");
 
@@ -33,13 +42,13 @@ namespace SpaceSim.Runtime.Menu
             stars.AddToClassList("backdrop__layer");
             Add(stars);
             glow = Layer("backdrop__glow");
-            glow.style.backgroundImage = new StyleBackground(Radial(256, new Color(1f, 0.9f, 0.78f), 6f));
+            glow.style.backgroundImage = new StyleBackground(Own(Radial(256, new Color(1f, 0.9f, 0.78f), 6f)));
             streak = Layer("backdrop__streak");
-            streak.style.backgroundImage = new StyleBackground(Streak(512, 32));
+            streak.style.backgroundImage = new StyleBackground(Own(Streak(512, 32)));
             planet = Layer("backdrop__planet");
-            Layer("backdrop__shade-left").style.backgroundImage = new StyleBackground(LinearAlpha(256, 1, horizontal: true, 0.94f, 2.1f));
-            Layer("backdrop__shade-bottom").style.backgroundImage = new StyleBackground(LinearAlpha(1, 128, horizontal: false, 0.85f, 1.6f));
-            Layer("backdrop__vignette").style.backgroundImage = new StyleBackground(Vignette(256, 144));
+            Layer("backdrop__shade-left").style.backgroundImage = new StyleBackground(Own(LinearAlpha(256, 1, horizontal: true, 0.94f, 2.1f)));
+            Layer("backdrop__shade-bottom").style.backgroundImage = new StyleBackground(Own(LinearAlpha(1, 128, horizontal: false, 0.85f, 1.6f)));
+            Layer("backdrop__vignette").style.backgroundImage = new StyleBackground(Own(Vignette(256, 144)));
 
             planetJob = Task.Run(() => BuildPlanet(PlanetSize));
             nebulaJob = Task.Run(() => BuildNebula(NebulaWidth, NebulaHeight));
@@ -52,6 +61,43 @@ namespace SpaceSim.Runtime.Menu
 
         /// <summary>The generated homeworld picture (null until ready): previews in the load and settings screens.</summary>
         public Texture2D PlanetTexture { get; private set; }
+
+        Texture2D Own(Texture2D texture)
+        {
+            ownedTextures.Add(texture);
+            return texture;
+        }
+
+        /// <summary>
+        /// Frees the textures of earlier backdrops that are no longer shown. A new backdrop is made each time the main menu
+        /// loads, while one backdrop is only detached and re-added when the menu is rebuilt (language change) — so the
+        /// textures are released here, when the next backdrop exists, not on every detach.
+        /// </summary>
+        static void ReleaseDetachedBackdrops()
+        {
+            for (int i = Alive.Count - 1; i >= 0; i--)
+            {
+                if (Alive[i].panel == null) Alive[i].Release(); // removes itself from Alive (backwards loop: safe)
+            }
+        }
+
+        /// <summary>Destroys every texture this backdrop created. The backdrop shows nothing afterwards.</summary>
+        public void Release()
+        {
+            if (released) return;
+            released = true;
+            planetJob = null;
+            nebulaJob = null;
+            PlanetTexture = null;
+            foreach (Texture2D t in ownedTextures)
+            {
+                if (t == null) continue;
+                if (Application.isPlaying) UnityEngine.Object.Destroy(t);
+                else UnityEngine.Object.DestroyImmediate(t);
+            }
+            ownedTextures.Clear();
+            Alive.Remove(this);
+        }
 
         VisualElement Layer(string className)
         {
@@ -70,11 +116,12 @@ namespace SpaceSim.Runtime.Menu
 
         void Tick(TimerState t)
         {
+            if (released) return;
             if (planetJob != null && planetJob.IsCompleted)
             {
                 if (planetJob.Status == TaskStatus.RanToCompletion)
                 {
-                    PlanetTexture = Upload(planetJob.Result, PlanetSize, PlanetSize, false);
+                    PlanetTexture = Own(Upload(planetJob.Result, PlanetSize, PlanetSize, false));
                     planet.style.backgroundImage = new StyleBackground(PlanetTexture);
                     planet.AddToClassList("backdrop__layer--ready");
                 }
@@ -85,7 +132,7 @@ namespace SpaceSim.Runtime.Menu
             {
                 if (nebulaJob.Status == TaskStatus.RanToCompletion)
                 {
-                    nebula.style.backgroundImage = new StyleBackground(Upload(nebulaJob.Result, NebulaWidth, NebulaHeight, true));
+                    nebula.style.backgroundImage = new StyleBackground(Own(Upload(nebulaJob.Result, NebulaWidth, NebulaHeight, true)));
                     nebula.AddToClassList("backdrop__layer--ready");
                 }
                 else Debug.LogException(nebulaJob.Exception);
@@ -202,6 +249,11 @@ namespace SpaceSim.Runtime.Menu
             var sky = new Color(0.45f, 0.56f, 1f);
             // Planet frame: axial tilt 22.5° (HomeSystemCatalog) and a longitude that puts a continent on the limb.
             var spin = Quaternion.Euler(0f, 0f, -22.5f) * Quaternion.Euler(0f, 128f, 0f);
+            // The sea is the start planet's own (HomeSystemCatalog), so the menu shows the water the game shows.
+            PlanetGenerationSettings home = HomeSystemCatalog.Bodies().Find(b => b.Id == HomeSystemCatalog.HomeWorldId)?.Generation
+                                            ?? new PlanetGenerationSettings();
+            Color shallowSea = ToColor(home.shallowOcean), deepSea = ToColor(home.deepOcean), seaIce = ToColor(home.seaIce);
+            var polarSnow = new Color(0.9f, 0.93f, 1f);
 
             Parallel.For(0, n, row =>
             {
@@ -243,11 +295,11 @@ namespace SpaceSim.Runtime.Menu
                         else
                         {
                             float depth = Mathf.Clamp01((0.035f - h) * 7f);
-                            surface = Color.Lerp(new Color(0.40f, 0.28f, 0.80f), new Color(0.09f, 0.05f, 0.26f), Mathf.Sqrt(depth));
+                            surface = Color.Lerp(shallowSea, deepSea, Mathf.Sqrt(depth));
                         }
 
                         float ice = Mathf.Clamp01((lat - 0.82f + moisture * 0.12f) * 14f);
-                        surface = Color.Lerp(surface, new Color(0.9f, 0.93f, 1f), ice);
+                        surface = Color.Lerp(surface, land ? polarSnow : seaIce, ice);
 
                         var cp = new Vector3d(q.x * 2.6, q.y * 6.5, q.z * 2.6);
                         float c = (float)clouds.Fbm(cp + p * 1.5, 6, 2.1, 0.55);
@@ -332,6 +384,8 @@ namespace SpaceSim.Runtime.Menu
             });
             return px;
         }
+
+        static Color ToColor(ColorRGB c) => new Color(c.r, c.g, c.b);
 
         static Color32 ToneMap(Color c)
         {

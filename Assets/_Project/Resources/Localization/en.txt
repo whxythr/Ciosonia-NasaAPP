@@ -2518,3 +2518,47 @@ Ar ≈ 90 %, Ne ≈ 6 %, He ≈ 4 % (давление не задано — до
 Минерал неизвестного происхождения	Mineral of unknown origin
 Серый реголит	Grey regolith
 Аргон в порах породы	Argon trapped in rock pores
+Золин (Tholin	Tholin
+Еремус (Eremus	Eremus
+Пятая планета, создана для отработки марсианских миссий. Половина поверхности — озёра жидкого углекислого газа. Северное полушарие покрыто красной пылью — золином (сложные органические полимеры, как на Хароне), южное — льдом из-за наклона оси. 1.56 M⊕, g = 11.9 м/с², 37.8 °C, сутки 1.75 земных, год 182 дня	The fifth planet, made for rehearsing Mars missions. Half of the surface is lakes of liquid carbon dioxide. The northern hemisphere is covered with red dust — tholin (complex organic polymers, as on Charon); the southern one with ice because of the axial tilt. 1.56 M⊕, g = 11.9 m/s², 37.8 °C, day 1.75 Earth days, year 182 days
+Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, из них 7 крупных (пока не добавлены). Твёрдой поверхности нет: «площадка» — на уровне облаков	The sixth planet, the only gas giant — a mega-Jupiter and the largest object in the system. Orange, made mostly of hydrogen and helium. 864 M⊕, 12.9 R⊕, g = 50.8 m/s², −63.6 °C at the 1-bar level, day 0.329 Earth days, year 664 days, polar flattening 3.98 %. 17 moons, 7 of them major (not added yet). There is no solid surface: the “pad” is at the cloud tops
+CO₂ ≈ 95 %, N₂ ≈ 3 %, Ar ≈ 2 % (давление не задано — допущение 60 бар, чтобы CO₂ мог быть жидким	CO₂ ≈ 95 %, N₂ ≈ 3 %, Ar ≈ 2 % (pressure not specified — assumed 60 bar so that CO₂ can be liquid
+H₂ ≈ 86 %, He ≈ 13.6 %, CH₄, NH₃ (как у Юпитера: состав не задан	H₂ ≈ 86 %, He ≈ 13.6 %, CH₄, NH₃ (like Jupiter: composition not specified
+Жидкий CO₂ из озера	Liquid CO₂ from a lake
+Пористая вулканическая порода	Porous volcanic rock
+Сидерит	Siderite
+Сухой лёд с включениями золина	Dry ice with tholin inclusions
+Красная пыль золина	Red tholin dust
+Карбонатный ил озёр	Carbonate lake mud
+Органические полимеры золина	Tholin organic polymers
+C — ниже предела робота	C — below the robot's limit
+C — робот перегреется (предел	C — the robot will overheat (limit
+атм — корпус робота не выдержит (предел	atm — the robot's hull will not hold (limit
+без вреда до	harmless up to
+Визор	Visor
+Визор разрушен: изображения нет	Visor destroyed: no image
+Визор робота разрушен: изображения нет. Вернитесь к ракете по памяти (E — у ракеты	The robot's visor is destroyed: no image. Find the way back to the rocket from memory (E — at the rocket
+До отказа	Failure in
+До потери зрения	Blind in
+Жёсткое приземление	Hard landing
+Износ робота	Robot wear
+Кислотность уровня	Acidity level
+корпус разрушен	hull destroyed
+м/с: корпус	m/s: hull
+нужна новая ракета	a new rocket is needed
+ОТКАЗ	FAILURE
+отказ через	failure in
+покрытие робота растворится за секунды	the robot's coating would dissolve in seconds
+РОБОТ · СОСТОЯНИЕ	ROBOT · STATUS
+Робот в ракете	The robot is in the rocket
+Робот вышел из строя — трос втянул его в ракету. Выход невозможен до новой ракеты	The robot has failed — the tether reeled it into the rocket. No exit until a new rocket
+Робот неисправен	Robot out of order
+Робот неисправен — возврат в ракету	Robot out of order — returning to the rocket
+СЛЕП	BLIND
+Среда безопасна для робота	Surroundings are safe for the robot
+Терморегуляция	Thermal control
+терморегуляция отказала	thermal control failed
+Удар	Impact
+Химзащита	Chemical protection
+химзащита разрушена	chemical protection destroyed
+электроника робота откажет	the robot's electronics would fail

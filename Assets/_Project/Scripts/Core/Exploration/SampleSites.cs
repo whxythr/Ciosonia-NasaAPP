@@ -57,6 +57,9 @@ namespace SpaceSim.Exploration
         {
             public double ValueFactor = 1.0;
             public (SampleCategory category, double weight, string[] names)[] Kinds;
+            /// <summary>What can be taken where the ground is liquid (sea, lake); null names = nothing.</summary>
+            public SampleCategory LiquidCategory = SampleCategory.Water;
+            public string[] LiquidNames;
         }
 
         static readonly Dictionary<string, PlanetSamples> Tables = new Dictionary<string, PlanetSamples>
@@ -64,6 +67,8 @@ namespace SpaceSim.Exploration
             [HomeSystemCatalog.HomeWorldId] = new PlanetSamples
             {
                 ValueFactor = 0.3,
+                LiquidCategory = SampleCategory.Water,
+                LiquidNames = new[] { Loc.T("Фиолетовая морская вода") },
                 Kinds = new[]
                 {
                     (SampleCategory.Rock, 0.35, new[] { Loc.T("Базальт"), Loc.T("Гранит"), Loc.T("Песчаник") }),
@@ -149,7 +154,25 @@ namespace SpaceSim.Exploration
                     (SampleCategory.Soil, 0.30, new[] { Loc.T("Серый реголит") }),
                     (SampleCategory.UnusualCompound, 0.09, new[] { Loc.T("Аргон в порах породы") })
                 }
-            }
+            },
+            // Mars-mission analogue: tholin dust, carbonates of the lake shores, liquid CO₂ from the lakes.
+            [HomeSystemCatalog.TholinId] = new PlanetSamples
+            {
+                ValueFactor = 1.5,
+                LiquidCategory = SampleCategory.OtherLiquid,
+                LiquidNames = new[] { Loc.T("Жидкий CO₂ из озера") },
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.30, new[] { Loc.T("Базальт"), Loc.T("Пористая вулканическая порода") }),
+                    (SampleCategory.Mineral, 0.15, new[] { Loc.T("Сидерит"), Loc.T("Гематит") }),
+                    (SampleCategory.RareGeology, 0.05, new[] { Loc.T("Сухой лёд с включениями золина") }),
+                    (SampleCategory.Soil, 0.28, new[] { Loc.T("Красная пыль золина") }),
+                    (SampleCategory.MineralSoil, 0.12, new[] { Loc.T("Карбонатный ил озёр") }),
+                    (SampleCategory.UnusualCompound, 0.10, new[] { Loc.T("Органические полимеры золина") })
+                }
+            },
+            // Gas giant: no ground to sample.
+            [HomeSystemCatalog.EremusId] = new PlanetSamples { Kinds = new (SampleCategory, double, string[])[0] }
         };
 
         static readonly PlanetSamples Generic = new PlanetSamples
@@ -191,11 +214,15 @@ namespace SpaceSim.Exploration
                 string[] names;
                 if (water)
                 {
-                    if (planetId != HomeSystemCatalog.HomeWorldId) continue; // nothing to pick up under other seas (none exist now)
-                    category = SampleCategory.Water;
-                    names = new[] { Loc.T("Фиолетовая морская вода") };
+                    if (table.LiquidNames == null || table.LiquidNames.Length == 0) continue; // nothing to pick up there
+                    category = table.LiquidCategory;
+                    names = table.LiquidNames;
                 }
-                else category = Pick(table, u, out names);
+                else
+                {
+                    if (table.Kinds.Length == 0) continue; // e.g. a gas giant: no ground
+                    category = Pick(table, u, out names);
+                }
                 var site = new SampleSite
                 {
                     Id = planetId + ":" + i + ":" + j + ":" + k,

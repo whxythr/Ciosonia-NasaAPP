@@ -374,7 +374,11 @@ namespace SpaceSim.Runtime
             LastLanding = null;
             sim.PlaceOnSurface(planet.LaunchSiteDirection(), controller.SimulationTime);
             RebuildVisual();
+            RocketReset?.Invoke();
         }
+
+        /// <summary>A fresh rocket stands on the pad (<see cref="ResetToLaunchSite"/>): everything aboard starts anew.</summary>
+        public event System.Action RocketReset;
 
         /// <summary>Rover hook: moves the landed vehicle along the ground to a planet-fixed direction (stays landed, no touchdown).</summary>
         public bool DriveTo(Vector3d fixedDirection)

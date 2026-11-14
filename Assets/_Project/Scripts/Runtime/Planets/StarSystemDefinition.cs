@@ -18,12 +18,15 @@ namespace SpaceSim.Runtime
         public List<PlanetDefinition> bodies = new List<PlanetDefinition>();
         [Tooltip("planetId of the body where the probe starts.")]
         public string startBodyId = HomeSystemCatalog.HomeWorldId;
+        [Tooltip("HomeSystemCatalog.DataVersion these assets were generated from (0 = before versioning).")]
+        public int catalogVersion;
 
         /// <summary>The designer's home system (Teonan, Quoris, Hermeous Mora + moon), built in memory.</summary>
         public static StarSystemDefinition CreateHomeSystem()
         {
             var s = CreateInstance<StarSystemDefinition>();
             s.name = "Home system (runtime default)";
+            s.catalogVersion = HomeSystemCatalog.DataVersion;
             s.star = HomeSystemCatalog.Star();
             foreach (var preset in HomeSystemCatalog.Bodies()) s.bodies.Add(PlanetDefinition.FromPreset(preset));
             return s;

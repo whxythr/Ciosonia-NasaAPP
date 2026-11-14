@@ -30,7 +30,7 @@ namespace SpaceSim.Planets
     ///
     /// Notes on interpretation:
     /// • "Prot" is used as the sidereal rotation period.
-    /// • Orbits are circular and coplanar (no e, i given).
+    /// • Orbits are coplanar (no i given) and circular unless pericentre/apocentre are given (Tholin, Eremus).
     /// • The star's mass is not given; it is derived from Kepler's third law, M = 4π²a³/(G·T²), using the
     ///   given a and T of Hermeous Mora (≈ 5.19·10³⁰ kg ≈ 2.6 M☉). All three planets agree within 1 %.
     /// </summary>
@@ -53,6 +53,18 @@ namespace SpaceSim.Planets
         public const string KolimpriId = "kolimpri";
         /// <summary>Outer moon of the start planet (thin argon air, smooth, one canyon).</summary>
         public const string TromosId = "tromos";
+        /// <summary>Fifth planet: lakes of liquid CO₂, red tholin dust in the north, ice in the south.</summary>
+        public const string TholinId = "tholin";
+        /// <summary>Sixth planet: the orange mega-Jupiter, the largest body of the system.</summary>
+        public const string EremusId = "eremus";
+
+        /// <summary>
+        /// Version of the preset data. Saved home-system assets carry the version they were generated from; bump this when
+        /// presets gain bodies or fields that older assets would silently lack (the editor then regenerates them).
+        /// 1 = moons Kolimpri/Tromos, hazards, cloud tints, albedo maps, canyons, violet-sea colours.
+        /// 2 = fifth and sixth planets (Tholin, Eremus), gas-giant bands.
+        /// </summary>
+        public const int DataVersion = 2;
 
         public static double StarMassFromKepler(double semiMajorAxis, double period) =>
             4.0 * Math.PI * Math.PI * Math.Pow(semiMajorAxis, 3) / (PhysicalConstants.GravitationalConstant * period * period);
@@ -74,7 +86,170 @@ namespace SpaceSim.Planets
             list.Add(home);
             list.Add(Kolimpri(home.Physical.GravitationalParameter));
             list.Add(Tromos(home.Physical.GravitationalParameter));
+            list.Add(Tholin());
+            list.Add(Eremus());
             return list;
+        }
+
+        /// <summary>
+        /// Tholin (Золин) — fifth planet, an analogue for Mars missions (designer data: M = 1.56 M⊕ = 9.36·10²⁴ kg,
+        /// R = 7 244 420 m, ρ = 5880 kg/m³, g = 11.9 m/s², T = 37.8 °C, day 1.75 d, year 182 d, a = 0.865 AU,
+        /// pericentre 0.799 AU, apocentre 0.931 AU). M and R reproduce ρ and g to 0.1 %; Kepler with the star's mass gives
+        /// 181.9 d for a = 0.865 AU, so a, T and the apsides agree (e = (0.931 − 0.799)/(0.931 + 0.799) = 0.0763).
+        /// Interpretation (not given):
+        /// • Liquid CO₂ exists only between its triple point (−56.6 °C, 5.18 bar) and critical point (31.0 °C, 73.8 bar). At
+        ///   the quoted mean of 37.8 °C no CO₂ can be liquid at any pressure, so the lakes must lie where it is colder: the
+        ///   atmosphere is taken as 60 bar of CO₂ (boiling point ≈ 22 °C), 37.8 °C is the global mean, and the lakes fill
+        ///   the cooler basins and high latitudes. 60 bar is above the suit limit (2 atm): no EVA, the arm still samples.
+        /// • Axial tilt 30° (only "the tilt causes the icy south" is given).
+        /// • Colours, the tholin north and the icy south come from the artist map Resources/PlanetMaps/tholin; its dark
+        ///   regions become basins (albedoMapRelief), and sea level 0 fills about half the surface with lakes.
+        /// • The optical coefficients are tuned to the artist render (hazy cream disk), not derived from 60 bar of CO₂, which
+        ///   would hide the surface completely (as Hermeous Mora's are tuned).
+        /// </summary>
+        static CelestialBodyPreset Tholin()
+        {
+            const double orbitAngle = 200.0, padLat = 38.0, padLon = 12.0;
+            var a = new AtmosphereProperties
+            {
+                hasAtmosphere = true,
+                surfacePressure = 6.0e6,            // assumption: keeps CO₂ liquid below ≈ 22 °C
+                composition = "CO₂ ≈ 95 %, N₂ ≈ 3 %, Ar ≈ 2 % (давление не задано — допущение 60 бар, чтобы CO₂ мог быть жидким)",
+                surfaceTemperature = 310.95,        // 37.8 °C
+                meanMolarMass = 0.04345,
+                coRotationFactor = 1.0
+            };
+            var p = new PlanetPhysicalProperties
+            {
+                meanRadius = 7244420.0,
+                mass = 9.36e24,
+                gravitySource = GravitationalParameterSource.FromMass,
+                siderealRotationPeriod = 1.75 * Day,
+                axialTiltDegrees = 30.0,
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                spaceBoundaryAltitude = 120000.0,   // ≈ 24 scale heights: p there ≈ Earth's at 100 km
+                atmosphere = a
+            };
+            p.measuredGravitationalParameter = p.GravitationalParameter;
+            a.scaleHeight = AtmosphericModel.IsothermalScaleHeight(a.surfaceTemperature, a.meanMolarMass, p.SurfaceGravity);
+            a.surfaceDensity = AtmosphericModel.IdealGasDensity(a.surfacePressure, a.meanMolarMass, a.surfaceTemperature);
+            var optics = new AtmosphereOpticalProperties
+            {
+                // Thick CO₂ scatters more than Earth's air, and suspended tholin dust (Mie) yellows the disk.
+                rayleighScattering = new Vector3d(5.802e-6, 13.558e-6, 33.1e-6) * 2.5,
+                mieScattering = 1.2e-5, mieExtinctionRatio = 1.3, mieScaleHeight = 3000.0, mieAnisotropy = 0.75
+            };
+            var g = new PlanetGenerationSettings
+            {
+                seed = 50582,
+                surfaceStyle = SurfaceStyle.Rocky,
+                hasOcean = true,
+                seaLevel = 0.0,
+                continentFrequency = 1.4, continentBias = 0.0, continentAmplitude = 700, oceanDepthAmplitude = 700, warpStrength = 0.15,
+                mountainFrequency = 3.0, mountainAmplitude = 900,
+                detailFrequency = 150, detailAmplitude = 60,
+                craterCount = 40, craterMinRadius = 500, craterMaxRadius = 20000, craterDepthRatio = 0.08,
+                lowland = new ColorRGB(0.42f, 0.20f, 0.18f),      // procedural fallback: tholin-red lowlands
+                highland = new ColorRGB(0.66f, 0.64f, 0.62f),     // pale frosted highlands
+                stain = new ColorRGB(0.45f, 0.17f, 0.15f), stainCoverage = 0.25, stainFrequency = 4.0,
+                craterFloorDarkening = 0.12, moistureFrequency = 2.5,
+                // Liquid CO₂ is colourless (n ≈ 1.2): the lake bed shows through, darkened by depth.
+                shallowOcean = new ColorRGB(0.60f, 0.60f, 0.64f),
+                deepOcean = new ColorRGB(0.06f, 0.06f, 0.08f),
+                cloudCoverage = 0.08, cloudTint = new ColorRGB(1f, 1f, 1f), // thin dry-ice cirrus
+                albedoMap = "tholin",
+                albedoMapDetail = 0.3,
+                albedoMapRelief = 2500.0
+            };
+            return new CelestialBodyPreset
+            {
+                Id = TholinId, DisplayName = "Золин (Tholin)",
+                Description = "Пятая планета, создана для отработки марсианских миссий. Половина поверхности — озёра жидкого углекислого газа. Северное полушарие покрыто красной пылью — золином (сложные органические полимеры, как на Хароне), южное — льдом из-за наклона оси. 1.56 M⊕, g = 11.9 м/с², 37.8 °C, сутки 1.75 земных, год 182 дня.",
+                Physical = p, Generation = g, Optics = optics,
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 0.865 * AU, eccentricity = (0.931 - 0.799) / (0.931 + 0.799),
+                    period = 182.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle
+                },
+                LaunchLatitude = padLat, LaunchLongitude = padLon,
+                Hazards = new EnvironmentHazards { radiationLevel = 1 } // dense air shields the ground (only above it)
+            };
+        }
+
+        /// <summary>
+        /// Eremus (Еремус) — sixth planet, the only gas giant, a mega-Jupiter (designer data: M = 864 M⊕, R = 12.9 R⊕,
+        /// ρ = 2208 kg/m³, g = 50.8 m/s², T = −63.6 °C, day 0.329 d, year 664 d, a = 2.03 AU, pericentre 1.98 AU,
+        /// apocentre 2.12 AU, polar flattening 3.98 %, 17 moons of which 7 are major).
+        /// With M⊕ = 5.9722·10²⁴ kg and R⊕ = 6 371 000 m: ρ = 2219 kg/m³ and g = 51.0 m/s² (0.5 % above the quoted values).
+        /// Orbit: the apsides give a = (1.98 + 2.12)/2 = 2.05 AU and e = 0.034, and Kepler with the star's mass gives
+        /// 664 d for a = 2.05 AU (but 654 d for 2.03 AU), so a = 2.05 AU is used — it agrees with both the period and
+        /// the apsides. Not modelled: the flattening (the shape and gravity stay spherical, no J2) and the moons (no data).
+        /// The reference radius is the 1-bar level; there is no solid surface — the "ground" is the cloud tops.
+        /// </summary>
+        static CelestialBodyPreset Eremus()
+        {
+            const double orbitAngle = 300.0, padLat = 0.0, padLon = -30.0;
+            const double earthMass = 5.9722e24, earthRadius = 6371000.0;
+            var a = new AtmosphereProperties
+            {
+                hasAtmosphere = true,
+                surfacePressure = 1.0e5,            // the 1-bar reference level
+                composition = "H₂ ≈ 86 %, He ≈ 13.6 %, CH₄, NH₃ (как у Юпитера: состав не задан)",
+                surfaceTemperature = 209.55,        // −63.6 °C
+                meanMolarMass = 0.00234,
+                coRotationFactor = 1.0
+            };
+            var p = new PlanetPhysicalProperties
+            {
+                meanRadius = 12.9 * earthRadius,
+                mass = 864.0 * earthMass,
+                gravitySource = GravitationalParameterSource.FromMass,
+                siderealRotationPeriod = 0.329 * Day,
+                axialTiltDegrees = 3.0,             // not given: Jupiter-like
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                spaceBoundaryAltitude = 250000.0,   // ≈ 17 scale heights above the 1-bar level
+                atmosphere = a
+            };
+            p.measuredGravitationalParameter = p.GravitationalParameter;
+            a.scaleHeight = AtmosphericModel.IsothermalScaleHeight(a.surfaceTemperature, a.meanMolarMass, p.SurfaceGravity);
+            a.surfaceDensity = AtmosphericModel.IdealGasDensity(a.surfacePressure, a.meanMolarMass, a.surfaceTemperature);
+            // H₂ scatters ≈ 0.22 × as much per molecule as air; at 1 bar and 210 K there are 1.36 × as many molecules.
+            double numberRatio = (a.surfacePressure / a.surfaceTemperature) / (101325.0 / 288.15);
+            var optics = new AtmosphereOpticalProperties
+            {
+                rayleighScattering = new Vector3d(5.802e-6, 13.558e-6, 33.1e-6) * (0.22 * numberRatio),
+                mieScattering = 2.0e-6, mieExtinctionRatio = 1.2, mieScaleHeight = 20000.0, mieAnisotropy = 0.7,
+                // Orange photochemical haze above the clouds.
+                hazeScattering = new Vector3d(3.0e-6, 1.8e-6, 0.8e-6), hazeAltitude = 60000.0, hazeThickness = 20000.0
+            };
+            var g = new PlanetGenerationSettings
+            {
+                seed = 120577,
+                surfaceStyle = SurfaceStyle.GasGiant,
+                hasOcean = false,
+                // No solid surface: the 1-bar level is a smooth sphere.
+                continentAmplitude = 0, oceanDepthAmplitude = 0, mountainAmplitude = 0, detailAmplitude = 0, detailOctaves = 0,
+                craterCount = 0, warpFrequency = 1.5, warpStrength = 0.06,
+                lowland = new ColorRGB(0.85f, 0.42f, 0.18f),      // belts: deep orange
+                highland = new ColorRGB(0.98f, 0.72f, 0.46f),     // zones: pale apricot
+                stain = new ColorRGB(0.72f, 0.30f, 0.12f), stainCoverage = 0.04, stainFrequency = 5.0, // rust-red ovals
+                bandCount = 8.0, bandTurbulence = 1.4, bandStretch = 10.0,
+                moistureFrequency = 2.0,
+                cloudCoverage = 0.0                               // the bands are the cloud tops
+            };
+            return new CelestialBodyPreset
+            {
+                Id = EremusId, DisplayName = "Еремус (Eremus)",
+                Description = "Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, из них 7 крупных (пока не добавлены). Твёрдой поверхности нет: «площадка» — на уровне облаков.",
+                Physical = p, Generation = g, Optics = optics,
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 2.05 * AU, eccentricity = (2.12 - 1.98) / (2.12 + 1.98),
+                    period = 664.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle
+                },
+                LaunchLatitude = padLat, LaunchLongitude = padLon,
+                Hazards = new EnvironmentHazards { radiationLevel = 2 } // intense radiation belts of a giant magnetosphere
+            };
         }
 
         /// <summary>
@@ -268,9 +443,15 @@ namespace SpaceSim.Planets
                 equatorialAridity = 0.45,
                 coastalMountainBoost = 0.9,
                 elevationCooling = 0.00008,
-                deepOcean = new ColorRGB(0.07f, 0.02f, 0.16f),      // violet seas
-                shallowOcean = new ColorRGB(0.24f, 0.10f, 0.36f),
-                seaIce = new ColorRGB(0.82f, 0.82f, 0.90f),
+                // Violet seas: retinal-type pigment in the plankton absorbs green (500–600 nm) and back-scatters red and violet.
+                // Luminance stays ocean-like (≈ 4 % linear, Earth's sea ≈ 0.3–3 %), only the chroma differs. The albedo must be
+                // this saturated: at the old (0.07, 0.02, 0.16) the water body (≈ 0.4 % linear) was weaker than the 2 % Fresnel
+                // reflection of the blue sky plus aerial perspective, and the sea rendered navy like Earth's. Blue outweighs red
+                // ≈ 3:1 (linear) because the K-star's light is ≈ 3:1 red-heavy after the air: lit water reads purple (hue ≈ 285°),
+                // not magenta. Sea ice is faintly lilac (pigment trapped in brine).
+                deepOcean = new ColorRGB(0.32f, 0.08f, 0.54f),
+                shallowOcean = new ColorRGB(0.44f, 0.22f, 0.68f),
+                seaIce = new ColorRGB(0.84f, 0.80f, 0.90f),
                 grassland = new ColorRGB(0.26f, 0.42f, 0.14f),
                 forest = new ColorRGB(0.10f, 0.26f, 0.08f),
                 desert = new ColorRGB(0.80f, 0.64f, 0.40f),

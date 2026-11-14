@@ -1,0 +1,242 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67f3db8e82744378f4cdddb7a7408f0, type: 3}
+  m_Name: tromos
+  m_EditorClassIdentifier: 
+  planetId: tromos
+  displayName: "\u0422\u0440\u043E\u043C\u043E\u0441 (Tromos)"
+  physical:
+    meanRadius: 266478
+    mass: 3.31e+20
+    gravitySource: 0
+    measuredGravitationalParameter: 22091932999.999996
+    siderealRotationPeriod: 220319.99999999997
+    axialTiltDegrees: 0
+    rotationPhaseAtEpochDegrees: 150
+    atmosphere:
+      hasAtmosphere: 1
+      profile: 0
+      surfaceDensity: 0.0019458507235638098
+      scaleHeight: 165188.37568371228
+      surfacePressure: 100
+      surfaceTemperature: 230.55
+      meanMolarMass: 0.0373
+      coRotationFactor: 1
+      table: []
+      composition: "Ar \u2248 90 %, Ne \u2248 6 %, He \u2248 4 % (\u0434\u0430\u0432\u043B\u0435\u043D\u0438\u0435
+        \u043D\u0435 \u0437\u0430\u0434\u0430\u043D\u043E \u2014 \u0434\u043E\u043F\u0443\u0449\u0435\u043D\u0438\u0435
+        100 \u041F\u0430)"
+    spaceBoundaryAltitude: 300000
+  physicalGeneratorVersion: 0
+  physicalSeed: 0
+  surfaceSource: 0
+  generation:
+    seed: 83302
+    algorithmVersion: 1
+    continentFrequency: 1
+    continentOctaves: 6
+    lacunarity: 2
+    persistence: 0.5
+    continentBias: -0.04
+    continentAmplitude: 800
+    oceanDepthAmplitude: 800
+    warpFrequency: 1.6
+    warpStrength: 0.25
+    mountainFrequency: 2.5
+    mountainOctaves: 7
+    mountainAmplitude: 400
+    detailFrequency: 90
+    detailOctaves: 7
+    detailAmplitude: 30
+    hasOcean: 0
+    seaLevel: 0
+    craterCount: 25
+    craterMinRadius: 300
+    craterMaxRadius: 3000
+    craterDepthRatio: 0.08
+    craterRimWidth: 0.45
+    elevationCooling: 0.00008
+    moistureFrequency: 2
+    deepOcean:
+      r: 0.015
+      g: 0.05
+      b: 0.16
+    shallowOcean:
+      r: 0.04
+      g: 0.17
+      b: 0.3
+    seaIce:
+      r: 0.8
+      g: 0.85
+      b: 0.9
+    beach:
+      r: 0.72
+      g: 0.66
+      b: 0.48
+    desert:
+      r: 0.76
+      g: 0.63
+      b: 0.42
+    grassland:
+      r: 0.28
+      g: 0.4
+      b: 0.16
+    forest:
+      r: 0.11
+      g: 0.24
+      b: 0.09
+    tundra:
+      r: 0.42
+      g: 0.41
+      b: 0.35
+    rock:
+      r: 0.36
+      g: 0.33
+      b: 0.3
+    snow:
+      r: 0.9
+      g: 0.92
+      b: 0.95
+    atmosphereTint:
+      r: 1
+      g: 1
+      b: 1
+    cloudCoverage: 0
+    cloudTint:
+      r: 1
+      g: 1
+      b: 1
+    flattenZones:
+    - latitudeDegrees: -10
+      longitudeDegrees: 40
+      radius: 600
+      minHeightAboveSeaLevel: 15
+    equatorialAridity: 0
+    coastalMountainBoost: 0
+    surfaceStyle: 1
+    lowland:
+      r: 0.55
+      g: 0.54
+      b: 0.52
+    highland:
+      r: 0.74
+      g: 0.73
+      b: 0.71
+    stain:
+      r: 0.36
+      g: 0.35
+      b: 0.34
+    stainCoverage: 0.15
+    stainFrequency: 4
+    craterFloorDarkening: 0.1
+    featureCraters: []
+    featureCanyons:
+    - startLatitudeDegrees: 18
+      startLongitudeDegrees: -60
+      endLatitudeDegrees: 30
+      endLongitudeDegrees: 10
+      width: 35000
+      depth: 3500
+    canyonDarkening: 0.3
+    bandCount: 7
+    bandTurbulence: 1.2
+    bandStretch: 8
+    albedoMap: tromos
+    albedoMapDetail: 0.3
+    albedoMapRelief: 0
+  lod:
+    chunkResolution: 32
+    maxLevel: 17
+    splitDistanceFactor: 2.2
+    useWorkerThreads: 1
+    maxConcurrentJobs: 6
+    maxMeshUploadsPerFrame: 8
+    cacheBudgetMegabytes: 256
+    skirtFraction: 0.015
+  importedModel:
+    modelPrefab: {fileID: 0}
+    modelRadius: 1
+    rotationOffsetEuler: {x: 0, y: 0, z: 0}
+  optics:
+    rayleighScattering:
+      x: 0.000000006584191242227859
+      y: 0.00000001538580917995955
+      z: 0.000000037562345763140663
+    mieScattering: 0
+    mieExtinctionRatio: 1.11
+    mieScaleHeight: 1200
+    mieAnisotropy: 0.8
+    hazeScattering:
+      x: 0
+      y: 0
+      z: 0
+    hazeAltitude: 70000
+    hazeThickness: 8000
+    autoShellHeight: 0
+    shellDensityRatio: 0.000001
+    shellHeight: 495565.1270511368
+  atmosphereRendering:
+    enabled: 1
+    sunIntensity: 22
+    exposure: 0.4
+    viewSamples: 28
+    multipleScattering: 1
+    clouds:
+      enabled: 1
+      extinction: 0.012
+      primarySteps: 34
+      lightSteps: 4
+      ambient: 2.2
+      cirrus: 0.45
+      shadowStrength: 0.75
+      driftSpeed: 11
+      evolveSpeed: 4
+      weatherWidth: 2048
+  launchSite:
+    name: "\u041F\u043B\u043E\u0449\u0430\u0434\u043A\u0430 \xB7 \u0422\u0440\u043E\u043C\u043E\u0441
+      (Tromos)"
+    latitudeDegrees: -10
+    longitudeDegrees: 40
+    padRadius: 40
+    flattenRadius: 600
+    minHeightAboveSeaLevel: 15
+  parentBodyId: home
+  orbit:
+    semiMajorAxis: 97059000
+    eccentricity: 0
+    inclinationDegrees: 0
+    longitudeOfAscendingNodeDegrees: 0
+    argumentOfPeriapsisDegrees: 0
+    meanAnomalyAtEpochDegrees: 75
+    period: 0
+    tidallyLocked: 0
+  description: "\u0412\u0442\u043E\u0440\u043E\u0439 \u043F\u043E \u0434\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438
+    \u0441\u043F\u0443\u0442\u043D\u0438\u043A \u0441\u0442\u0430\u0440\u0442\u043E\u0432\u043E\u0439
+    \u043F\u043B\u0430\u043D\u0435\u0442\u044B. \u0422\u0435\u043C\u043F\u0435\u0440\u0430\u0442\u0443\u0440\u0430
+    \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438 (\u221242.6
+    \xB0C) \u0432\u044B\u0436\u0438\u0432\u0430\u0435\u043C\u0430 \u0434\u043B\u044F
+    \u0447\u0435\u043B\u043E\u0432\u0435\u043A\u0430 \u0431\u043B\u0430\u0433\u043E\u0434\u0430\u0440\u044F
+    \u0441\u043B\u0435\u0433\u043A\u0430 \u0432\u0438\u0434\u0438\u043C\u043E\u0439
+    \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u0435 \u0438\u0437 \u0430\u0440\u0433\u043E\u043D\u0430
+    \u0441 \u043D\u0435\u0431\u043E\u043B\u044C\u0448\u043E\u0439 \u043F\u0440\u0438\u043C\u0435\u0441\u044C\u044E
+    \u0433\u0435\u043B\u0438\u044F \u0438 \u043D\u0435\u043E\u043D\u0430. \u0411\u043E\u043B\u044C\u0448\u0438\u0445
+    \u043A\u0440\u0430\u0442\u0435\u0440\u043E\u0432 \u043D\u0435\u0442, \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u044C
+    \u0433\u043B\u0430\u0434\u043A\u0430\u044F, \u0435\u0441\u0442\u044C \u043E\u0434\u0438\u043D
+    \u0448\u0438\u0440\u043E\u043A\u0438\u0439 \u043A\u0430\u043D\u044C\u043E\u043D.
+    \u041F\u0440\u043E\u0438\u0441\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u0435
+    \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043D\u043E. g = 0.31 \u043C/\u0441\xB2,
+    \u0441\u0443\u0442\u043A\u0438 2.55 \u0437\u0435\u043C\u043D\u044B\u0445, \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435
+    3.8 \u0437\u0435\u043C\u043D\u044B\u0445"
+  hazards:
+    radiationLevel: 1
+    acidLevel: 0
+  flattenLaunchSite: 1

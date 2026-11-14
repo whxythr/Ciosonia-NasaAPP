@@ -48,8 +48,12 @@ namespace SpaceSim.Runtime
         float yaw, lookPitch;
         GUIStyle note;
 
-        AstronautModel model;
-        HelmetVisorOverlay visor;
+        IExplorerBody model;
+        RobotVisorOverlay visor;
+        RobotStatusPanel statusPanel;
+        readonly RobotStatus robot = new RobotStatus();
+        int seenTouchdowns, seenImpacts;
+        bool warnedBlind;
         bool thirdPerson;
         Vector3 eyeLocal = new Vector3(0f, (float)SurfaceWalker.EyeHeight, 0f);
         float baseFov = -1f, fovKick;
@@ -59,9 +63,18 @@ namespace SpaceSim.Runtime
         public RoverController Rover { get; set; }
         public float Yaw => yaw;
         public float LookPitch => lookPitch;
-        /// <summary>The suited body while outside (null inside the rocket).</summary>
-        public AstronautModel Model => model;
+        /// <summary>
+        /// The body while outside (null inside the rocket): the robot from the imported model when it is set up
+        /// (<see cref="RobotModelSettings"/>), else the procedural astronaut.
+        /// </summary>
+        public IExplorerBody Model => model;
         public bool ThirdPerson => thirdPerson;
+        /// <summary>The robot's condition (kept aboard between exits, reset with every new rocket).</summary>
+        public RobotStatus Robot => robot;
+        public RobotVisorOverlay VisorOverlay => visor;
+        public RobotStatusPanel StatusPanel => statusPanel;
+        /// <summary>The surroundings on the ground here, as the robot feels them.</summary>
+        public RobotEnvironment SurfaceEnvironment => RobotEnvironment.AtSurface(planet.Model.Properties, planet.Definition.hazards);
 
         // Scripted input for tests and the development bridge (the player uses the keyboard).
         double driveForward, driveRight;
@@ -105,11 +118,31 @@ namespace SpaceSim.Runtime
             simulation = sim;
             origin = floatingOrigin;
             lit = litShader;
-            visor = gameObject.AddComponent<HelmetVisorOverlay>();
+            visor = gameObject.AddComponent<RobotVisorOverlay>();
+            statusPanel = gameObject.AddComponent<RobotStatusPanel>();
+            statusPanel.Status = robot;
+            if (body != null)
+            {
+                body.Touchdown += OnVehicleTouchdown;
+                body.RocketReset += robot.Reset;
+            }
+        }
+
+        /// <summary>The robot rides inside: a hard landing shakes it, a crash wrecks it.</summary>
+        void OnVehicleTouchdown(LandingOutcome outcome)
+        {
+            if (Eva) return;
+            if (outcome.Result == LandingResult.Hard) robot.VehicleDamage(LandingPhysics.HardLandingDamage);
+            else if (outcome.Result == LandingResult.Crash) robot.VehicleDamage(1.0);
         }
 
         void OnDestroy()
         {
+            if (body != null)
+            {
+                body.Touchdown -= OnVehicleTouchdown;
+                body.RocketReset -= robot.Reset;
+            }
             if (cameraController != null && ReferenceEquals(cameraController.FirstPerson, this)) cameraController.FirstPerson = null;
             if (controls != null) controls.Suspended = false;
             RemoveBody();
@@ -120,6 +153,7 @@ namespace SpaceSim.Runtime
             if (model != null) model.Destroy();
             model = null;
             if (visor != null) visor.Visible = false;
+            if (statusPanel != null) statusPanel.Visible = false;
             if (baseFov > 0f && cameraController != null && cameraController.Camera != null) cameraController.Camera.fieldOfView = baseFov;
             baseFov = -1f;
             fovKick = 0f;
@@ -157,10 +191,27 @@ namespace SpaceSim.Runtime
         internal ISurfaceHeightProvider WalkSurface() =>
             new PadSurface(planet.Model.Surface, planet.LaunchSiteDirection(), planet.Model.Radius, planet.Definition.launchSite.padRadius);
 
+        PlanetSurfaceSampler waterTestSampler;
+        Func<Vector3d, bool> waterTest;
+
+        /// <summary>
+        /// "Is this direction open sea?" for the walker and the rover, or null on a body without an ocean. Same answer as
+        /// <c>Sample(d).IsWater</c> but only evaluates the height (no biome shading); cached until the surface changes.
+        /// </summary>
         internal Func<Vector3d, bool> WaterTest()
         {
-            if (planet.Model.Surface is PlanetSurfaceSampler sampler) return d => sampler.Sample(d).IsWater;
-            return null;
+            if (!(planet.Model.Surface is PlanetSurfaceSampler sampler))
+            {
+                waterTestSampler = null;
+                waterTest = null;
+                return null;
+            }
+            if (ReferenceEquals(sampler, waterTestSampler)) return waterTest;
+            PlanetGenerationSettings g = sampler.Settings; // a copy: read once per surface
+            double seaLevel = g.seaLevel;
+            waterTestSampler = sampler;
+            waterTest = g.hasOcean ? d => sampler.TerrainHeight(d) < seaLevel : (Func<Vector3d, bool>)null;
+            return waterTest;
         }
 
         // ---- Sites -------------------------------------------------------------------------------------------
@@ -244,7 +295,7 @@ namespace SpaceSim.Runtime
         {
             var sim = body.Simulation;
             if (sim == null || !sim.IsLanded || body.Destroyed) return Loc.T("Выйти можно только из стоящей на грунте ракеты.");
-            CollectionCheck exit = SampleCollection.CanExit(planet.Model.Properties, planet.Definition.hazards);
+            CollectionCheck exit = RobotEva.CanExit(planet.Model.Properties, planet.Definition.hazards, robot);
             if (!exit.Ok) return exit.Reason;
             Vector3d landed = sim.LandedFixedPosition;
             walker = new SurfaceWalker(planet.Model.GravitationalParameter, planet.Model.Radius, WalkSurface(), landed, WaterTest());
@@ -261,11 +312,11 @@ namespace SpaceSim.Runtime
             cameraController.FirstPerson = this;
             simulation.ResetWarp();
             RemoveBody();
-            if (lit != null)
-            {
-                model = new AstronautModel(null, lit);
-                model.SetFirstPerson(!thirdPerson);
-            }
+            model = CreateBody();
+            if (model != null) model.SetFirstPerson(!thirdPerson);
+            seenTouchdowns = walker.Touchdowns;
+            seenImpacts = walker.Impacts;
+            warnedBlind = robot.Blind;
             eyeLocal = model != null ? model.EyeLocal : new Vector3(0f, (float)SurfaceWalker.EyeHeight, 0f);
             if (cameraController.Camera != null) baseFov = cameraController.Camera.fieldOfView;
             double g = walker.Gravity;
@@ -274,8 +325,67 @@ namespace SpaceSim.Runtime
                   (double.IsPositiveInfinity(Locomotion.SprintEndurance(g)) ? Loc.T(" без усталости") : Loc.T(" на ≈ ") + UnitFormatter.Number(Locomotion.SprintEndurance(g), 0) + Loc.T(" с"))
                 : Loc.T("бег невозможен — слишком тяжело");
             state.Notify(Loc.T("Выход на поверхность: g = ") + UnitFormatter.Number(g, 2) + Loc.T(" м/с², шаг ") + UnitFormatter.Number(walker.WalkSpeed, 2) +
-                         Loc.T(" м/с, ") + sprint + Loc.T(", прыжок ≈ ") + UnitFormatter.Number(walker.JumpHeight, 2) + Loc.T(" м. E — образец/вернуться, V — вид со стороны."));
+                         Loc.T(" м/с, ") + sprint + Loc.T(", прыжок ≈ ") + UnitFormatter.Number(walker.JumpHeight, 2) + Loc.T(" м. E — образец/вернуться, V — вид со стороны.") +
+                         Wear());
             return "";
+        }
+
+        /// <summary>" Износ: …" when the surroundings wear the robot, else "".</summary>
+        string Wear()
+        {
+            string w = RobotEva.Warning(SurfaceEnvironment, robot.Rates);
+            return w.Length > 0 ? Loc.T(" Износ робота: ") + w + "." : "";
+        }
+
+        /// <summary>The robot from the imported model when it is set up, else the procedural astronaut (also on any error).</summary>
+        IExplorerBody CreateBody()
+        {
+            RobotModelSettings settings = RobotModelSettings.Load();
+            if (settings != null && settings.Usable)
+            {
+                try
+                {
+                    return new RobotBodyModel(settings, lit);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning("SpaceSim: robot model failed (" + e.Message + "), using the procedural astronaut.");
+                }
+            }
+            return lit != null ? new AstronautModel(null, lit) : null;
+        }
+
+        /// <summary>Wears the robot for one EVA step: the surroundings, touchdowns after a fall and collisions.</summary>
+        void UpdateRobot(float dt)
+        {
+            robot.Step(SurfaceEnvironment, dt);
+            string hit = "";
+            if (walker.Touchdowns != seenTouchdowns)
+            {
+                seenTouchdowns = walker.Touchdowns;
+                if (robot.Impact(walker.LastTouchdownSpeed) > 0.0) hit = Loc.T("Жёсткое приземление ");
+            }
+            if (walker.Impacts != seenImpacts)
+            {
+                seenImpacts = walker.Impacts;
+                if (robot.Impact(walker.LastImpactSpeed) > 0.0) hit = Loc.T("Удар ");
+            }
+            if (hit.Length > 0)
+                state.Notify(hit + UnitFormatter.Number(robot.LastImpactSpeed, 1) + Loc.T(" м/с: корпус −") + UnitFormatter.Number(robot.LastImpactDamage * 100.0, 0) +
+                             Loc.T(" % (без вреда до ") + UnitFormatter.Number(robot.Rates.safeImpactSpeed, 1) + Loc.T(" м/с)."));
+            if (robot.Blind && !warnedBlind)
+            {
+                warnedBlind = true;
+                state.Notify(Loc.T("Визор робота разрушен: изображения нет. Вернитесь к ракете по памяти (E — у ракеты)."));
+            }
+            if (robot.Disabled)
+            {
+                walker = null;
+                RemoveBody();
+                controls.Suspended = false;
+                cameraController.FirstPerson = null;
+                state.Notify(Loc.T("Робот вышел из строя — трос втянул его в ракету. Выход невозможен до новой ракеты."));
+            }
         }
 
         public void EndEva()
@@ -285,7 +395,7 @@ namespace SpaceSim.Runtime
             RemoveBody();
             controls.Suspended = false;
             cameraController.FirstPerson = null;
-            state.Notify(Loc.T("Астронавт в ракете."));
+            state.Notify(Loc.T("Робот в ракете."));
         }
 
         /// <summary>Takes a sample through the core rules; returns the message shown to the player.</summary>
@@ -326,7 +436,7 @@ namespace SpaceSim.Runtime
                 if (toRocket <= BoardingDistance)
                 {
                     EndEva();
-                    return Loc.T("Астронавт в ракете.");
+                    return Loc.T("Робот в ракете.");
                 }
                 string far = Loc.T("Ничего в пределах ") + SampleCollection.HandReach + Loc.T(" м; до ракеты ") + UnitFormatter.Number(toRocket, 0) + Loc.T(" м.");
                 state.Notify(far);
@@ -374,6 +484,8 @@ namespace SpaceSim.Runtime
             }
             float dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
             walker.Step(dt, forward, right, yaw, sprint, jump);
+            UpdateRobot(dt);
+            if (!Eva) return; // the robot failed this step
             FindNearest(walker.Position);
             AnimateBody(dt);
         }
@@ -405,8 +517,16 @@ namespace SpaceSim.Runtime
             if (baseFov > 0f && cameraController.Camera != null) cameraController.Camera.fieldOfView = baseFov + fovKick;
             if (visor != null)
             {
-                visor.Visible = !thirdPerson;
-                visor.Strain = (float)MathD.Clamp(1.0 - walker.Stamina.Fraction / 0.5, 0.0, 1.0) * 0.8f;
+                // The view is the robot's camera in both views (the one from behind is rebuilt from it): its damage shows in each.
+                visor.Visible = true;
+                visor.Rim = !thirdPerson;
+                visor.Visor = (float)robot.Visor;
+                visor.Strain = thirdPerson ? 0f : (float)MathD.Clamp(1.0 - walker.Stamina.Fraction / 0.5, 0.0, 1.0) * 0.8f;
+            }
+            if (statusPanel != null)
+            {
+                statusPanel.Visible = true;
+                statusPanel.Environment = SurfaceEnvironment;
             }
         }
 
@@ -494,9 +614,9 @@ namespace SpaceSim.Runtime
             }
             else
             {
-                CollectionCheck exit = SampleCollection.CanExit(planet.Model.Properties, planet.Definition.hazards);
+                CollectionCheck exit = RobotEva.CanExit(planet.Model.Properties, planet.Definition.hazards, robot);
                 GUILayout.Label(Loc.T("ПОСАДКА · ") + Loc.T(planet.Definition.displayName), HudStyle.Title);
-                GUILayout.Label(exit.Ok ? FlightInput.KeyLabel(InputKey.E) + Loc.T(" — выйти на поверхность (") + MoveKeys() + Loc.T(" — идти, ") + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.Space) + Loc.T(" — прыжок, ПКМ — осмотреться, ") + FlightInput.KeyLabel(InputKey.V) + Loc.T(" — вид со стороны).")
+                GUILayout.Label(exit.Ok ? FlightInput.KeyLabel(InputKey.E) + Loc.T(" — выйти на поверхность (") + MoveKeys() + Loc.T(" — идти, ") + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.Space) + Loc.T(" — прыжок, ПКМ — осмотреться, ") + FlightInput.KeyLabel(InputKey.V) + Loc.T(" — вид со стороны).") + Wear()
                     : Loc.T("Выход невозможен: ") + exit.Reason + " " + FlightInput.KeyLabel(InputKey.E) + Loc.T(" — манипулятор (до ") + SampleCollection.ArmReach + Loc.T(" м)."), note);
                 FindNearest(sim.LandedFixedPosition);
             }

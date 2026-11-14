@@ -11,7 +11,8 @@ namespace SpaceSim.Runtime
 
         public static void Apply(Language language)
         {
-            if (!loaded)
+            // Reload when a table went missing (tests or tools replaced it): a stale "loaded" flag left the game in Russian.
+            if (!loaded || (language != Language.Russian && !Loc.HasTable(language)))
             {
                 loaded = true;
                 Load(Language.Russian, "ru");

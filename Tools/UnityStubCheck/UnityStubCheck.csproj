@@ -10,7 +10,7 @@
     <LangVersion>9.0</LangVersion>
     <Nullable>disable</Nullable>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <DefineConstants>ENABLE_LEGACY_INPUT_MANAGER;UNITY_INCLUDE_TESTS</DefineConstants>
+    <DefineConstants>ENABLE_LEGACY_INPUT_MANAGER;UNITY_INCLUDE_TESTS;SPACESIM_ANIMATION</DefineConstants>
     <!-- CS0649: [SerializeField] fields are assigned by Unity's serializer. -->
     <NoWarn>CS0618;CS0649</NoWarn>
   </PropertyGroup>

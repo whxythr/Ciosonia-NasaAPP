@@ -21,6 +21,11 @@
             "define": "SPACESIM_URP"
         },
         {
+            "name": "com.unity.modules.animation",
+            "expression": "1.0.0",
+            "define": "SPACESIM_ANIMATION"
+        },
+        {
             "name": "com.unity.inputsystem",
             "expression": "1.0.0",
             "define": "SPACESIM_INPUT_SYSTEM"

@@ -59,9 +59,48 @@ namespace SpaceSim.Localization
             while (last >= first && !char.IsLetter(source[last]) && !char.IsNumber(source[last])) last--;
             if (first > last) return source;
             string core = source.Substring(first, last - first + 1);
-            if (!table.TryGetValue(core, out string translated)) return source;
+            if (!table.TryGetValue(core, out string translated))
+            {
+                // Same text in other letter case («ПРИМЕНИТЬ» vs «Применить»): reuse the entry and keep the source's case.
+                Dictionary<string, string> folded = Folded((int)current, table);
+                if (!folded.TryGetValue(core, out translated)) return source;
+                translated = MatchCase(core, translated);
+            }
             return source.Substring(0, first) + translated + source.Substring(last + 1);
         }
+
+        static readonly Dictionary<string, string>[] foldedTables = new Dictionary<string, string>[3];
+        static readonly Dictionary<string, string>[] foldedFrom = new Dictionary<string, string>[3];
+
+        static Dictionary<string, string> Folded(int index, Dictionary<string, string> table)
+        {
+            if (foldedTables[index] != null && ReferenceEquals(foldedFrom[index], table)) return foldedTables[index];
+            var folded = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (KeyValuePair<string, string> p in table)
+                if (!folded.ContainsKey(p.Key)) folded[p.Key] = p.Value;
+            foldedTables[index] = folded;
+            foldedFrom[index] = table;
+            return folded;
+        }
+
+        /// <summary>All-caps source → all-caps translation; capitalised source → capitalised translation.</summary>
+        static string MatchCase(string source, string translated)
+        {
+            bool anyLetter = false, allUpper = true;
+            foreach (char c in source)
+            {
+                if (!char.IsLetter(c)) continue;
+                anyLetter = true;
+                if (char.IsLower(c)) allUpper = false;
+            }
+            if (anyLetter && allUpper && source.Length > 1) return translated.ToUpperInvariant();
+            if (source.Length > 0 && char.IsUpper(source[0]) && translated.Length > 0 && char.IsLower(translated[0]))
+                return char.ToUpperInvariant(translated[0]) + translated.Substring(1);
+            return translated;
+        }
+
+        /// <summary>True when a non-empty table is installed for <paramref name="language"/>.</summary>
+        public static bool HasTable(Language language) => tables[(int)language] != null && tables[(int)language].Count > 0;
 
         /// <summary>Reads "source&lt;TAB&gt;translation" lines; \n in either column stands for a line break.</summary>
         public static Dictionary<string, string> Parse(string text)

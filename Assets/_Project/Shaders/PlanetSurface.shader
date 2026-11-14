@@ -154,6 +154,8 @@ Shader "SpaceSim/PlanetSurface"
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+            #include "SpaceSimLighting.hlsl"
+            #include "SpaceSimDetail.hlsl"
 
             float3 _LightDirection;
             float3 _LightPosition;
@@ -162,11 +164,18 @@ Shader "SpaceSim/PlanetSurface"
             {
                 float4 positionOS : POSITION;
                 float3 normalOS : NORMAL;
+                float3 uv0 : TEXCOORD0;
+                float2 uv1 : TEXCOORD1;
             };
 
             float4 ShadowVert(Attributes v) : SV_POSITION
             {
+                // Same morph as the colour and depth passes: the shadow map must see the surface that is drawn.
+                // (URP sets the camera position back to the viewing camera's before it renders shadow casters.)
                 float3 positionWS = TransformObjectToWorld(v.positionOS.xyz);
+                float3 up = normalize(positionWS - _SpaceSimPlanetCenter);
+                float morph = SpaceSimLodMorph(length(GetCameraPositionWS() - positionWS), v.uv0.z, _LodSplitFactor);
+                positionWS = TransformObjectToWorld(v.positionOS.xyz + TransformWorldToObjectDir(up) * v.uv1.y * morph);
                 float3 normalWS = TransformObjectToWorldNormal(v.normalOS);
             #if defined(_CASTING_PUNCTUAL_LIGHT_SHADOW)
                 float3 lightDir = normalize(_LightPosition - positionWS);

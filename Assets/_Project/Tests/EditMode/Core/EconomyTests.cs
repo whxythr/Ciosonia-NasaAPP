@@ -157,6 +157,8 @@ namespace SpaceSim.Tests
             Assert.AreEqual(0, bodies.Find(b => b.Id == HomeSystemCatalog.HomeWorldId).Hazards.radiationLevel, "home is safe");
             Assert.AreEqual(2, bodies.Find(b => b.Id == HomeSystemCatalog.TeonanId).Hazards.radiationLevel);
             Assert.AreEqual(1, bodies.Find(b => b.Id == HomeSystemCatalog.HermeousMoraId).Hazards.acidLevel);
+            Assert.AreEqual(2, bodies.Find(b => b.Id == HomeSystemCatalog.EremusId).Hazards.radiationLevel, "giant's radiation belts");
+            Assert.AreEqual(0, bodies.Find(b => b.Id == HomeSystemCatalog.TholinId).Hazards.acidLevel, "CO₂ lakes are not acid");
         }
     }
 }

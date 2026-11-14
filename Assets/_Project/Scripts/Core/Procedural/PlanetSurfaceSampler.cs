@@ -44,6 +44,9 @@ namespace SpaceSim.Procedural
 
         public static bool IsAlgorithmVersionSupported(int version) => version == 1;
 
+        /// <summary>Brightest albedo (sRGB luminance) a lake on a Rocky body may have and still be shaded as open liquid.</summary>
+        const double MaxOpenLiquidLuminance = 0.42;
+
         // Salts for independent noise streams. Changing any of them changes every planet → new algorithm version.
         const ulong SaltWarpX = 0x1001, SaltWarpY = 0x1002, SaltWarpZ = 0x1003, SaltContinent = 0x2001,
             SaltMountain = 0x3001, SaltMountainMask = 0x3002, SaltDetail = 0x4001, SaltMoisture = 0x5001,
@@ -214,7 +217,12 @@ namespace SpaceSim.Procedural
                 SurfaceHeight = water ? s.seaLevel : h,
                 IsWater = water
             };
-            if (s.surfaceStyle == SurfaceStyle.Rocky) ShadeRocky(unitDirection, warped, h, craterFloor, canyonFloor, ref sample);
+            if (s.surfaceStyle == SurfaceStyle.Rocky)
+            {
+                ShadeRocky(unitDirection, warped, h, craterFloor, canyonFloor, ref sample);
+                if (water) ShadeLake(h, ref sample);
+            }
+            else if (s.surfaceStyle == SurfaceStyle.GasGiant) ShadeGasGiant(unitDirection, warped, ref sample);
             else Shade(unitDirection, warped, h, water, ref sample);
             return sample;
         }
@@ -250,6 +258,46 @@ namespace SpaceSim.Procedural
             if (canyonFloor > 0.0) c = c * (float)(1.0 - s.canyonDarkening * canyonFloor);
             sample.Albedo = c;
             sample.Biome = t < 0.5 ? Biome.Desert : Biome.Rock;
+        }
+
+        /// <summary>
+        /// A lake or sea on a Rocky body (e.g. liquid CO₂ over an artist map): a clear liquid shows its bed, tinted by
+        /// <see cref="PlanetGenerationSettings.shallowOcean"/> (transmission), fading with depth to
+        /// <see cref="PlanetGenerationSettings.deepOcean"/> — the same 0–2500 m depth ramp as terrestrial oceans.
+        /// </summary>
+        void ShadeLake(double h, ref SurfaceSample sample)
+        {
+            double depth = s.seaLevel - h;
+            ColorRGB bed = new ColorRGB(sample.Albedo.r * s.shallowOcean.r, sample.Albedo.g * s.shallowOcean.g, sample.Albedo.b * s.shallowOcean.b);
+            ColorRGB c = ColorRGB.Lerp(bed, s.deepOcean, MathD.SmoothStep(0.0, 2500.0, depth));
+            // The surface shader shades water-masked pixels brighter than luminance 0.45 as ice (SpaceSimShadeSurface):
+            // keep open liquid over a bright bed just below that, so it gets the liquid's glitter and sky reflection.
+            double lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+            if (lum > MaxOpenLiquidLuminance) c = c * (float)(MaxOpenLiquidLuminance / lum);
+            sample.Albedo = c;
+            sample.Biome = depth > 200.0 ? Biome.DeepOcean : Biome.ShallowOcean;
+        }
+
+        /// <summary>
+        /// Gas giant cloud tops: belts and zones parallel to the equator, their edges bent by turbulence that is stretched
+        /// east–west (streaks along the bands), plus oval storms where <see cref="PlanetGenerationSettings.stainCoverage"/> &gt; 0.
+        /// </summary>
+        void ShadeGasGiant(Vector3d p, Vector3d q, ref SurfaceSample sample)
+        {
+            var streak = new Vector3d(q.x, q.y, q.z * s.bandStretch);
+            double turbulence = moisture.Fbm(streak * 2.0, 5, 2.0, 0.5);
+            double phase = Math.PI * s.bandCount * p.z + s.bandTurbulence * turbulence;
+            double zone = MathD.SmoothStep(-0.35, 0.35, Math.Sin(phase));
+            ColorRGB c = ColorRGB.Lerp(s.lowland, s.highland, (float)zone);
+            c = c * (float)(0.95 + 0.10 * climateJitter.Fbm(streak * 6.0, 4, 2.0, 0.5));
+            if (s.stainCoverage > 0.0)
+            {
+                double n = 0.5 + 0.9 * climateJitter.Fbm(new Vector3d(q.x, q.y, q.z * 2.0) * s.stainFrequency, 3, 2.0, 0.5);
+                double w = MathD.SmoothStep(1.0 - s.stainCoverage, 1.0 - s.stainCoverage + 0.08, n);
+                c = ColorRGB.Lerp(c, s.stain, (float)w);
+            }
+            sample.Albedo = c;
+            sample.Biome = Biome.Desert;
         }
 
         double RawTerrainHeight(Vector3d p, out Vector3d q, out double craterFloor, out double canyonFloor)

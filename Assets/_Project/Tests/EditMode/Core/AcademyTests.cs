@@ -59,8 +59,8 @@ namespace SpaceSim.Tests
             CelestialBodyPreset home = HomeSystemCatalog.Bodies().Find(b => b.Id == HomeSystemCatalog.HomeWorldId);
             Assert.AreEqual(home.Physical.GravitationalParameter, c.Mu);
             Assert.AreEqual(8.27, c.SurfaceGravity, 0.01, "g of the fourth planet");
-            Assert.AreEqual(7, c.Bodies.Count, "4 planets + Mora I + Kolimpri + Tromos");
-            Assert.AreEqual(4, new List<AcademyBody>(c.Planets()).Count, "moons are not heliocentric targets");
+            Assert.AreEqual(9, c.Bodies.Count, "6 planets + Mora I + Kolimpri + Tromos");
+            Assert.AreEqual(6, new List<AcademyBody>(c.Planets()).Count, "moons are not heliocentric targets");
             Assert.Greater(c.StarMu, 0.0);
             Assert.Greater(c.SiteRotationSpeed, 0.0);
         }
