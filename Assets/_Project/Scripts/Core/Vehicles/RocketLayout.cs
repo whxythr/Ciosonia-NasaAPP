@@ -12,8 +12,6 @@ namespace SpaceSim.Vehicles
         Tank,
         /// <summary>Filler that brings a stage up to the compiler's minimum length (a stage without engine and tanks).</summary>
         StageSpacer,
-        /// <summary>Cone from the rocket diameter to the first payload section on top of the last stage.</summary>
-        PayloadAdapter,
         /// <summary>A remotely controlled cabin (probe core): the bus the instruments of the payload section are mounted on.</summary>
         ProbeBus,
         /// <summary>Protection wrapped around the bus (radiation shield, acid coating): a shell, innermost first.</summary>
@@ -61,7 +59,7 @@ namespace SpaceSim.Vehicles
     public sealed class PartPlacement
     {
         public PartRole Role;
-        /// <summary>Catalog module drawn in this slot ("" = structure: engine section, adapter, fairing…).</summary>
+        /// <summary>Catalog module drawn in this slot ("" = structure: engine section, spacer, fairing…).</summary>
         public string ModuleId = "";
         /// <summary>Stage index, −1 for the payload section.</summary>
         public int Stage = -1;
@@ -97,14 +95,13 @@ namespace SpaceSim.Vehicles
     /// <see cref="BlueprintCompiler"/> gives the physics (engine length + tank lengths, at least 1 m); side sets never change them.
     /// Modules the compiler skips (unknown, not bought, wrong slot) are not placed either. Diameters are visual only — drag still
     /// uses the rocket radius.
-    /// <para>Payload section, bottom to top: adapter · rover (frame, drive, wheels) · probe bus with its shells · cargo bays ·
+    /// <para>Payload section, bottom to top, standing directly on the last stage's top: rover (frame, drive, wheels) · probe bus with its shells · cargo bays ·
     /// heat shield · crewed capsules · parachutes on the nose. Instruments go around the bus and the bays (or inside open bays),
     /// the fairing covers all of it.</para>
     /// </summary>
     public sealed class RocketLayout
     {
         public const double DefaultRadius = 1.85;
-        public const double AdapterHeight = 0.6;
         /// <summary>Same minimum as <see cref="BlueprintCompiler"/>.</summary>
         public const double MinStageLength = 1.0;
         /// <summary>
@@ -140,12 +137,10 @@ namespace SpaceSim.Vehicles
         public double Radius { get; private set; }
         public double[] StageBottom { get; private set; } = new double[0];
         public double[] StageTop { get; private set; } = new double[0];
-        /// <summary>Top of the last stage = bottom of the payload adapter [m].</summary>
+        /// <summary>Top of the last stage = bottom of the payload section [m].</summary>
         public double PayloadBottom { get; private set; }
-        /// <summary>Top of the payload contents (everything above the adapter) [m].</summary>
+        /// <summary>Top of the payload contents [m].</summary>
         public double PayloadTop { get; private set; }
-        /// <summary>Diameter of the section standing on the adapter: the adapter cone narrows to it [m].</summary>
-        public double AdapterTopDiameter { get; private set; }
         public double FairingRadius { get; private set; }
         public double FairingCylinderHeight { get; private set; }
         public double FairingNoseHeight { get; private set; }
@@ -431,8 +426,7 @@ namespace SpaceSim.Vehicles
         {
             double r = layout.Radius;
             layout.PayloadBottom = bottom;
-            layout.Add(PartRole.PayloadAdapter, "", -1, -1, bottom, AdapterHeight, 2.0 * r);
-            double y = bottom + AdapterHeight;
+            double y = bottom;
 
             var remote = new List<Item>();
             var crewed = new List<Item>();
@@ -467,17 +461,10 @@ namespace SpaceSim.Vehicles
             if (remote.Count == 0 && crewed.Count == 0)
                 remote.Add(new Item { Module = ModuleCatalog.Find(ModuleCatalog.ProbeCore), Index = -1 });
 
-            double firstDiameter = -1.0;
-            void Base(double d)
-            {
-                if (firstDiameter < 0.0) firstDiameter = d;
-            }
-
-            // Rover at the very bottom: it rolls off the adapter once the vehicle has landed.
+            // Rover at the very bottom: it rolls off the stage top once the vehicle has landed.
             if (chassis.Count + drives.Count + wheels.Count > 0)
             {
                 double frame = FrameLength(chassis.Count > 0 ? chassis[0].Module : null, r);
-                Base(frame);
                 y = PlaceRover(layout, chassis, drives, wheels, y, frame);
             }
 
@@ -501,13 +488,12 @@ namespace SpaceSim.Vehicles
             }
 
             // Without a crewed capsule the heat shield protects the bus from below.
-            if (crewed.Count == 0) y = PlaceHeatShields(layout, shields, y, 1.04 * outer, Base);
+            if (crewed.Count == 0) y = PlaceHeatShields(layout, shields, y, 1.04 * outer);
 
             double busBottom = y;
             foreach (Item core in remote)
             {
                 double h = Math.Max(0.5, core.Module.length);
-                Base(busDiameter);
                 layout.Add(PartRole.ProbeBus, core.Module.id, -1, core.Index, y, h, busDiameter);
                 y += h;
             }
@@ -520,7 +506,6 @@ namespace SpaceSim.Vehicles
             foreach (Item bay in bays)
             {
                 double d = BayDiameter(bay.Module, r), h = Math.Max(0.3, bay.Module.length);
-                Base(d);
                 bayParts.Add(layout.Add(PartRole.CargoBay, bay.Module.id, -1, bay.Index, y, h, d));
                 segments.Add(new Segment { Bottom = y, Top = y + h, Diameter = d });
                 y += h;
@@ -529,13 +514,12 @@ namespace SpaceSim.Vehicles
             double capsuleBottom = y;
             if (crewed.Count > 0)
             {
-                y = PlaceHeatShields(layout, shields, y, 1.04 * Math.Max(capsuleDiameter, outer), Base);
+                y = PlaceHeatShields(layout, shields, y, 1.04 * Math.Max(capsuleDiameter, outer));
                 capsuleBottom = y;
                 foreach (Item c in crewed)
                 {
                     double d = CapsuleDiameter(c.Module, r), h = Math.Max(0.5, c.Module.length);
-                    Base(d);
-                    layout.Add(PartRole.Capsule, c.Module.id, -1, c.Index, y, h, d);
+                        layout.Add(PartRole.Capsule, c.Module.id, -1, c.Index, y, h, d);
                     y += h;
                 }
             }
@@ -592,25 +576,23 @@ namespace SpaceSim.Vehicles
 
             double top = busTop;
             foreach (PartPlacement p in layout.Parts)
-                if (p.Stage == -1 && p.Role != PartRole.PayloadAdapter) top = Math.Max(top, p.Top);
+                if (p.Stage == -1) top = Math.Max(top, p.Top);
             layout.PayloadTop = top;
-            layout.AdapterTopDiameter = firstDiameter > 0.0 ? firstDiameter : r;
 
             double reach = 0.0;
             foreach (PartPlacement p in layout.Parts)
-                if (p.Stage == -1 && p.Role != PartRole.PayloadAdapter) reach = Math.Max(reach, p.OuterRadius);
+                if (p.Stage == -1) reach = Math.Max(reach, p.OuterRadius);
             layout.FairingRadius = Math.Max(r, reach + FairingClearance);
             layout.FairingCylinderHeight = top - bottom + FairingHeadroom;
             layout.FairingNoseHeight = 1.5 * layout.FairingRadius;
             layout.Add(PartRole.Fairing, "", -1, -1, bottom, layout.FairingCylinderHeight + layout.FairingNoseHeight, 2.0 * layout.FairingRadius);
         }
 
-        static double PlaceHeatShields(RocketLayout layout, List<Item> shields, double y, double diameter, Action<double> onBase)
+        static double PlaceHeatShields(RocketLayout layout, List<Item> shields, double y, double diameter)
         {
             foreach (Item s in shields)
             {
                 double h = HeatShieldHeight(s.Module);
-                onBase(diameter);
                 layout.Add(PartRole.HeatShield, s.Module.id, -1, s.Index, y, h, diameter);
                 y += h;
             }

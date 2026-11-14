@@ -172,7 +172,104 @@ namespace SpaceSim.Exploration
                 }
             },
             // Gas giant: no ground to sample.
-            [HomeSystemCatalog.EremusId] = new PlanetSamples { Kinds = new (SampleCategory, double, string[])[0] }
+            [HomeSystemCatalog.EremusId] = new PlanetSamples { Kinds = new (SampleCategory, double, string[])[0] },
+            // Moons of Eremus: far from the start (≈ 1.4 AU) and, inside the radiation belts, reachable only by the robot.
+            [HomeSystemCatalog.OriId] = new PlanetSamples
+            {
+                ValueFactor = 2.0,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.40, new[] { Loc.T("Бугристая порода нагорий"), Loc.T("Гладкая порода равнин") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Пироксен"), Loc.T("Оливин") }),
+                    (SampleCategory.RareGeology, 0.05, new[] { Loc.T("Импактное стекло") }),
+                    (SampleCategory.Soil, 0.35, new[] { Loc.T("Персиковый реголит") })
+                }
+            },
+            [HomeSystemCatalog.OinId] = new PlanetSamples
+            {
+                ValueFactor = 2.0,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.35, new[] { Loc.T("Порода гряд"), Loc.T("Окисленный базальт") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Гематит"), Loc.T("Магнетит") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Порода со дна тёмной ямы") }),
+                    (SampleCategory.Soil, 0.27, new[] { Loc.T("Ржавый реголит") }),
+                    (SampleCategory.MineralSoil, 0.12, new[] { Loc.T("Железистый реголит") })
+                }
+            },
+            [HomeSystemCatalog.BifurId] = new PlanetSamples
+            {
+                ValueFactor = 2.0,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.40, new[] { Loc.T("Ударная брекчия") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Плагиоклаз"), Loc.T("Пироксен") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Импактное стекло") }),
+                    (SampleCategory.Soil, 0.34, new[] { Loc.T("Кремовый реголит") })
+                }
+            },
+            [HomeSystemCatalog.NevermourId] = new PlanetSamples
+            {
+                ValueFactor = 2.1,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.38, new[] { Loc.T("Базальт «моря»"), Loc.T("Бугристая порода нагорий") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Пироксен"), Loc.T("Гематит") }),
+                    (SampleCategory.RareGeology, 0.05, new[] { Loc.T("Импактное стекло") }),
+                    (SampleCategory.Soil, 0.27, new[] { Loc.T("Оранжевый реголит") }),
+                    (SampleCategory.MineralSoil, 0.10, new[] { Loc.T("Железистый реголит") })
+                }
+            },
+            [HomeSystemCatalog.DwalinId] = new PlanetSamples
+            {
+                ValueFactor = 2.2,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.40, new[] { Loc.T("Гладкая порода равнин") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Плагиоклаз"), Loc.T("Оливин") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Порода из трещины") }),
+                    (SampleCategory.Soil, 0.34, new[] { Loc.T("Бледный реголит") })
+                }
+            },
+            [HomeSystemCatalog.BalinId] = new PlanetSamples
+            {
+                ValueFactor = 2.4,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.32, new[] { Loc.T("Застывшая базальтовая лава"), Loc.T("Базальт") }),
+                    (SampleCategory.Mineral, 0.18, new[] { Loc.T("Оливин"), Loc.T("Пироксен") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Вулканическое стекло") }),
+                    (SampleCategory.Soil, 0.30, new[] { Loc.T("Персиковый реголит") }),
+                    (SampleCategory.UnusualCompound, 0.14, new[] { Loc.T("Водяной иней светлых пятен"), Loc.T("Вулканическая сера") })
+                }
+            },
+            // Titan analogue: methane–ethane seas, water-ice bedrock, organic sediment.
+            [HomeSystemCatalog.ColossId] = new PlanetSamples
+            {
+                ValueFactor = 3.0,
+                LiquidCategory = SampleCategory.OtherLiquid,
+                LiquidNames = new[] { Loc.T("Жидкий метан и этан из моря") },
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.30, new[] { Loc.T("Водяной лёд коренной породы") }),
+                    (SampleCategory.Mineral, 0.12, new[] { Loc.T("Ледяная галька") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Эвапорит берегов (бензол, бутан)") }),
+                    (SampleCategory.Soil, 0.30, new[] { Loc.T("Органические осадки") }),
+                    (SampleCategory.UnusualCompound, 0.22, new[] { Loc.T("Сложная органика из осадков") })
+                }
+            },
+            [HomeSystemCatalog.GandalfId] = new PlanetSamples
+            {
+                ValueFactor = 2.6,
+                Kinds = new[]
+                {
+                    (SampleCategory.Rock, 0.36, new[] { Loc.T("Зеленоватая порода") }),
+                    (SampleCategory.Mineral, 0.20, new[] { Loc.T("Оливин") }),
+                    (SampleCategory.RareGeology, 0.06, new[] { Loc.T("Импактное стекло") }),
+                    (SampleCategory.Soil, 0.28, new[] { Loc.T("Жёлто-зелёный реголит") }),
+                    (SampleCategory.UnusualCompound, 0.10, new[] { Loc.T("Иней CO₂ светлых пятен") })
+                }
+            }
         };
 
         static readonly PlanetSamples Generic = new PlanetSamples

@@ -285,6 +285,14 @@ namespace SpaceSim.Procedural
         void ShadeGasGiant(Vector3d p, Vector3d q, ref SurfaceSample sample)
         {
             var streak = new Vector3d(q.x, q.y, q.z * s.bandStretch);
+            if (map != null)
+            {
+                // The artist's map draws the belts; only a faint east–west streak texture is added.
+                double k = s.albedoMapDetail;
+                sample.Albedo = map.Sample(p) * (float)(1.0 + k * 0.15 * climateJitter.Fbm(streak * 6.0, 4, 2.0, 0.5));
+                sample.Biome = Biome.Desert;
+                return;
+            }
             double turbulence = moisture.Fbm(streak * 2.0, 5, 2.0, 0.5);
             double phase = Math.PI * s.bandCount * p.z + s.bandTurbulence * turbulence;
             double zone = MathD.SmoothStep(-0.35, 0.35, Math.Sin(phase));
@@ -308,6 +316,15 @@ namespace SpaceSim.Procedural
             q = p + new Vector3d(warpX.Fbm(wp, 3, 2.0, 0.5), warpY.Fbm(wp, 3, 2.0, 0.5), warpZ.Fbm(wp, 3, 2.0, 0.5)) * s.warpStrength;
 
             double c = continent.Fbm(q * s.continentFrequency, s.continentOctaves, s.lacunarity, s.persistence) + s.continentBias;
+            if (map != null && s.albedoMapCoastline > 0.0)
+            {
+                // The artist's map decides land and sea; small-scale noise (wavelengths ≈ 30–300 km on a 6000-km planet, below
+                // and around the map's pixel) roughens the coastline so it is not a blurred staircase. Far from the coast
+                // |land| = 1 outweighs the noise, so the map's continents stay where the artist drew them.
+                double coastNoise = continent.Fbm(q * 140.0, 5, 2.0, 0.5);
+                c = s.albedoMapCoastline * map.SmoothLand(p) + 0.45 * s.albedoMapCoastline * coastNoise
+                    + 0.25 * (c - s.continentBias) * s.albedoMapCoastline;
+            }
             double h = c >= 0.0 ? c * s.continentAmplitude : c * s.oceanDepthAmplitude;
 
             double land = MathD.SmoothStep(-0.02, 0.12, c);
@@ -407,6 +424,11 @@ namespace SpaceSim.Procedural
             }
 
             double elevation = h - s.seaLevel;
+            if (map != null)
+            {
+                ShadeMappedLand(p, q, elevation, temp, ref sample);
+                return;
+            }
             ColorRGB c = s.grassland;
             Biome b = Biome.Grassland;
 
@@ -440,6 +462,39 @@ namespace SpaceSim.Procedural
                 }
             }
 
+            sample.Albedo = c;
+            sample.Biome = b;
+        }
+
+        /// <summary>
+        /// Land of a terrestrial body with an artist map: the map gives the colour (green plains, ochre deserts, white ice), the
+        /// generator adds fine brightness variation (so close up it is not one flat pixel colour), bare rock and snow on high
+        /// mountains, and beaches. The biome is read from the colour.
+        /// </summary>
+        void ShadeMappedLand(Vector3d p, Vector3d q, double elevation, double temp, ref SurfaceSample sample)
+        {
+            double k = s.albedoMapDetail;
+            double coarse = moisture.Fbm(q * s.moistureFrequency, 4, 2.0, 0.5);
+            double fine = climateJitter.Fbm(q * 900.0, 4, 2.0, 0.5);
+            ColorRGB c = map.Sample(p) * (float)(1.0 + k * (0.3 * coarse + 0.35 * fine));
+            double lum = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+            Biome b = lum > 0.5 ? Biome.Snow : c.r > c.g * 1.02 ? Biome.Desert : lum < 0.3 ? Biome.Forest : Biome.Grassland;
+
+            double rockW = MathD.SmoothStep(1800.0, 3200.0, elevation);
+            c = ColorRGB.Lerp(c, s.rock, rockW);
+            if (rockW > 0.5) b = Biome.Rock;
+            double snowW = MathD.SmoothStep(3900.0, 4800.0, elevation);
+            c = ColorRGB.Lerp(c, s.snow, snowW);
+            if (snowW > 0.5) b = Biome.Snow;
+            if (s.hasOcean && b != Biome.Snow)
+            {
+                double beachW = 1.0 - MathD.SmoothStep(5.0, 45.0, elevation);
+                if (beachW > 0.0 && temp > 0.15)
+                {
+                    c = ColorRGB.Lerp(c, s.beach, beachW);
+                    if (beachW > 0.5) b = Biome.Beach;
+                }
+            }
             sample.Albedo = c;
             sample.Biome = b;
         }

@@ -140,6 +140,11 @@ namespace SpaceSim.Runtime
             {
                 diskMaterial.SetVector("_SunDir", dirUnity);
                 diskMaterial.SetFloat("_AngularRadius", (float)Math.Asin(Math.Min(1.0, system.Star.radius / StarDistance)));
+                // The wide halo is mostly forward scattering by the air (aerosols): strong in it, faint in vacuum, where only the
+                // eye's/lens' own glare and the diffraction rays remain.
+                float inAir = (float)Math.Min(1.0, column);
+                diskMaterial.SetFloat("_HaloIntensity", Mathf.Lerp(0.08f, 0.35f, inAir));
+                diskMaterial.SetFloat("_GlowIntensity", Mathf.Lerp(1.2f, 2.5f, inAir));
                 // The sky pass dims everything behind it by the MEAN transmittance; the colour of the low Sun comes from here.
                 float mean = (float)((t.x + t.y + t.z) / 3.0);
                 diskMaterial.SetColor("_Color", mean > 1e-4f

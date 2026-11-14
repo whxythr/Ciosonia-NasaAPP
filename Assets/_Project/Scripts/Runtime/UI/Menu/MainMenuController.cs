@@ -13,7 +13,8 @@ namespace SpaceSim.Runtime.Menu
     /// <summary>
     /// HORIZON main menu (UI Toolkit). Builds every screen in code from <see cref="MenuCatalog"/> and styles it with
     /// Resources/UI/MainMenu.uss: Main, New Mission, Team Mission lobby, Academy, Mission Archive, Settings and the quit
-    /// dialog. Keyboard / gamepad navigation comes from UI Toolkit focus; Esc (navigation cancel) goes back.
+    /// dialog. Keyboard / gamepad navigation comes from UI Toolkit focus; Esc (polled through <see cref="FlightInput.EscapePressed"/>
+    /// in Update, so it works whatever element has the focus) goes back one screen.
     /// Drop on an empty GameObject (SpaceSim ▸ Create Main Menu Scene).
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
@@ -36,16 +37,17 @@ namespace SpaceSim.Runtime.Menu
         readonly Stack<string> history = new Stack<string>();
         readonly List<VisualElement> menuItems = new List<VisualElement>();
         readonly List<VisualElement> scenarioCards = new List<VisualElement>();
-        readonly List<VisualElement> difficultyTiles = new List<VisualElement>();
         string current;
-        int scenarioIndex = 2, difficultyIndex = 1;
+        int scenarioIndex = 2;
         /// <summary>The real settings (brightness, mouse, key bindings), shared with the in-game Esc menu.</summary>
         SettingsView settingsView;
 
         // New Mission detail widgets, refreshed when the scenario changes.
         Label detailType, detailTitle, detailTarget, detailSummary, detailFocus;
-        VisualElement detailGoals;
-        readonly List<(VisualElement fill, Label value, Label critical)> resourceRows = new List<(VisualElement, Label, Label)>();
+        // The mission's fixed difficulty (shown, not chosen).
+        Label difficultyTitle, difficultyTag, difficultyText, difficultyScore, budgetValue;
+        VisualElement detailGoals, difficultyPlate;
+        readonly List<VisualElement> difficultySegments = new List<VisualElement>();
 
         public string CurrentScreen => current;
         public bool IsReady => backdrop != null && backdrop.IsReady;
@@ -75,7 +77,9 @@ namespace SpaceSim.Runtime.Menu
 
         void Update()
         {
+            // Settings first: an Esc that cancels a key prompt there marks BlocksBack, so Back() below ignores it.
             if (current == SettingsScreen) settingsView?.Tick();
+            if (FlightInput.EscapePressed && Time.frameCount != builtFrame) Back();
             if (clockLabel != null && Time.frameCount % 60 == 0) clockLabel.text = ClockText();
         }
 
@@ -85,8 +89,7 @@ namespace SpaceSim.Runtime.Menu
             screens.Clear();
             menuItems.Clear();
             scenarioCards.Clear();
-            difficultyTiles.Clear();
-            resourceRows.Clear();
+            difficultySegments.Clear();
             history.Clear();
             current = null;
 
@@ -115,9 +118,21 @@ namespace SpaceSim.Runtime.Menu
             BuildHudBottom();
             BuildQuitModal();
 
-            root.RegisterCallback<NavigationCancelEvent>(_ => Back());
+            // Esc is polled in Update (UI Toolkit's NavigationCancelEvent needs a focused element and the UI input module, so it
+            // did not fire reliably); listening to both would go back twice.
+            builtFrame = Time.frameCount;
             Show(MainScreen, remember: false);
-            root.schedule.Execute(() => menuItems[0].Focus());
+            root.schedule.Execute(() => FirstEnabledMenuItem()?.Focus());
+        }
+
+        /// <summary>Frame of the last rebuild: the Esc that closed the settings must not also leave the rebuilt screen.</summary>
+        int builtFrame = -10;
+
+        VisualElement FirstEnabledMenuItem()
+        {
+            foreach (VisualElement item in menuItems)
+                if (!item.ClassListContains("menu-item--disabled")) return item;
+            return menuItems.Count > 0 ? menuItems[0] : null;
         }
 
         // ─────────────────────────────── navigation ───────────────────────────────
@@ -148,6 +163,14 @@ namespace SpaceSim.Runtime.Menu
         {
             if (current == SettingsScreen && settingsView != null && settingsView.BlocksBack) return; // Esc cancelled a key prompt
             if (modal.ClassListContains("modal--open")) { modal.RemoveFromClassList("modal--open"); return; }
+            if (current == LoadScreen && (renaming || deleteArmed != null))
+            {
+                // Esc first leaves the rename field / disarms «Точно удалить?», then the screen.
+                renaming = false;
+                deleteArmed = null;
+                RefreshLoad();
+                return;
+            }
             if (current == SettingsScreen && settingsView != null)
             {
                 settingsView.Apply(); // Esc keeps the changes (they are already in effect); the view calls PopScreen
@@ -192,12 +215,8 @@ namespace SpaceSim.Runtime.Menu
             RefreshScenarioDetail();
         }
 
-        public void SelectDifficulty(int index)
-        {
-            difficultyIndex = Mathf.Clamp(index, 0, MenuCatalog.Difficulties.Length - 1);
-            for (int i = 0; i < difficultyTiles.Count; i++)
-                difficultyTiles[i].EnableInClassList("diff-tile--selected", i == difficultyIndex);
-        }
+        /// <summary>The research mission selected on the New Mission screen.</summary>
+        public MenuCatalog.Scenario SelectedScenario => MenuCatalog.Scenarios[scenarioIndex];
 
         public void SelectMenuItem(int index)
         {
@@ -207,11 +226,38 @@ namespace SpaceSim.Runtime.Menu
 
         public void OpenQuitDialog() => modal.AddToClassList("modal--open");
 
-        public void BeginMission()
+        /// <summary>Continues the saved game: the flight scene starts from the live profile and keeps its goal.</summary>
+        public void BeginMission() => LoadGameplay(null);
+
+        /// <summary>«Песочница»: straight into the flight scene; the autosave records the sandbox as its goal.</summary>
+        public void StartSandbox() => LoadGameplay(MenuCatalog.Sandbox.Id);
+
+        /// <summary>Starts a research mission (or the sandbox) by id; the autosave records it as its goal.</summary>
+        public void StartScenario(string scenarioId) => LoadGameplay(string.IsNullOrEmpty(scenarioId) ? MenuCatalog.Sandbox.Id : scenarioId);
+
+        void LoadGameplay(string scenarioId)
         {
-            if (Application.CanStreamedLevelBeLoaded(gameplayScene)) SceneManager.LoadScene(gameplayScene);
-            else Debug.LogWarning($"[MainMenu] Scene '{gameplayScene}' is not in Build Settings.");
+            if (!Application.CanStreamedLevelBeLoaded(gameplayScene))
+            {
+                Debug.LogWarning($"[MainMenu] Scene '{gameplayScene}' is not in Build Settings.");
+                return;
+            }
+            if (LoadingScreen.IsShowing) return; // a second click while the scene is already loading
+            PlayerSession.PendingScenarioId = scenarioId; // null = keep the goal of the save
+
+            // The loading screen names what is being started: the mission (with its goals), the sandbox, or the continued save.
+            bool resuming = scenarioId == null;
+            MenuCatalog.Scenario s = MenuCatalog.FindScenario(resuming ? PlayerSession.ReadProfileFile()?.scenarioId : scenarioId);
+            bool sandbox = s == MenuCatalog.Sandbox;
+            string eyebrow = resuming ? Loc.T("ПРОДОЛЖЕНИЕ ИГРЫ")
+                : sandbox ? Loc.T("ПЕСОЧНИЦА") : Loc.T("НОВАЯ МИССИЯ") + "  ·  " + Loc.T(s.Difficulty.Title);
+            string goal = sandbox ? Loc.T(s.Summary) : string.Join("  ·  ", Array.ConvertAll(s.Goals, Loc.T));
+            if (!LoadingScreen.Begin(gameplayScene, eyebrow, Loc.T(s.Title), goal))
+                SceneManager.LoadScene(gameplayScene);
         }
+
+        /// <summary>Localised name of a save's goal: «Песочница» or the research mission's title.</summary>
+        static string GoalName(string scenarioId) => Loc.T(MenuCatalog.FindScenario(scenarioId).Title);
 
         static void Quit()
         {
@@ -252,13 +298,28 @@ namespace SpaceSim.Runtime.Menu
                 : UnitFormatter.Number(PlayerProfile.StartingCredits, 0) + Loc.T(" кр"), "hz-status__value", "t-mono"));
 
             var list = Add(screen, El("menu-list"));
-            string saved = profile != null ? Loc.T("АВТОСОХР.") + " · " + SaveSlots.Ago(DateTimeOf(profile.lastSavedUtc)).ToUpperInvariant() : Loc.T("НОВЫЙ ПРОФИЛЬ");
-            AddMenuItem(list, "ПРОДОЛЖИТЬ", saved, () => Show(LoadScreen));
+            // «Продолжить» opens the autosave (the live profile) on the load screen; its caption names the goal of that game.
+            // Without an autosave there is nothing to continue: the item is greyed out and ignores clicks.
+            string saved = profile != null
+                ? (GoalName(profile.scenarioId) + " · " + SaveSlots.Ago(DateTimeOf(profile.lastSavedUtc))).ToUpperInvariant()
+                : Loc.T("НЕТ АВТОСОХРАНЕНИЯ");
+            VisualElement resume = AddMenuItem(list, "ПРОДОЛЖИТЬ", saved, () =>
+            {
+                if (PlayerSession.ReadProfileFile() == null) return;
+                loadSaveTab = false;
+                loadSelected = SaveSlots.AutosaveId;
+                Show(LoadScreen);
+            });
+            if (profile == null)
+            {
+                resume.AddToClassList("menu-item--disabled");
+                resume.focusable = false;
+            }
             AddMenuItem(list, "НОВАЯ МИССИЯ", null, () => Show(NewMissionScreen));
             AddMenuItem(list, "КОМАНДНАЯ МИССИЯ", null, () => Show(TeamScreen));
-            AddMenuItem(list, "ПЕСОЧНИЦА", null, () => { Show(NewMissionScreen); SelectScenario(MenuCatalog.Scenarios.Length - 1); });
+            AddMenuItem(list, "ПЕСОЧНИЦА", null, StartSandbox);
             AddMenuItem(list, "НАСТРОЙКИ", null, () => Show(SettingsScreen));
-            SelectMenuItem(0);
+            SelectMenuItem(menuItems.IndexOf(FirstEnabledMenuItem()));
 
             var quit = new Button(OpenQuitDialog) { text = Loc.T("ВЫЙТИ НА РАБОЧИЙ СТОЛ") };
             quit.AddToClassList("hz-quit");
@@ -313,7 +374,7 @@ namespace SpaceSim.Runtime.Menu
                 recent.Add(Text("Ручных сохранений пока нет. В полёте: Esc → «Сохранить игру» — снимок экрана и весь профиль.", "hz-card__empty"));
         }
 
-        void AddMenuItem(VisualElement list, string label, string meta, Action onClick)
+        VisualElement AddMenuItem(VisualElement list, string label, string meta, Action onClick)
         {
             var item = new Button(onClick) { focusable = true };
             item.AddToClassList("menu-item");
@@ -321,9 +382,10 @@ namespace SpaceSim.Runtime.Menu
             if (meta != null) item.Add(Text(meta, "menu-item__meta", "t-mono"));
             int i = menuItems.Count;
             item.RegisterCallback<FocusInEvent>(_ => SelectMenuItem(i));
-            item.RegisterCallback<PointerEnterEvent>(_ => item.Focus());
+            item.RegisterCallback<PointerEnterEvent>(_ => { if (item.focusable) item.Focus(); });
             menuItems.Add(item);
             list.Add(item);
+            return item;
         }
 
         // ─────────────────────────────── load game (photo 8) ───────────────────────────────
@@ -401,7 +463,7 @@ namespace SpaceSim.Runtime.Menu
                 loadList.Add(Text("Сохранений нет: игра ещё не начиналась. «Новая миссия» или «Песочница» создадут профиль.", "hz-note"));
                 loadDetail.Add(Text("НОВАЯ ИГРА", "eyebrow", "t-mono"));
                 loadDetail.Add(Text("Профиль игрока", "hz-detail__name", "t-strong"));
-                Add(Add(loadDetail, El("hz-detail__buttons")), ButtonEl(Loc.T("НАЧАТЬ") + "  →", BeginMission, primary: true));
+                Add(Add(loadDetail, El("hz-detail__buttons")), ButtonEl(Loc.T("НАЧАТЬ") + "  →", StartSandbox, primary: true));
                 ApplyFonts(screen);
                 return;
             }
@@ -430,7 +492,7 @@ namespace SpaceSim.Runtime.Menu
             var title = Add(main, El("hz-row__title"));
             title.Add(Text(m.name, "hz-row__name"));
             if (m.IsAutosave) title.Add(Text("АВТО", "hz-tag", "t-mono"));
-            main.Add(Text((m.IsAutosave ? Loc.T("ЖИВОЙ ПРОФИЛЬ") : Loc.T("РУЧНОЕ")) + "  ·  " + m.SavedLocal.ToString("dd.MM  HH:mm"), "hz-row__sub", "t-mono"));
+            main.Add(Text(GoalName(m.scenarioId).ToUpperInvariant() + "  ·  " + m.SavedLocal.ToString("dd.MM  HH:mm"), "hz-row__sub", "t-mono"));
             Add(row, Text(UnitFormatter.Number(m.credits, 0) + Loc.T(" кр"), "hz-row__cell", "t-mono")).style.width = 170;
             Add(row, Text(UnitFormatter.Number(m.research, 0) + Loc.T(" очк."), "hz-row__cell", "hz-row__cell--green", "t-mono")).style.width = 140;
             Add(row, Text(SaveSlots.Ago(m.SavedLocal).ToUpperInvariant(), "hz-row__cell", "hz-row__cell--dim", "t-mono")).style.width = 170;
@@ -463,7 +525,7 @@ namespace SpaceSim.Runtime.Menu
             loadDetail.Add(Text(m.name, "hz-detail__name", "t-strong"));
             Kv(loadDetail, "Сохранено", m.SavedLocal == DateTime.MinValue ? "—" : m.SavedLocal.ToString("dd.MM.yyyy  HH:mm"));
             Kv(loadDetail, "Полётов", m.flights.ToString());
-            Kv(loadDetail, "Экипаж", m.crew + (m.crewInFlight > 0 ? Loc.T(" (в полёте: ") + m.crewInFlight + ")" : ""));
+            Kv(loadDetail, "Цель миссии", GoalName(m.scenarioId)); // «Песочница» or the research mission (old saves: sandbox)
             Kv(loadDetail, "Кредиты", UnitFormatter.Number(m.credits, 0) + Loc.T(" кр"));
             Kv(loadDetail, "Исследования", UnitFormatter.Number(m.research, 0) + Loc.T(" очк."));
             Kv(loadDetail, "Образцы", m.samples.ToString());
@@ -492,6 +554,7 @@ namespace SpaceSim.Runtime.Menu
 
         string deleteArmed;
 
+        /// <summary>Loads a slot (the autosave is already live) and continues it: the goal comes from the save itself.</summary>
         void LoadSlot(SaveSlotMeta m)
         {
             if (!m.IsAutosave)
@@ -601,7 +664,7 @@ namespace SpaceSim.Runtime.Menu
         {
             var screen = AddScreen(NewMissionScreen);
             ScreenHeader(screen, "NEW MISSION", "CHOOSE YOUR OBJECTIVE",
-                "Every mission starts with a goal. The goal decides which resource will hurt the most.");
+                "Every mission starts with a goal. The difficulty is set by the mission itself.");
 
             var flow = Add(screen, El("flow"));
             string[] steps = { "OBJECTIVE", "REQUIREMENTS", "SPACECRAFT", "LAUNCH & ORBIT", "SIMULATE", "DEBRIEF" };
@@ -632,6 +695,9 @@ namespace SpaceSim.Runtime.Menu
                 text.Add(Text(s.Type, "scenario-card__type", "t-strong"));
                 text.Add(Text(s.Title, "scenario-card__title", "t-strong"));
                 text.Add(Text(s.Target, "scenario-card__target"));
+                // The mission's fixed difficulty (not chosen by the player).
+                text.Add(Text(Loc.T("DIFFICULTY") + ": " + Loc.T(s.Difficulty.Title), "scenario-card__difficulty",
+                    "scenario-card__difficulty--" + s.DifficultyIndex, "t-mono"));
                 var pips = Add(card, El("scenario-card__pips"));
                 for (int p = 0; p < 5; p++) pips.Add(El("pip", p < s.Stars ? "pip--on" : null));
                 card.RegisterCallback<FocusInEvent>(_ => SelectScenario(index));
@@ -651,59 +717,62 @@ namespace SpaceSim.Runtime.Menu
             Add(focus, Text("YOU WILL LEARN", "eyebrow", "t-strong")).style.color = (Color)new Color32(0xA9, 0x8B, 0xFF, 0xFF);
             detailFocus = Add(focus, Text("", "focus-box__text"));
 
-            detail.Add(Text("STARTING RESOURCES  ·  HOW TIGHT EACH ONE IS", "section-label", "t-strong"));
-            for (int r = 0; r < MenuCatalog.ResourceNames.Length; r++)
-            {
-                var row = Add(detail, El("res-row"));
-                var swatch = Add(row, El("res-row__swatch"));
-                swatch.style.backgroundColor = MenuCatalog.ResourceColors[r];
-                row.Add(Text(MenuCatalog.ResourceNames[r], "res-row__name", "t-strong"));
-                var track = Add(row, El("res-row__track"));
-                var fill = Add(track, El("res-row__fill"));
-                fill.style.backgroundColor = MenuCatalog.ResourceColors[r];
-                var value = Add(row, Text("", "res-row__value", "t-mono"));
-                var critical = Add(row, Text("CRITICAL", "res-row__critical", "t-strong"));
-                row.tooltip = Loc.T(MenuCatalog.ResourceHints[r]);
-                resourceRows.Add((fill, value, critical));
-            }
-            var legend = Add(detail, El("res-legend"));
-            legend.Add(Text("GENEROUS", "res-legend__label"));
-            legend.Add(Text("TIGHT", "res-legend__label"));
+            // Budget: the one starting resource still shown, as a compact value line.
+            var budget = Add(detail, El("budget-line"));
+            var budgetSwatch = Add(budget, El("budget-line__swatch"));
+            budgetSwatch.style.backgroundColor = MenuCatalog.ResourceColors[(int)MissionResource.Budget];
+            budget.Add(Text("STARTING BUDGET", "budget-line__label", "t-strong"));
+            budget.Add(El("grow"));
+            budgetValue = Add(budget, Text("", "budget-line__value", "t-mono"));
+            budget.tooltip = Loc.T(MenuCatalog.ResourceHints[(int)MissionResource.Budget]);
+
+            // The mission's fixed difficulty: a coloured plate (tier name, tagline, 1–5 segment meter, description), the one
+            // detailed difficulty display of the screen. Tier colour comes from the diff-plate--0/1/2 class.
+            difficultyPlate = Add(detail, El("diff-plate"));
+            var plateTop = Add(difficultyPlate, El("diff-plate__top"));
+            var plateName = Add(plateTop, El("grow"));
+            plateName.Add(Text(Loc.T("MISSION DIFFICULTY") + "  ·  " + Loc.T("Set by the mission — it cannot be changed").ToUpperInvariant(),
+                "diff-plate__eyebrow", "t-mono"));
+            difficultyTitle = Add(plateName, Text("", "diff-plate__title", "t-strong"));
+            difficultyTag = Add(plateName, Text("", "diff-plate__tag", "t-strong"));
+            var meter = Add(plateTop, El("diff-plate__meter"));
+            var segments = Add(meter, El("diff-plate__segments"));
+            difficultySegments.Clear();
+            for (int i = 0; i < 5; i++) difficultySegments.Add(Add(segments, El("diff-plate__seg")));
+            difficultyScore = Add(meter, Text("", "diff-plate__score", "t-mono"));
+            difficultyText = Add(difficultyPlate, Text("", "diff-plate__text"));
 
             var config = Add(body, El("config"));
-            Add(config, Text("DIFFICULTY", "section-label", "t-strong")).style.marginTop = 0;
-            for (int i = 0; i < MenuCatalog.Difficulties.Length; i++)
-            {
-                var d = MenuCatalog.Difficulties[i];
-                int index = i;
-                var tile = new Button(() => SelectDifficulty(index));
-                tile.AddToClassList("diff-tile");
-                var head = Add(tile, El("diff-tile__head"));
-                head.Add(Text(d.Title, "diff-tile__title", "t-strong"));
-                head.Add(Text(Loc.T(d.Tagline).ToUpperInvariant(), "diff-tile__tag", "t-strong"));
-                tile.Add(Text(d.Description, "diff-tile__text"));
-                difficultyTiles.Add(tile);
-                config.Add(tile);
-            }
-
-            Add(config, Text("OPTIONS", "section-label", "t-strong")).style.marginTop = 14;
+            Add(config, Text("OPTIONS", "section-label", "t-strong")).style.marginTop = 0;
             ToggleRow(config, "Random mission events", true);
             ToggleRow(config, "Advisor explains each decision", true);
             ToggleRow(config, "Show real-world equivalents", false);
 
             var cta = Add(config, El("cta-stack"));
-            cta.Add(ButtonEl("BEGIN MISSION DESIGN", BeginMission, primary: true));
+            cta.Add(ButtonEl("BEGIN MISSION DESIGN", () => StartScenario(SelectedScenario.Id), primary: true));
             cta.Add(ButtonEl("PLAY AS A TEAM", () => Show(TeamScreen)));
 
             SelectScenario(scenarioIndex);
-            SelectDifficulty(difficultyIndex);
         }
 
         void RefreshScenarioDetail()
         {
             if (detailTitle == null) return;
             var s = MenuCatalog.Scenarios[scenarioIndex];
-            detailType.text = Loc.T(s.Type) + "   ·   " + DifficultyStars(s.Stars);
+            detailType.text = Loc.T(s.Type) + "   ·   " + DifficultyStars(s.Stars) + "   ·   " + Loc.T(s.Difficulty.Title);
+            if (difficultyPlate != null)
+            {
+                for (int t = 0; t < MenuCatalog.Difficulties.Length; t++)
+                    difficultyPlate.EnableInClassList("diff-plate--" + t, t == s.DifficultyIndex);
+                difficultyTitle.text = Loc.T(s.Difficulty.Title);
+                difficultyTag.text = Loc.T(s.Difficulty.Tagline).ToUpperInvariant();
+                difficultyText.text = Loc.T(s.Difficulty.Description);
+                for (int i = 0; i < difficultySegments.Count; i++)
+                    difficultySegments[i].EnableInClassList("diff-plate__seg--on", i < s.Stars);
+                difficultyScore.text = s.Stars + "/5";
+            }
+            if (budgetValue != null)
+                budgetValue.text = FormatAllowance(s.Allowance[(int)MissionResource.Budget], MenuCatalog.ResourceUnits[(int)MissionResource.Budget]);
             detailTitle.text = Loc.T(s.Title);
             detailTarget.text = Loc.T(s.Target).ToUpperInvariant();
             detailSummary.text = Loc.T(s.Summary);
@@ -718,14 +787,6 @@ namespace SpaceSim.Runtime.Menu
                 goal.Add(Text(g, "goal__text"));
             }
             ApplyFonts(detailGoals);
-
-            for (int r = 0; r < resourceRows.Count; r++)
-            {
-                var (fill, value, critical) = resourceRows[r];
-                fill.style.width = Length.Percent(Mathf.Lerp(6f, 100f, s.Pressure[r]));
-                value.text = FormatAllowance(s.Allowance[r], MenuCatalog.ResourceUnits[r]);
-                critical.EnableInClassList("res-row__critical--hidden", (int)s.Critical != r || s.Stars == 0);
-            }
         }
 
         static string DifficultyStars(int stars) => stars == 0 ? Loc.T("NO LIMITS") : Loc.T("DIFFICULTY") + " " + stars + "/5";

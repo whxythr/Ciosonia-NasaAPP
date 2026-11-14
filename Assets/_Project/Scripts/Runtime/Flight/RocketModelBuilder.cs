@@ -718,14 +718,6 @@ namespace SpaceSim.Runtime
                     MeshPart(slot, Tube, c.Dark, new Vector3(2f * r, h, 2f * r), Vector3.zero, "Spacer");
                     Cylinder(slot, c.Metal, 1.96f * r, 0.08f, Mathf.Max(0f, h - 0.08f), "Deck");
                     break;
-                case PartRole.PayloadAdapter:
-                {
-                    float top = layout != null ? Mathf.Min(r, 0.5f * (float)layout.AdapterTopDiameter) : 0.5f * r;
-                    Mesh adapterCone = ProceduralMeshes.Frustum(40, r, top, true, true, "Adapter");
-                    model.OwnedMeshes.Add(adapterCone);
-                    MeshPart(slot, adapterCone, c.Dark, new Vector3(1f, h, 1f), Vector3.zero, "Adapter");
-                    break;
-                }
                 case PartRole.ProbeBus:
                     if (m == null || m.id == ModuleCatalog.ProbeCore) Bus(slot, c, d, h, model);
                     else SmallProbe(slot, c, d, h);
@@ -1891,19 +1883,19 @@ namespace SpaceSim.Runtime
         {
             float r = (float)layout.Radius, fr = (float)layout.FairingRadius;
             float cylinder = (float)layout.FairingCylinderHeight, nose = (float)layout.FairingNoseHeight;
-            float start = 0f;
-            if (fr > r + 0.01f)
+            if (fr > r + 0.01f && layout.StageCount > 0)
             {
-                // Hammerhead: the payload is wider than the rocket — a conical skirt widens to the fairing.
-                start = Mathf.Min(cylinder * 0.5f, (float)RocketLayout.AdapterHeight + (fr - r));
+                // Hammerhead: the payload (standing right on the last stage) is wider than the rocket — a conical boattail
+                // below the payload section, around the top of the last stage, widens to the fairing.
+                float tail = Mathf.Min(fr - r, (float)(layout.StageTop[layout.StageCount - 1] - layout.StageBottom[layout.StageCount - 1]));
                 Mesh skirt = ProceduralMeshes.Frustum(40, r, fr, false, false, "FairingSkirt");
                 model.OwnedMeshes.Add(skirt);
-                MeshPart(slot, skirt, c.White, new Vector3(1f, start, 1f), Vector3.zero, "Skirt");
+                MeshPart(slot, skirt, c.White, new Vector3(1f, tail, 1f), new Vector3(0f, -tail, 0f), "Skirt");
             }
-            Cylinder(slot, c.White, 2f * fr, cylinder - start, start, "Shell");
+            Cylinder(slot, c.White, 2f * fr, cylinder, 0f, "Shell");
             MeshPart(slot, Ogive, c.White, new Vector3(fr, nose, fr), new Vector3(0f, cylinder, 0f), "Nose");
             for (int k = -1; k <= 1; k += 2) // clamshell seam
-                Box(slot, c.Dark, new Vector3(0.03f, cylinder - start, 0.06f), new Vector3(k * fr, start + 0.5f * (cylinder - start), 0f), "Seam");
+                Box(slot, c.Dark, new Vector3(0.03f, cylinder, 0.06f), new Vector3(k * fr, 0.5f * cylinder, 0f), "Seam");
         }
     }
 }

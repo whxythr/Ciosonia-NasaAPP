@@ -570,8 +570,27 @@ namespace SpaceSim.Editor
                     boot.Explorer.Look((float)D(a[1]));
                     return "pitch " + boot.Explorer.LookPitch;
                 case "tp":
-                    boot.Explorer.ToggleThirdPerson();
-                    return "thirdPerson=" + boot.Explorer.ThirdPerson;
+                {
+                    // tp [on|off] — toggle (or set) the EVA third-person view (robot or astronaut); reports what is drawn
+                    var ex = boot.Explorer;
+                    if (a.Length > 1 && (a[1] == "on" || a[1] == "off")) ex.SetThirdPerson(a[1] == "on");
+                    else ex.ToggleThirdPerson();
+                    string tpInfo = "thirdPerson=" + ex.ThirdPerson + " eva=" + ex.Eva;
+                    var bodyModel = ex.Model;
+                    if (bodyModel != null)
+                    {
+                        tpInfo += " body=" + bodyModel.GetType().Name + " firstPersonModel=" + bodyModel.FirstPerson;
+                        int headShadowOnly = 0;
+                        foreach (Renderer tpRenderer in bodyModel.HeadRenderers)
+                            if (tpRenderer != null && tpRenderer.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly) headShadowOnly++;
+                        tpInfo += " headRenderers=" + bodyModel.HeadRenderers.Count + " headShadowOnly=" + headShadowOnly;
+                    }
+                    if (ex.VisorOverlay != null) tpInfo += " visorVisible=" + ex.VisorOverlay.Visible + " visorRim=" + ex.VisorOverlay.Rim;
+                    var tpCam = boot.CameraController.Camera;
+                    if (tpCam != null && ex.Eva && bodyModel != null && bodyModel.Root != null)
+                        tpInfo += " camToBody=" + Vector3.Distance(tpCam.transform.position, bodyModel.Root.position).ToString("F2") + "m";
+                    return tpInfo;
+                }
                 case "rover":
                 {
                     // rover on|off|status · rover drive THROTTLE STEER [SECONDS] · rover grab (manipulator)

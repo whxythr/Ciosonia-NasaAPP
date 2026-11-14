@@ -272,30 +272,8 @@ Button {
 .res-row { flex-direction: row; align-items: center; height: 36px; }
 .res-row__swatch { width: 8px; height: 8px; margin-right: 12px; }
 .res-row__name { width: 110px; font-size: 13px; letter-spacing: 3px; color: rgb(170, 166, 157); }
-.res-row__track { flex-grow: 1; height: 6px; background-color: rgba(255, 255, 255, 0.07); margin-right: 18px; }
-.res-row__fill { height: 6px; }
-.res-row__value { width: 130px; font-size: 16px; -unity-text-align: middle-right; color: rgb(226, 221, 209); }
-.res-row__critical {
-    width: 82px; height: 20px; margin-left: 14px; font-size: 10px; letter-spacing: 2px; -unity-text-align: middle-center;
-    color: rgb(255, 104, 92); border-width: 1px; border-color: rgba(255, 104, 92, 0.6); border-radius: 0;
-}
-.res-row__critical--hidden { opacity: 0; }
-.res-legend { flex-direction: row; justify-content: space-between; margin-left: 130px; margin-right: 244px; }
-.res-legend__label { font-size: 11px; letter-spacing: 2px; color: rgb(90, 88, 84); }
 
 .config { width: 430px; }
-.diff-tile {
-    padding: 16px 20px; margin-bottom: 10px;
-    background-color: rgba(14, 14, 15, 0.6);
-    border-width: 1px; border-color: rgba(255, 255, 255, 0.12); border-radius: 0;
-}
-.diff-tile__head { flex-direction: row; align-items: center; justify-content: space-between; }
-.diff-tile__title { font-size: 19px; letter-spacing: 4px; color: rgb(204, 199, 188); }
-.diff-tile__tag { font-size: 12px; letter-spacing: 2px; color: rgb(110, 107, 101); }
-.diff-tile__text { font-size: 14px; color: rgb(134, 131, 124); white-space: normal; margin-top: 6px; }
-.diff-tile--selected { border-color: rgb(98, 140, 255); background-color: rgba(98, 140, 255, 0.08); }
-.diff-tile--selected .diff-tile__title { color: rgb(255, 255, 255); }
-.diff-tile--selected .diff-tile__tag { color: rgb(98, 140, 255); }
 
 .toggle-row { flex-direction: row; align-items: center; justify-content: space-between; height: 46px; border-bottom-width: 1px; border-color: rgba(255, 255, 255, 0.08); }
 .toggle-row__label { font-size: 16px; color: rgb(204, 199, 188); }
@@ -697,3 +675,63 @@ Button {
 .set-seg__item--on { background-color: rgb(240, 234, 220); color: rgb(10, 10, 11); }
 .set-seg__item--on:hover { color: rgb(10, 10, 11); }
 .scroll-viewport { flex-grow: 1; overflow: hidden; }
+
+/* Main menu: «Продолжить» without an autosave; the fixed difficulty of each research mission. */
+.menu-item--disabled .menu-item__label,
+.menu-item--disabled.menu-item--selected .menu-item__label { color: rgb(90, 88, 84); }
+.menu-item--disabled .menu-item__meta { color: rgb(90, 88, 84); }
+.scenario-card__difficulty { font-size: 11px; letter-spacing: 2px; margin-top: 5px; color: rgb(134, 131, 124); }
+.scenario-card__difficulty--0 { color: rgb(91, 228, 155); }
+.scenario-card__difficulty--1 { color: rgb(255, 200, 87); }
+.scenario-card__difficulty--2 { color: rgb(255, 107, 94); }
+
+/* New Mission detail: budget value line and the fixed-difficulty plate (tier colour from diff-plate--0/1/2). */
+.budget-line { flex-direction: row; align-items: center; height: 44px; margin-top: 24px; padding: 0 16px; background-color: rgba(255, 255, 255, 0.03); border-width: 1px; border-color: rgba(255, 255, 255, 0.08); }
+.budget-line__swatch { width: 8px; height: 8px; margin-right: 12px; }
+.budget-line__label { font-size: 12px; letter-spacing: 4px; color: rgb(170, 166, 157); }
+.budget-line__value { font-size: 20px; color: rgb(255, 200, 87); }
+.diff-plate { margin-top: 14px; padding: 18px 22px; border-left-width: 4px; border-color: rgb(98, 140, 255); background-color: rgba(98, 140, 255, 0.07); }
+.diff-plate__top { flex-direction: row; align-items: center; }
+.diff-plate__eyebrow { font-size: 10px; letter-spacing: 3px; color: rgb(110, 107, 101); }
+.diff-plate__title { font-size: 30px; letter-spacing: 5px; color: rgb(255, 255, 255); margin-top: 6px; }
+.diff-plate__tag { font-size: 12px; letter-spacing: 3px; margin-top: 2px; color: rgb(98, 140, 255); }
+.diff-plate__meter { align-items: flex-end; margin-left: 18px; }
+.diff-plate__segments { flex-direction: row; }
+.diff-plate__seg { width: 26px; height: 10px; margin-left: 4px; background-color: rgba(255, 255, 255, 0.1); }
+.diff-plate__seg--on { background-color: rgb(98, 140, 255); }
+.diff-plate__score { font-size: 13px; margin-top: 6px; color: rgb(170, 166, 157); }
+.diff-plate__text { font-size: 14px; color: rgb(170, 166, 157); white-space: normal; margin-top: 12px; }
+.diff-plate--0 { border-color: rgb(91, 228, 155); background-color: rgba(91, 228, 155, 0.07); }
+.diff-plate--0 .diff-plate__tag { color: rgb(91, 228, 155); }
+.diff-plate--0 .diff-plate__seg--on { background-color: rgb(91, 228, 155); }
+.diff-plate--1 { border-color: rgb(255, 200, 87); background-color: rgba(255, 200, 87, 0.07); }
+.diff-plate--1 .diff-plate__tag { color: rgb(255, 200, 87); }
+.diff-plate--1 .diff-plate__seg--on { background-color: rgb(255, 200, 87); }
+.diff-plate--2 { border-color: rgb(255, 107, 94); background-color: rgba(255, 107, 94, 0.07); }
+.diff-plate--2 .diff-plate__tag { color: rgb(255, 107, 94); }
+.diff-plate--2 .diff-plate__seg--on { background-color: rgb(255, 107, 94); }
+
+/* Loading screen between the main menu and the flight scene. */
+.loading { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background-color: rgb(8, 8, 9); opacity: 1; transition-property: opacity; transition-duration: 0.45s; }
+.loading--hidden { opacity: 0; }
+.loading__brand { position: absolute; left: 96px; top: 64px; font-size: 14px; letter-spacing: 6px; color: rgb(134, 131, 124); }
+.loading__body { position: absolute; left: 96px; right: 96px; bottom: 150px; }
+.loading__eyebrow { font-size: 12px; letter-spacing: 5px; color: rgb(98, 140, 255); }
+.loading__title { font-size: 64px; letter-spacing: 2px; color: rgb(240, 234, 220); margin-top: 10px; }
+.loading__goal { font-size: 18px; color: rgb(170, 166, 157); white-space: normal; margin-top: 10px; max-width: 1100px; }
+.loading__track { height: 4px; margin-top: 44px; background-color: rgba(255, 255, 255, 0.08); }
+.loading__fill { height: 4px; width: 0; background-color: rgb(98, 140, 255); }
+.loading__status { flex-direction: row; justify-content: space-between; margin-top: 12px; }
+.loading__step { font-size: 12px; letter-spacing: 3px; color: rgb(134, 131, 124); }
+.loading__percent { font-size: 12px; letter-spacing: 2px; color: rgb(226, 221, 209); }
+.loading__tip { position: absolute; left: 96px; right: 96px; bottom: 64px; font-size: 15px; color: rgb(110, 107, 101); white-space: normal; }
+
+/* ── header: subtitle sits to the right of the title, never over the step flow ── */
+.screen-head .grow { flex-direction: row; align-items: flex-end; flex-shrink: 1; }
+.screen-head .screen-title { flex-shrink: 0; }
+.screen-head .screen-sub { flex-shrink: 1; max-width: 760px; margin-bottom: 18px; }
+
+/* ── mission cards: long titles end with "…" inside the card ── */
+.scenario-card__body { flex-shrink: 1; min-width: 0; overflow: hidden; margin-right: 14px; }
+.scenario-card__title { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scenario-card__target { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

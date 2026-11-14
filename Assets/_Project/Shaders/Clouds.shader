@@ -247,7 +247,11 @@ Shader "SpaceSim/Clouds"
                 float3 o = _CameraPlanetPos;
                 float3 dCloud = mul(SS_CLOUD_ROTATION, d);
                 float pixelAngle = 2.0 / (abs(UNITY_MATRIX_P._m11) * _ScaledScreenParams.y);
-                float jitter = 0.5 + 0.65 * (frac(sin(dot(i.positionCS.xy, float2(12.9898, 78.233))) * 43758.5453) - 0.5); // white, partial: less grain, no stripes
+                // Ray-start jitter, white and partial (less grain, no stripes). It is hashed from the view direction in the cloud frame,
+                // quantised to about a pixel, not from the screen position: a screen-fixed pattern slid over the clouds whenever the
+                // camera turned or the planet rotated and read as flicker; tied to the sky it stays put with the clouds.
+                float3 cellDir = floor(dCloud / max(pixelAngle, 1e-6));
+                float jitter = 0.5 + 0.65 * (frac(sin(dot(cellDir, float3(12.9898, 78.233, 37.719))) * 43758.5453) - 0.5);
 
                 bool sky;
                 float tLimit = SSSceneDistance(GetNormalizedScreenSpaceUV(i.positionCS), d, sky);

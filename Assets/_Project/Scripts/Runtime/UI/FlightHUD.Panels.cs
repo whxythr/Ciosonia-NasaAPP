@@ -788,10 +788,7 @@ namespace SpaceSim.Runtime
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.M), Loc.T("КАРТА"));
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.Tab), Loc.T("ЭКИПАЖ"));
             if (system.SpaceUnlocked)
-            {
                 x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.Y), Loc.T("СХЕМА"));
-                x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.J), Loc.T("К ДРУГОМУ ТЕЛУ"));
-            }
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.Space), Loc.T("ОТДЕЛИТЬ"));
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.R), Loc.T("НОВАЯ РАКЕТА"));
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.F1), "MANUAL");

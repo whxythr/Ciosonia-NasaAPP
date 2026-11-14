@@ -84,14 +84,18 @@ namespace SpaceSim.Runtime
             Origin = Create<FloatingOrigin>("FloatingOrigin");
 
             StarSystemDefinition def = starSystem != null ? starSystem : StarSystemDefinition.CreateHomeSystem();
-            startBodyId = def.startBodyId;
             System = Create<StarSystemRuntime>("StarSystem");
             System.Initialize(def, Simulation, Origin, planetSurfaceShader, atmosphereShader);
-            int start = System.IndexOf(def.startBodyId);
+            // Rockets launch only from the start world (the fourth planet): neither the system asset nor a saved profile can
+            // put the pad on another body. A system without that world (a custom test asset) falls back to its own start body.
+            startBodyId = System.IndexOf(SpaceSim.Planets.HomeSystemCatalog.HomeWorldId) >= 0
+                ? SpaceSim.Planets.HomeSystemCatalog.HomeWorldId
+                : def.startBodyId;
+            int start = System.IndexOf(startBodyId);
 
             // Persistent player profile: currency, purchases, rocket design, samples, progress.
             Session = Create<PlayerSession>("PlayerSession");
-            Session.Initialize(def.startBodyId);
+            Session.Initialize(startBodyId);
             design = Session.Profile.blueprint.Clone();
             System.SetActive(start >= 0 ? start : 0, Gravity);
 
@@ -176,7 +180,11 @@ namespace SpaceSim.Runtime
             }
         }
 
-        /// <summary>Moves the probe to another body's launch pad (that body becomes the simulation frame's centre).</summary>
+        /// <summary>
+        /// Moves the probe to body <paramref name="index"/>'s launch pad (that body becomes the simulation frame's centre).
+        /// The game itself only uses it to return to the start planet (<see cref="NewRocketAtHome"/>); the player has no way to
+        /// launch from another body. The Editor-only SpaceSimBridge "jump" debug command also calls it.
+        /// </summary>
         public void SwitchToBody(int index)
         {
             if (Body != null) Simulation.Unregister(Body); // stop stepping the old probe immediately
@@ -186,7 +194,8 @@ namespace SpaceSim.Runtime
             FlightState.Notify(Loc.T("Активное тело: ") + System.ActiveBody.Name + Loc.T(". Зонд на стартовой площадке."));
         }
 
-        public void SwitchToNextBody() => SwitchToBody((System.ActiveIndex + 1) % System.Bodies.Count);
+        /// <summary>Ground clutter of the active body (rebuilt with the flight stack).</summary>
+        public SurfaceScatter Scatter { get; private set; }
 
         void BuildFlightStack(FlightBody.VehicleCarry carry = null)
         {
@@ -197,6 +206,10 @@ namespace SpaceSim.Runtime
             var site = new GameObject("LaunchSite").AddComponent<LaunchSite>();
             site.transform.SetParent(flightStack.transform, false);
             site.Initialize(planet, Origin, Simulation, litShader);
+            // Stones, slabs, pebbles and low shrubs on the ground around the viewer (visual only).
+            Scatter = new GameObject("SurfaceScatter").AddComponent<SurfaceScatter>();
+            Scatter.transform.SetParent(flightStack.transform, false);
+            Scatter.Initialize(planet, Origin, Simulation, litShader);
             // The assembly hangar next to the pad (part of the launch site, so it rides on the planet like the pad).
             var hangarBuilding = new GameObject("Hangar").AddComponent<HangarBuilding>();
             hangarBuilding.transform.SetParent(site.transform, false);
@@ -228,7 +241,7 @@ namespace SpaceSim.Runtime
             var hud = ui.AddComponent<FlightHUD>();
             var controls = ui.AddComponent<RocketControls>();
             controls.Initialize(Body, FlightState);
-            hud.Initialize(FlightState, Body, planet, Simulation, CameraController, stars, manual, ic, System, Sun, Origin, SwitchToNextBody, controls);
+            hud.Initialize(FlightState, Body, planet, Simulation, CameraController, stars, manual, ic, System, Sun, Origin, controls);
             var hangarFacility = ui.AddComponent<HangarFacility>();
             hangarFacility.Initialize(Body, hangarBuilding, CameraController, litShader);
             var hangar = ui.AddComponent<HangarUI>();

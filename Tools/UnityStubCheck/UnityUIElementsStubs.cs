@@ -50,11 +50,22 @@ namespace UnityEngine
     }
 }
 
+namespace UnityEngine
+{
+    public class AsyncOperation
+    {
+        public bool isDone => true;
+        public float progress => 1f;
+        public bool allowSceneActivation { get; set; }
+    }
+}
+
 namespace UnityEngine.SceneManagement
 {
     public static class SceneManager
     {
         public static void LoadScene(string sceneName) { }
+        public static UnityEngine.AsyncOperation LoadSceneAsync(string sceneName) => null;
     }
 }
 

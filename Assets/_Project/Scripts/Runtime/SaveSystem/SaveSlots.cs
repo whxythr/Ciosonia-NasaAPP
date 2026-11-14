@@ -24,6 +24,8 @@ namespace SpaceSim.Runtime
         public double playSeconds;
         /// <summary>Body the flight was at when saved (empty in the main menu).</summary>
         public string bodyName = "";
+        /// <summary>Goal of the saved game (<see cref="PlayerProfile.scenarioId"/>); "" in metas written before it existed = sandbox.</summary>
+        public string scenarioId = "";
 
         /// <summary>The live profile (profile.json), autosaved after every change: not a slot of its own.</summary>
         public bool IsAutosave => id == SaveSlots.AutosaveId;
@@ -58,6 +60,7 @@ namespace SpaceSim.Runtime
                 visitedBodies = p.visitedBodies != null ? p.visitedBodies.Count : 0,
                 playSeconds = p.playSeconds,
                 bodyName = bodyName ?? "",
+                scenarioId = p.scenarioId ?? "",
             };
             if (p.samples != null) m.samples = p.samples.Count;
             if (p.crew != null && p.crew.members != null)

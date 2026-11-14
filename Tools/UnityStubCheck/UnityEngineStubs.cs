@@ -17,6 +17,8 @@ namespace UnityEngine
         public static T Instantiate<T>(T original, Transform parent, bool instantiateInWorldSpace) where T : Object => original;
         public static T Instantiate<T>(T original) where T : Object => original;
         public static implicit operator bool(Object o) => o != null;
+        public static void DontDestroyOnLoad(Object target) { }
+        public static T FindFirstObjectByType<T>() where T : Object => null;
     }
 
     public class Component : Object
@@ -102,6 +104,7 @@ namespace UnityEngine
     {
         public float x, y, z;
         public Vector3(float x, float y, float z) { this.x = x; this.y = y; this.z = z; }
+        public static Vector3 Scale(Vector3 a, Vector3 b) => new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         public static Vector3 zero => default;
         public static Vector3 one => default;
         public static Vector3 up => default;
@@ -204,7 +207,7 @@ namespace UnityEngine
 
 
 
-    public struct Matrix4x4 { public static Matrix4x4 TRS(Vector3 p, Quaternion q, Vector3 s) => default; public static Matrix4x4 identity => default; }
+    public struct Matrix4x4 { public static Matrix4x4 TRS(Vector3 p, Quaternion q, Vector3 s) => default; public static Matrix4x4 identity => default; public static Matrix4x4 operator *(Matrix4x4 a, Matrix4x4 b) => default; }
 
     public static class Mathf
     {
@@ -300,6 +303,7 @@ namespace UnityEngine
         public void SetTextureOffset(string n, Vector2 v) { }
         public bool IsKeywordEnabled(string keyword) => false;
         public MaterialGlobalIlluminationFlags globalIlluminationFlags { get; set; }
+        public bool enableInstancing { get; set; }
     }
 
     public sealed class Shader : Object
@@ -324,6 +328,9 @@ namespace UnityEngine
     {
         public static void Blit(Texture source, RenderTexture dest) { }
         public static void DrawMeshInstancedProcedural(Mesh mesh, int submeshIndex, Material material, Bounds bounds, int count,
+            MaterialPropertyBlock properties = null, Rendering.ShadowCastingMode castShadows = Rendering.ShadowCastingMode.On,
+            bool receiveShadows = true, int layer = 0) { }
+        public static void DrawMeshInstanced(Mesh mesh, int submeshIndex, Material material, Matrix4x4[] matrices, int count,
             MaterialPropertyBlock properties = null, Rendering.ShadowCastingMode castShadows = Rendering.ShadowCastingMode.On,
             bool receiveShadows = true, int layer = 0) { }
     }
@@ -762,5 +769,6 @@ namespace UnityEngine
     {
         public static float value => 0f;
         public static float Range(float min, float max) => min;
+        public static int Range(int minInclusive, int maxExclusive) => minInclusive;
     }
 }

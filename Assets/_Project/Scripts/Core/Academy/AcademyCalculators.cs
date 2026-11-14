@@ -97,7 +97,7 @@ namespace SpaceSim.Academy
         static AcademyCalculator BuildThrust(AcademyContext c)
         {
             StageReport s1 = Stage(c, 0);
-            var calc = new AcademyCalculator(Loc.T(Thrust), Loc.T("Тяга двигателя"), AcademyTopics.MassThrust,
+            var calc = new AcademyCalculator(Thrust, Loc.T("Тяга двигателя"), AcademyTopics.MassThrust,
                 Loc.T("F = ṁ·Isp·g₀: тяга — это расход топлива, умноженный на скорость истечения."),
                 new[]
                 {
@@ -126,7 +126,7 @@ namespace SpaceSim.Academy
 
         static AcademyCalculator BuildGravity(AcademyContext c)
         {
-            var calc = new AcademyCalculator(Loc.T(Gravity), Loc.T("Сила тяжести"), AcademyTopics.Gravity,
+            var calc = new AcademyCalculator(Gravity, Loc.T("Сила тяжести"), AcademyTopics.Gravity,
                 Loc.T("F = G·M·m/r²: притяжение планеты на расстоянии r от её центра."),
                 new[]
                 {
@@ -165,7 +165,7 @@ namespace SpaceSim.Academy
         {
             StageReport s1 = Stage(c, 0);
             double g = c.SurfaceGravity;
-            var calc = new AcademyCalculator(Loc.T(Acceleration), Loc.T("Ускорение ракеты"), AcademyTopics.Acceleration,
+            var calc = new AcademyCalculator(Acceleration, Loc.T("Ускорение ракеты"), AcademyTopics.Acceleration,
                 Loc.T("a = F/m: ускорение от тяги, и сколько остаётся на подъём после вычета гравитации."),
                 new[]
                 {
@@ -199,7 +199,7 @@ namespace SpaceSim.Academy
         {
             StageReport s1 = Stage(c, 0);
             double launchMass = HasRocket(c) && c.Design.LaunchMass > 0.0 ? c.Design.LaunchMass : s1.MassAtIgnition;
-            var calc = new AcademyCalculator(Loc.T(ThrustToWeight), Loc.T("Тяга/вес (TWR)"), AcademyTopics.MassThrust,
+            var calc = new AcademyCalculator(ThrustToWeight, Loc.T("Тяга/вес (TWR)"), AcademyTopics.MassThrust,
                 Loc.T("TWR = F/(m·g): может ли ракета оторваться от поверхности."),
                 new[]
                 {
@@ -241,7 +241,7 @@ namespace SpaceSim.Academy
         static AcademyCalculator BuildBurn(AcademyContext c)
         {
             StageReport s1 = Stage(c, 0), s2 = Stage(c, LastStage(c));
-            var calc = new AcademyCalculator(Loc.T(Burn), Loc.T("Расход топлива и время работы"), AcademyTopics.FuelConsumption,
+            var calc = new AcademyCalculator(Burn, Loc.T("Расход топлива и время работы"), AcademyTopics.FuelConsumption,
                 Loc.T("ṁ = F/(Isp·g₀), t = m_топл/ṁ: сколько секунд проработает ступень и какой Δv она даст."),
                 new[]
                 {
@@ -281,7 +281,7 @@ namespace SpaceSim.Academy
         static AcademyCalculator BuildDeltaV(AcademyContext c)
         {
             StageReport s1 = Stage(c, 0), s2 = Stage(c, LastStage(c));
-            var calc = new AcademyCalculator(Loc.T(DeltaV), Loc.T("Δv (формула Циолковского)"), AcademyTopics.Tsiolkovsky,
+            var calc = new AcademyCalculator(DeltaV, Loc.T("Δv (формула Циолковского)"), AcademyTopics.Tsiolkovsky,
                 Loc.T("Δv = Isp·g₀·ln(m₀/m_f): идеальный запас изменения скорости."),
                 new[]
                 {
@@ -321,7 +321,7 @@ namespace SpaceSim.Academy
         {
             StageReport s1 = Stage(c, 0), s2 = Stage(c, LastStage(c));
             MissionTarget[] targets = MissionRequirements.StandardTargets(c.Mu, c.Radius, c.SiteRotationSpeed, c.SpaceBoundary, c.HasAtmosphere);
-            var calc = new AcademyCalculator(Loc.T(Fuel), Loc.T("Топливо для заданного Δv"), AcademyTopics.DeltaVBudget,
+            var calc = new AcademyCalculator(Fuel, Loc.T("Топливо для заданного Δv"), AcademyTopics.DeltaVBudget,
                 Loc.T("m_топл = m_f·(e^(Δv/(Isp·g₀)) − 1): сколько топлива нужно, чтобы получить Δv."),
                 new[]
                 {
@@ -358,7 +358,7 @@ namespace SpaceSim.Academy
 
         static AcademyCalculator BuildOrbit(AcademyContext c)
         {
-            var calc = new AcademyCalculator(Loc.T(Orbit), Loc.T("Круговая орбита"), AcademyTopics.OrbitalVelocity,
+            var calc = new AcademyCalculator(Orbit, Loc.T("Круговая орбита"), AcademyTopics.OrbitalVelocity,
                 Loc.T("v = √(μ/r), T = 2π√(r³/μ): скорость и период круговой орбиты."),
                 new[]
                 {
@@ -393,11 +393,11 @@ namespace SpaceSim.Academy
             return calc;
         }
 
-        // ---- 9. Loc.T(Escape) velocity ----------------------------------------------------------------------------------
+        // ---- 9. Escape velocity ----------------------------------------------------------------------------------
 
         static AcademyCalculator BuildEscape(AcademyContext c)
         {
-            var calc = new AcademyCalculator(Loc.T(Escape), Loc.T("Вторая космическая"), AcademyTopics.EscapeVelocity,
+            var calc = new AcademyCalculator(Escape, Loc.T("Вторая космическая"), AcademyTopics.EscapeVelocity,
                 Loc.T("v = √(2μ/r): скорость, при которой аппарат уходит от планеты навсегда."),
                 new[]
                 {
@@ -439,7 +439,7 @@ namespace SpaceSim.Academy
             double area = c.Rocket != null ? c.Rocket.ReferenceArea : Math.PI * 1.85 * 1.85;
             StageReport s1 = Stage(c, 0);
             double mass = HasRocket(c) && c.Design.LaunchMass > 0.0 ? c.Design.LaunchMass : s1.MassAtIgnition;
-            var calc = new AcademyCalculator(Loc.T(Drag), Loc.T("Сопротивление атмосферы"), AcademyTopics.Drag,
+            var calc = new AcademyCalculator(Drag, Loc.T("Сопротивление атмосферы"), AcademyTopics.Drag,
                 Loc.T("ρ(h) = ρ₀·e^(−h/H), F = ½·ρ·v²·C_d·A: сила сопротивления на высоте h при скорости v."),
                 new[]
                 {
@@ -492,7 +492,7 @@ namespace SpaceSim.Academy
         static AcademyCalculator BuildInsertion(AcademyContext c)
         {
             double apo = c.LowOrbitAltitude / Km;
-            var calc = new AcademyCalculator(Loc.T(Insertion), Loc.T("Выход на орбиту (скругление)"), AcademyTopics.Insertion,
+            var calc = new AcademyCalculator(Insertion, Loc.T("Выход на орбиту (скругление)"), AcademyTopics.Insertion,
                 Loc.T("Δv = √(μ/r_a) − √(μ·(2/r_a − 1/a)): разгон в апоцентре, превращающий траекторию в круговую орбиту."),
                 new[]
                 {
@@ -538,7 +538,7 @@ namespace SpaceSim.Academy
         static AcademyCalculator BuildHohmann(AcademyContext c)
         {
             double low = c.LowOrbitAltitude;
-            var calc = new AcademyCalculator(Loc.T(Hohmann), Loc.T("Гомановский переход"), AcademyTopics.Hohmann,
+            var calc = new AcademyCalculator(Hohmann, Loc.T("Гомановский переход"), AcademyTopics.Hohmann,
                 Loc.T("Два импульса между круговыми орбитами r₁ и r₂ по эллипсу a = (r₁ + r₂)/2; фазовый угол для встречи."),
                 new[]
                 {
@@ -590,7 +590,7 @@ namespace SpaceSim.Academy
             if (origin == null || !origin.OrbitsStar) origin = c.Find(HomeSystemCatalog.HomeWorldId) ?? FirstPlanet(c, null);
             AcademyBody target = FirstPlanet(c, origin != null ? origin.Id : null);
             double[] defaults = TransferValues(c, origin, target);
-            var calc = new AcademyCalculator(Loc.T(Transfer), Loc.T("Оценка межпланетного перелёта"), AcademyTopics.LaunchWindows,
+            var calc = new AcademyCalculator(Transfer, Loc.T("Оценка межпланетного перелёта"), AcademyTopics.LaunchWindows,
                 Loc.T("Гомановский переход вокруг звезды + отлёт с орбиты ожидания и захват у цели (метод сопряжённых конических сечений)."),
                 new[]
                 {

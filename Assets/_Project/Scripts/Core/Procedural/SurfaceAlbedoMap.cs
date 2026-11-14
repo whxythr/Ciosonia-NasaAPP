@@ -19,6 +19,7 @@ namespace SpaceSim.Procedural
     {
         readonly float[] rgb;      // sRGB 0…1, 3 floats per pixel
         readonly float[] smooth;   // smoothed luminance / mean luminance − 1 (0 = average brightness)
+        readonly float[] land;     // lightly smoothed land signal: +1 = land, −1 = open water (see WaterScore)
 
         public int Width { get; }
         public int Height { get; }
@@ -86,6 +87,49 @@ namespace SpaceSim.Procedural
                 maxAbs = Math.Max(maxAbs, Math.Abs(smooth[p]));
             }
             MaxAbsSmoothBrightness = maxAbs;
+
+            // Land / water: a light blur (≈ 1/400 of the width, 3 px on a 1280-px map) keeps the artist's coastline but removes
+            // the pixel staircase; the generator adds sub-pixel coastal detail on top (PlanetSurfaceSampler).
+            var water = new float[width * height];
+            double waterSum = 0.0;
+            for (int p = 0; p < water.Length; p++)
+            {
+                water[p] = WaterScore(rgb[p * 3], rgb[p * 3 + 1], rgb[p * 3 + 2]);
+                waterSum += water[p];
+            }
+            WaterFraction = (float)(waterSum / water.Length);
+            int rl = Math.Max(1, width / 400);
+            float[] wb = water;
+            for (int pass = 0; pass < 2; pass++) wb = BoxBlur(wb, width, height, rl);
+            land = new float[wb.Length];
+            for (int p = 0; p < wb.Length; p++) land[p] = 1f - 2f * wb[p];
+        }
+
+        /// <summary>
+        /// 0…1: how much a map colour (sRGB 0…1) reads as open water. The start planet's seas are violet: blue clearly above green,
+        /// while land (green, ochre), ice and cloud (grey-white) have blue at or below green. Bright pixels are never water.
+        /// Coloss' methane seas are teal: green and blue both far above red (grey, green or ochre land never is).
+        /// </summary>
+        public static float WaterScore(float r, float g, float b)
+        {
+            float teal = (Math.Min(g, b) - r - 60f / 255f) / (40f / 255f);
+            teal = teal < 0f ? 0f : (teal > 1f ? 1f : teal);
+            if (r + g + b > 1.3f) return teal;
+            float s = (b - g - 6f / 255f) / (14f / 255f);
+            s = s < 0f ? 0f : (s > 1f ? 1f : s);
+            return Math.Max(s, teal);
+        }
+
+        /// <summary>Fraction of the map's pixels that read as open water (unweighted by area).</summary>
+        public float WaterFraction { get; }
+
+        /// <summary>Land signal at a planet-fixed direction: +1 deep inland, −1 open water, 0 on the map's coastline.</summary>
+        public double SmoothLand(Vector3d unitDirection)
+        {
+            Locate(unitDirection, out int x0, out int y0, out int x1, out int y1, out float fx, out float fy);
+            float top = land[y0 * Width + x0] * (1f - fx) + land[y0 * Width + x1] * fx;
+            float bottom = land[y1 * Width + x0] * (1f - fx) + land[y1 * Width + x1] * fx;
+            return top * (1f - fy) + bottom * fy;
         }
 
         /// <summary>Largest |<see cref="SmoothBrightness"/>| anywhere on the map (bounds the relief it can add).</summary>

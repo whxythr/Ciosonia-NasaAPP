@@ -126,7 +126,7 @@ namespace SpaceSim.Tests
             }
             foreach (PartPlacement p in layout.Parts)
             {
-                if (p.Stage != -1 || p.Role == PartRole.Fairing || p.Role == PartRole.PayloadAdapter) continue;
+                if (p.Stage != -1 || p.Role == PartRole.Fairing) continue;
                 Assert.Less(p.OuterRadius, layout.FairingRadius, p.ModuleId + " inside the fairing");
                 Assert.Less(p.Top, layout.PayloadBottom + layout.FairingCylinderHeight, p.ModuleId + " under the nose");
             }
@@ -202,7 +202,7 @@ namespace SpaceSim.Tests
         {
             foreach (PartPlacement p in layout.Parts)
             {
-                if (p.Stage != -1 || p.Role == PartRole.Fairing || p.Role == PartRole.PayloadAdapter) continue;
+                if (p.Stage != -1 || p.Role == PartRole.Fairing) continue;
                 Assert.GreaterOrEqual(p.Bottom, layout.PayloadBottom - 1e-9, what + ": " + p.ModuleId + " above the last stage");
                 Assert.Less(p.OuterRadius, layout.FairingRadius, what + ": " + p.ModuleId + " inside the fairing");
                 Assert.Less(p.Top, layout.PayloadBottom + layout.FairingCylinderHeight, what + ": " + p.ModuleId + " under the nose");
@@ -303,7 +303,7 @@ namespace SpaceSim.Tests
             PartPlacement shield = All(layout, PartRole.HeatShield)[0];
             PartPlacement bay = All(layout, PartRole.CargoBay)[0];
             PartPlacement chute = All(layout, PartRole.Parachute)[0];
-            Assert.AreEqual(layout.PayloadBottom + RocketLayout.AdapterHeight, bay.Bottom, 1e-9, "the bay stands on the adapter");
+            Assert.AreEqual(layout.PayloadBottom, bay.Bottom, 1e-9, "the bay stands right on the last stage");
             Assert.AreEqual(bay.Top, shield.Bottom, 1e-9);
             Assert.AreEqual(shield.Top, capsule.Bottom, 1e-9, "the shield is right under the capsule");
             Assert.GreaterOrEqual(shield.Diameter, capsule.Diameter);
@@ -315,7 +315,6 @@ namespace SpaceSim.Tests
             PartPlacement dish = layout.Find(PartRole.Instrument, -1, 5);
             Assert.IsFalse(dish.Inside, "a dish goes outside");
             Assert.GreaterOrEqual(dish.RadialOffset - 0.5 * dish.Diameter, 0.5 * bay.Diameter);
-            Assert.AreEqual(bay.Diameter, layout.AdapterTopDiameter, 1e-9);
             AssertNoForbiddenOverlap(layout, "crewed");
             AssertFairingCoversPayload(layout, "crewed");
         }
@@ -338,7 +337,7 @@ namespace SpaceSim.Tests
             int left = 0, right = 0;
             foreach (PartPlacement w in wheels)
             {
-                Assert.GreaterOrEqual(w.Bottom, layout.PayloadBottom + RocketLayout.AdapterHeight - 1e-9, "on the adapter, not in it");
+                Assert.GreaterOrEqual(w.Bottom, layout.PayloadBottom - 1e-9, "on the last stage, not in it");
                 Assert.LessOrEqual(w.Top, bus.Bottom + 1e-9, "the rover is under the probe");
                 Assert.AreEqual(frame.Center, w.Center, 1e-9, "axles at the frame's height");
                 if (w.X > 0.0) right++;
@@ -520,8 +519,7 @@ namespace SpaceSim.Tests
                 }
 
                 double payloadBottom = y;
-                P(parts, PartRole.PayloadAdapter, "", -1, -1, y, RocketLayout.AdapterHeight, 2.0 * r);
-                double busBottom = y + RocketLayout.AdapterHeight;
+                double busBottom = y;
                 var cores = new List<(ModuleDefinition, int)>();
                 var wraps = new List<(ModuleDefinition, int)>();
                 var instruments = new List<(ModuleDefinition, int)>();
@@ -574,7 +572,7 @@ namespace SpaceSim.Tests
                 }
                 double reach = 0.0;
                 foreach (PartPlacement p in parts)
-                    if (p.Stage == -1 && p.Role != PartRole.PayloadAdapter) reach = Math.Max(reach, p.OuterRadius);
+                    if (p.Stage == -1) reach = Math.Max(reach, p.OuterRadius);
                 fairingRadius = Math.Max(r, reach + FairingClearance);
                 fairingCylinder = top - payloadBottom + FairingHeadroom;
                 P(parts, PartRole.Fairing, "", -1, -1, payloadBottom, fairingCylinder + 1.5 * fairingRadius, 2.0 * fairingRadius);

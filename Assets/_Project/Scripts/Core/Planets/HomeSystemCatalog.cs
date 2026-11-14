@@ -34,7 +34,7 @@ namespace SpaceSim.Planets
     /// • The star's mass is not given; it is derived from Kepler's third law, M = 4π²a³/(G·T²), using the
     ///   given a and T of Hermeous Mora (≈ 5.19·10³⁰ kg ≈ 2.6 M☉). All three planets agree within 1 %.
     /// </summary>
-    public static class HomeSystemCatalog
+    public static partial class HomeSystemCatalog
     {
         const double Day = 86400.0;
         const double AU = PhysicalConstants.AstronomicalUnit;
@@ -63,15 +63,18 @@ namespace SpaceSim.Planets
         /// presets gain bodies or fields that older assets would silently lack (the editor then regenerates them).
         /// 1 = moons Kolimpri/Tromos, hazards, cloud tints, albedo maps, canyons, violet-sea colours.
         /// 2 = fifth and sixth planets (Tholin, Eremus), gas-giant bands.
+        /// 3 = the eight moons of Eremus (HomeSystemCatalog.EremusMoons.cs), Eremus' obliquity 4.15°.
+        /// 4 = names Lumini A / Ciosonia / Aegis, Tholin's moons Lin and Tiafoe, the Ciosonia artist map and its new pad.
+        /// 5 = artist colour maps for all remaining bodies (ArtistMaps), Coloss' seas from its map.
         /// </summary>
-        public const int DataVersion = 2;
+        public const int DataVersion = 5;
 
         public static double StarMassFromKepler(double semiMajorAxis, double period) =>
             4.0 * Math.PI * Math.PI * Math.Pow(semiMajorAxis, 3) / (PhysicalConstants.GravitationalConstant * period * period);
 
         public static StarProperties Star() => new StarProperties
         {
-            name = "Звезда",
+            name = "Люмини A (Lumini A)",
             mass = StarMassFromKepler(0.427 * AU, 63.1 * Day),
             radius = 1.2e9,
             surfaceTemperature = 4900.0,
@@ -86,10 +89,30 @@ namespace SpaceSim.Planets
             list.Add(home);
             list.Add(Kolimpri(home.Physical.GravitationalParameter));
             list.Add(Tromos(home.Physical.GravitationalParameter));
-            list.Add(Tholin());
-            list.Add(Eremus());
+            CelestialBodyPreset tholin = Tholin();
+            list.Add(tholin);
+            AddTholinMoons(list, tholin.Physical.GravitationalParameter);
+            CelestialBodyPreset eremus = Eremus();
+            list.Add(eremus);
+            AddEremusMoons(list, eremus.Physical.GravitationalParameter);
+            foreach (CelestialBodyPreset b in list)
+                if (b.Generation != null && !b.Generation.UsesAlbedoMap && ArtistMaps.TryGetValue(b.Id, out string key))
+                    b.Generation.albedoMap = key;
             return list;
         }
+
+        /// <summary>
+        /// Artist equirectangular colour maps (Resources/PlanetMaps/&lt;key&gt;.png, set 2026-11-14) for the bodies whose
+        /// presets do not name one themselves. The map gives the colour; relief stays procedural. Which picture belongs to
+        /// which body was matched by the descriptions (the files came unnamed) — swap a key here to reassign.
+        /// </summary>
+        static readonly Dictionary<string, string> ArtistMaps = new Dictionary<string, string>
+        {
+            { QuorisId, "quoris" }, { HermeousMoraId, "hermeous-mora" }, { MoraMoonId, "aegis" },
+            { LinId, "lin" }, { TiafoeId, "tiafoe" }, { EremusId, "eremus" },
+            { OriId, "ori" }, { OinId, "oin" }, { BifurId, "bifur" }, { NevermourId, "nevermour" },
+            { DwalinId, "dwalin" }, { BalinId, "balin" }, { ColossId, "coloss" }, { GandalfId, "gandalf" }
+        };
 
         /// <summary>
         /// Tholin (Золин) — fifth planet, an analogue for Mars missions (designer data: M = 1.56 M⊕ = 9.36·10²⁴ kg,
@@ -183,12 +206,14 @@ namespace SpaceSim.Planets
         /// With M⊕ = 5.9722·10²⁴ kg and R⊕ = 6 371 000 m: ρ = 2219 kg/m³ and g = 51.0 m/s² (0.5 % above the quoted values).
         /// Orbit: the apsides give a = (1.98 + 2.12)/2 = 2.05 AU and e = 0.034, and Kepler with the star's mass gives
         /// 664 d for a = 2.05 AU (but 654 d for 2.03 AU), so a = 2.05 AU is used — it agrees with both the period and
-        /// the apsides. Not modelled: the flattening (the shape and gravity stay spherical, no J2) and the moons (no data).
+        /// the apsides. Not modelled: the flattening (the shape and gravity stay spherical, no J2).
+        /// The eight major moons are in HomeSystemCatalog.EremusMoons.cs; the obliquity (not given) is 4.15° so that they orbit in
+        /// its equatorial plane.
         /// The reference radius is the 1-bar level; there is no solid surface — the "ground" is the cloud tops.
         /// </summary>
         static CelestialBodyPreset Eremus()
         {
-            const double orbitAngle = 300.0, padLat = 0.0, padLon = -30.0;
+            const double orbitAngle = EremusOrbitAngle, padLat = 0.0, padLon = -30.0;
             const double earthMass = 5.9722e24, earthRadius = 6371000.0;
             var a = new AtmosphereProperties
             {
@@ -205,7 +230,7 @@ namespace SpaceSim.Planets
                 mass = 864.0 * earthMass,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 0.329 * Day,
-                axialTiltDegrees = 3.0,             // not given: Jupiter-like
+                axialTiltDegrees = EremusObliquity, // not given: the regular moons' plane (Jupiter: 3.1°)
                 rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
                 spaceBoundaryAltitude = 250000.0,   // ≈ 17 scale heights above the 1-bar level
                 atmosphere = a
@@ -240,7 +265,7 @@ namespace SpaceSim.Planets
             return new CelestialBodyPreset
             {
                 Id = EremusId, DisplayName = "Еремус (Eremus)",
-                Description = "Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, из них 7 крупных (пока не добавлены). Твёрдой поверхности нет: «площадка» — на уровне облаков.",
+                Description = "Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, крупные из них: Ори, Оин, Бифур, Невермор, Двалин, Балин, Колосс и Гандальф. Твёрдой поверхности нет: «площадка» — на уровне облаков.",
                 Physical = p, Generation = g, Optics = optics,
                 Orbit = new OrbitProperties
                 {
@@ -410,7 +435,11 @@ namespace SpaceSim.Planets
         /// </summary>
         static CelestialBodyPreset HomeWorld()
         {
-            const double orbitAngle = HomeOrbitAngle, padLat = 28.0, padLon = -52.0;
+            // The pad is on the green plain of the western continent of the artist map (the old 28° N, 52° W is open sea there).
+            const double orbitAngle = HomeOrbitAngle, padLat = 19.0, padLon = -50.5;
+            // Early morning at the pad (not StartHour): the star stands low in the east, visible from the pad, with long shadows,
+            // and climbs during the first hours of play (the day is 0.844 Earth days, so ≈ 18° per hour).
+            const double startHour = 7.0;
             var a = new AtmosphereProperties
             {
                 hasAtmosphere = true,
@@ -427,7 +456,7 @@ namespace SpaceSim.Planets
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 0.844 * Day,
                 axialTiltDegrees = 22.5,
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, startHour),
                 spaceBoundaryAltitude = 100000.0,
                 atmosphere = a
             };
@@ -455,11 +484,18 @@ namespace SpaceSim.Planets
                 grassland = new ColorRGB(0.26f, 0.42f, 0.14f),
                 forest = new ColorRGB(0.10f, 0.26f, 0.08f),
                 desert = new ColorRGB(0.80f, 0.64f, 0.40f),
-                craterCount = 6
+                craterCount = 6,
+                // The artists' equirectangular map (Resources/PlanetMaps/ciosonia): it gives the continents, the coastline
+                // (violet = sea) and the land colours; the generator adds relief and sub-pixel detail.
+                albedoMap = "ciosonia",
+                albedoMapDetail = 0.3,
+                // 0.12: inland the continent field is ≈ 0.12 → lowlands of ≈ 600 m with mountains only where the noise lifts it
+                // (0.25 put whole continents at 1.5–2 km with ridges to 5 km, and they read as snowfields from orbit).
+                albedoMapCoastline = 0.12
             };
             return new CelestialBodyPreset
             {
-                Id = HomeWorldId, DisplayName = "Четвёртая планета (старт)",
+                Id = HomeWorldId, DisplayName = "Циосония (Ciosonia)",
                 Description = "Обитаемая стартовая планета: копия Земли с меньшей массой (0.842 M⊕) и g = 8.27 м/с². Фиолетовая вода (свет звезды K-класса), экваториальные пустыни, горы у экваториальных побережий, на полюсах до −49 °C. Сплюснутость 0.286 %, наклон оси 22.5°, магнитный полюс 11.5°, B = 0.254 Гс, магнитопауза 13 627 603 м. Сутки 0.844 земных, год 124 дня.",
                 Physical = p, Generation = g, Optics = new AtmosphereOpticalProperties(),
                 Orbit = new OrbitProperties { semiMajorAxis = 0.67 * AU, period = 124.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle },
@@ -684,7 +720,7 @@ namespace SpaceSim.Planets
             };
             return new CelestialBodyPreset
             {
-                Id = MoraMoonId, DisplayName = "Мора I (спутник)", ParentId = HermeousMoraId,
+                Id = MoraMoonId, DisplayName = "Эгида (Aegis)", ParentId = HermeousMoraId,
                 Description = "Несферический спутник Гермеус Моры на расстоянии 30 000 км, приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка).",
                 Physical = p, Generation = g, Optics = new AtmosphereOpticalProperties(),
                 Orbit = orbit,

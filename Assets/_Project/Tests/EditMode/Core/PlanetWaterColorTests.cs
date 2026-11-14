@@ -61,6 +61,8 @@ namespace SpaceSim.Tests
                 if (b.Id == HomeSystemCatalog.HomeWorldId) continue;
                 // Tholin's lakes are liquid CO₂, not water: a new body with its own (colourless-liquid) lake colours.
                 if (b.Id == HomeSystemCatalog.TholinId) continue;
+                // Coloss' seas are liquid methane–ethane (teal: red absorbed), with their own colours.
+                if (b.Id == HomeSystemCatalog.ColossId) continue;
                 AssertExactly(OriginalDeep, b.Generation.deepOcean, b.Id + " deepOcean");
                 AssertExactly(OriginalShallow, b.Generation.shallowOcean, b.Id + " shallowOcean");
                 AssertExactly(OriginalSeaIce, b.Generation.seaIce, b.Id + " seaIce");

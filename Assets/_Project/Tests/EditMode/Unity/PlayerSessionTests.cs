@@ -91,5 +91,28 @@ namespace SpaceSim.Tests
             Assert.IsFalse(s.Profile.ownedModules.Contains(ModuleCatalog.TankK140));
             Assert.AreEqual(json, File.ReadAllText(PlayerSession.SavePath), "the file stays untouched");
         }
+
+        [Test]
+        public void StartedScenario_IsRecordedInTheAutosave_AndOldSavesReadAsSandbox()
+        {
+            // A save from before the field existed: no "scenarioId" in the JSON.
+            Directory.CreateDirectory(dir);
+            string old = JsonUtility.ToJson(PlayerProfile.CreateNew(HomeSystemCatalog.HomeWorldId)).Replace(",\"scenarioId\":\"\"", "");
+            StringAssert.DoesNotContain("scenarioId", old);
+            File.WriteAllText(PlayerSession.SavePath, old);
+            var s = NewSession();
+            Assert.AreEqual(PlayerSession.SandboxScenarioId, PlayerSession.ScenarioOf(s.Profile));
+
+            // The main menu starts a mission: the next session writes it into the profile and forgets the request.
+            PlayerSession.PendingScenarioId = "mora-lander";
+            s = NewSession();
+            Assert.IsNull(PlayerSession.PendingScenarioId);
+            Assert.AreEqual("mora-lander", PlayerSession.ReadProfileFile().scenarioId);
+            Assert.AreEqual("mora-lander", SaveSlots.List()[0].scenarioId, "the autosave row knows its goal");
+
+            // «Продолжить» (no request) keeps the goal of the save.
+            s = NewSession();
+            Assert.AreEqual("mora-lander", s.Profile.scenarioId);
+        }
     }
 }

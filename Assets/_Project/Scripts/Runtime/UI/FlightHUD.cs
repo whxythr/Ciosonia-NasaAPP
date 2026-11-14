@@ -32,7 +32,6 @@ namespace SpaceSim.Runtime
         StarSystemRuntime system;
         SolarLightingController sun;
         FloatingOrigin origin;
-        Action switchToNextBody;
         bool visible = true;
         bool showMarkers = true;
         bool showMap;
@@ -70,7 +69,7 @@ namespace SpaceSim.Runtime
         public void Initialize(FlightStateController flightState, FlightBody flightBody, PlanetRuntime planetRuntime,
             SimulationController sim, SpaceCameraController cam, StarfieldController starfield,
             FlightManualUI manualUi, InitialConditionsPanel icPanel,
-            StarSystemRuntime starSystem, SolarLightingController starLight, FloatingOrigin floatingOrigin, Action nextBody,
+            StarSystemRuntime starSystem, SolarLightingController starLight, FloatingOrigin floatingOrigin,
             RocketControls controls)
         {
             state = flightState;
@@ -84,7 +83,6 @@ namespace SpaceSim.Runtime
             system = starSystem;
             sun = starLight;
             origin = floatingOrigin;
-            switchToNextBody = nextBody;
             rocketControls = controls;
             warpClampsSeen = sim.WarpClampCount;
         }
@@ -105,7 +103,7 @@ namespace SpaceSim.Runtime
                 system.UnlockSpace();
                 if (state.Telemetry.AboveSpaceBoundary)
                     state.Notify(Loc.T("Вы в космосе! Открыта звёздная система: ") + FlightInput.KeyLabel(InputKey.Y) + Loc.T(" — карта системы, ") +
-                                 FlightInput.KeyLabel(InputKey.N) + Loc.T(" — метки тел, ") + FlightInput.KeyLabel(InputKey.J) + Loc.T(" — перелёт к другому телу."));
+                                 FlightInput.KeyLabel(InputKey.N) + Loc.T(" — метки тел."));
             }
             CheckMilestones();
             TrackFlight();
@@ -157,11 +155,6 @@ namespace SpaceSim.Runtime
             {
                 if (FlightInput.GetKeyDown(InputKey.N)) showMarkers = !showMarkers;
                 if (FlightInput.GetKeyDown(InputKey.Y)) showMap = !showMap;
-                if (FlightInput.GetKeyDown(InputKey.J))
-                {
-                    switchToNextBody?.Invoke();
-                    return;
-                }
             }
             if (FlightInput.GetKeyDown(InputKey.U))
             {
@@ -359,7 +352,8 @@ namespace SpaceSim.Runtime
                              Loc.T(" очк. исследований. Новые товары в магазине."));
         }
 
-        string homeBodyId => session != null && session.Profile.visitedBodies.Count > 0 ? session.Profile.visitedBodies[0] : "";
+        /// <summary>Rockets launch only from the start planet; an old profile's first visited body does not move it.</summary>
+        static string homeBodyId => HomeSystemCatalog.HomeWorldId;
 
         void OnDestroy()
         {
@@ -403,7 +397,13 @@ namespace SpaceSim.Runtime
                     }
                 }
                 var p = c + new Vector2((float)hp.x, -(float)hp.y) * scale;
-                if (b.ParentIndex >= 0) p += new Vector2(10f, 10f); // moons: offset so they don't hide the parent
+                if (b.ParentIndex >= 0)
+                {
+                    // Moons: offset so they don't hide the parent, stacked one row each (Eremus has eight).
+                    int rank = 0;
+                    for (int j = 0; j < i; j++) if (system.Bodies[j].ParentIndex == b.ParentIndex) rank++;
+                    p += new Vector2(10f, 10f + 16f * rank);
+                }
                 bool active = i == system.ActiveIndex;
                 HudStyle.Dot(p, active ? 9f : 7f, active ? HudStyle.Danger : HudStyle.Accent);
                 double au = hp.Magnitude / PhysicalConstants.AstronomicalUnit;
@@ -423,19 +423,35 @@ namespace SpaceSim.Runtime
                 if (i == system.ActiveIndex) continue;
                 var b = system.Bodies[i];
                 if (b.Runtime.Model == null) continue;
+                // Seen from afar a planet's moons sit on top of it (Eremus and its eight): their labels would overprint the
+                // planet's, so a moon closer than one label row to its parent on screen is left out (the parent's label stays).
+                int parent = b.ParentIndex;
+                if (parent >= 0 && parent != system.ActiveIndex && system.Bodies[parent].Runtime.Model != null &&
+                    MarkerPoint(cam, b.Runtime.Model.Position - viewer, out Vector2 moon) &&
+                    MarkerPoint(cam, system.Bodies[parent].Runtime.Model.Position - viewer, out Vector2 planet) &&
+                    Vector2.Distance(moon, planet) < 18f) continue;
                 Marker(cam, b.Runtime.Model.Position - viewer, b.Runtime.Model.Radius, b.Name, HudStyle.Accent);
             }
+        }
+
+        /// <summary>GUI position of a marker for a direction from the viewer; false when it is behind the camera.</summary>
+        static bool MarkerPoint(Camera cam, Vector3d relative, out Vector2 point)
+        {
+            point = Vector2.zero;
+            double distance = relative.Magnitude;
+            if (distance <= 0.0) return false;
+            Vector3 dir = CoordinateSystem.ToUnityVector(relative / distance);
+            Vector3 screenPoint = cam.WorldToScreenPoint(cam.transform.position + dir * 1000f);
+            if (screenPoint.z <= 0f) return false; // behind the camera
+            float s = HudStyle.Scale;
+            point = new Vector2(screenPoint.x / s, (Screen.height - screenPoint.y) / s);
+            return true;
         }
 
         static void Marker(Camera cam, Vector3d relative, double radius, string name, Color color)
         {
             double distance = relative.Magnitude;
-            if (distance <= 0.0) return;
-            Vector3 dir = CoordinateSystem.ToUnityVector(relative / distance);
-            Vector3 screenPoint = cam.WorldToScreenPoint(cam.transform.position + dir * 1000f);
-            if (screenPoint.z <= 0f) return; // behind the camera
-            float s = HudStyle.Scale;
-            var p = new Vector2(screenPoint.x / s, (Screen.height - screenPoint.y) / s);
+            if (!MarkerPoint(cam, relative, out Vector2 p)) return;
             string dist = distance - radius > 1.0e9
                 ? UnitFormatter.Number((distance - radius) / PhysicalConstants.AstronomicalUnit, 3) + Loc.T(" а.е.")
                 : UnitFormatter.Number((distance - radius) / 1000.0, 0) + Loc.T(" км");

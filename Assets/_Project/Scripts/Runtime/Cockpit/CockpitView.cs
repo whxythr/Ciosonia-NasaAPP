@@ -236,7 +236,9 @@ namespace SpaceSim.Runtime
             AdvanceFade(dt);
 
             bool input = !FlightInput.IsTyping && !FlightInput.MapOpen && fade == Fade.None;
-            if (input && FlightInput.GetKeyDown(InputKey.T)) Toggle();
+            // On the surface the same key switches the robot's first / third person view (SurfaceExplorer), not the cabin.
+            bool eva = cameraController.FirstPerson is SurfaceExplorer;
+            if (input && !eva && FlightInput.GetKeyDown(InputKey.T)) Toggle();
             // The hangar takes the camera too: step out first, so its key works from the cabin.
             if (inside && input && body.IsOnLaunchPad && FlightInput.GetKeyDown(InputKey.B)) LeaveNow(true);
 

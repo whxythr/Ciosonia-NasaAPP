@@ -204,14 +204,15 @@ namespace SpaceSim.Tests
         {
             // New optional fields default to "off": a surface built from settings that never mention them is identical.
             CelestialBodyPreset q = Body(HomeSystemCatalog.QuorisId);
+            Assert.AreEqual("quoris", q.Generation.albedoMap, "every body has an artist map since catalog v5");
             var plain = q.Generation.Clone();
+            plain.albedoMap = null; // Validate() turns null into "" — the field is "never mentioned"
             var explicitOff = q.Generation.Clone();
             explicitOff.albedoMap = "";
             explicitOff.featureCanyons = new FeatureCanyon[0];
             explicitOff.albedoMapRelief = 0.0;
             Assert.AreEqual(PlanetFingerprint.Compute(PlanetSurfaceSampler.Create(plain, q.Physical.meanRadius)),
                 PlanetFingerprint.Compute(PlanetSurfaceSampler.Create(explicitOff, q.Physical.meanRadius)));
-            Assert.IsFalse(q.Generation.UsesAlbedoMap);
         }
     }
 }

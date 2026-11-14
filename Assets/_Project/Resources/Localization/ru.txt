@@ -31,7 +31,7 @@ NEW	НОВОЕ
 Academy: "Mass margins" lesson unlocks the lightweight carbon bus	Академия: урок «Запасы массы» открывает лёгкую углепластиковую платформу
 NEW MISSION	НОВАЯ МИССИЯ
 CHOOSE YOUR OBJECTIVE	ВЫБЕРИТЕ ЦЕЛЬ
-Every mission starts with a goal. The goal decides which resource will hurt the most	Каждая миссия начинается с цели. Цель решает, какой ресурс будет самым дефицитным
+Every mission starts with a goal. The difficulty is set by the mission itself	Каждая миссия начинается с цели. Сложность задаёт сама миссия
 OBJECTIVE	ЦЕЛЬ
 REQUIREMENTS	ТРЕБОВАНИЯ
 SPACECRAFT	АППАРАТ
@@ -240,3 +240,6 @@ Data rate, antennas & ground stations	Скорость данных, антен�
 Mass margins: why engineers add 20	Запас массы: зачем инженеры добавляют 20
 Instruments: what does science cost	Приборы: сколько стоит наука
 Radiation, heat and mission lifetime	Радиация, тепло и срок службы
+MISSION DIFFICULTY	СЛОЖНОСТЬ МИССИИ
+Set by the mission — it cannot be changed	Задана миссией и не меняется
+STARTING BUDGET	СТАРТОВЫЙ БЮДЖЕТ

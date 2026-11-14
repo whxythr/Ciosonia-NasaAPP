@@ -45,7 +45,7 @@ namespace SpaceSim.Tests
             for (int i = 0; i < 20; i++) yield return null;
 
             // Start body: the fourth planet, rocket on the pad, space tools still locked.
-            Assert.AreEqual(9, boot.System.Bodies.Count, "6 planets + Mora I + Kolimpri + Tromos");
+            Assert.AreEqual(19, boot.System.Bodies.Count, "6 planets + Aegis + Kolimpri + Tromos + Lin + Tiafoe + 8 moons of Eremus");
             Assert.AreEqual(HomeSystemCatalog.HomeWorldId, boot.System.ActiveBody.Id);
             Assert.AreEqual(8.27, boot.Planet.Model.Gravity.SurfaceGravity, 0.03);
             Assert.IsTrue(boot.Body.Simulation.IsLanded, "rocket starts on the pad");
@@ -203,7 +203,9 @@ namespace SpaceSim.Tests
             Assert.IsTrue(leaned, "the body leans into the acceleration");
             ex.ToggleThirdPerson();
             Assert.AreEqual(UnityEngine.Rendering.ShadowCastingMode.On, ex.Model.HeadRenderers[0].shadowCastingMode, "the helmet is drawn from behind");
+            Assert.IsFalse(ex.VisorOverlay.Visible, "no first-person visor overlay from behind");
             ex.ToggleThirdPerson();
+            Assert.IsTrue(ex.VisorOverlay.Visible, "the visor overlay is back in first person");
             float stopEnd = Time.realtimeSinceStartup + 1.6f; // let the sprint end before the sample is taken
             while (Time.realtimeSinceStartup < stopEnd) yield return null;
             Assert.IsNotNull(ex.Sites);

@@ -183,6 +183,12 @@ namespace SpaceSim.Procedural
         /// become basins. 0 = the map changes colour only.
         /// </summary>
         public double albedoMapRelief;
+        /// <summary>
+        /// Terrestrial bodies with an ocean: &gt; 0 makes the map decide land and sea (violet = water, see
+        /// <see cref="SurfaceAlbedoMap.WaterScore"/>). It is the weight of the map's land signal in the continent field; the
+        /// generator's noise only roughens the coastline below the map's pixel size. 0 = the noise decides (the map gives colour only).
+        /// </summary>
+        public double albedoMapCoastline;
 
         public bool UsesAlbedoMap => !string.IsNullOrEmpty(albedoMap);
 

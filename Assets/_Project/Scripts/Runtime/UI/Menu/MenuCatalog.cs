@@ -21,7 +21,14 @@ namespace SpaceSim.Runtime.Menu
             /// <summary>How tight each resource is for this scenario, 0 = generous … 1 = very tight.</summary>
             public float[] Pressure;
             public int Stars;
+            /// <summary>
+            /// Fixed difficulty of the mission: index into <see cref="Difficulties"/> (0 Cadet, 1 Engineer, 2 Flight Director).
+            /// Set by the mission, never chosen by the player.
+            /// </summary>
+            public int DifficultyIndex;
             public Color Tint;
+
+            public Difficulty Difficulty => Difficulties[Mathf.Clamp(DifficultyIndex, 0, Difficulties.Length - 1)];
         }
 
         public sealed class Difficulty
@@ -63,6 +70,7 @@ namespace SpaceSim.Runtime.Menu
             new Color32(0xFF, 0x8F, 0xB1, 0xFF),
         };
 
+        /// <summary>The five research missions of «Новая миссия»; each has a fixed <see cref="Scenario.DifficultyIndex"/>.</summary>
         public static readonly Scenario[] Scenarios =
         {
             new Scenario
@@ -74,7 +82,7 @@ namespace SpaceSim.Runtime.Menu
                 Critical = MissionResource.Comms,
                 Allowance = new[] { 120f, 450f, 600f, 40f, 2000f, 3f },
                 Pressure = new[] { 0.3f, 0.2f, 0.3f, 0.5f, 0.7f, 0.2f },
-                Stars = 1, Tint = new Color32(0x6A, 0x4B, 0xD0, 0xFF),
+                Stars = 1, DifficultyIndex = 0, Tint = new Color32(0x6A, 0x4B, 0xD0, 0xFF),
             },
             new Scenario
             {
@@ -85,7 +93,7 @@ namespace SpaceSim.Runtime.Menu
                 Critical = MissionResource.Mass,
                 Allowance = new[] { 260f, 1800f, 3500f, 5f, 50000f, 10f },
                 Pressure = new[] { 0.5f, 0.8f, 0.4f, 0.1f, 0.3f, 0.6f },
-                Stars = 2, Tint = new Color32(0x5B, 0xE4, 0xC8, 0xFF),
+                Stars = 2, DifficultyIndex = 0, Tint = new Color32(0x5B, 0xE4, 0xC8, 0xFF),
             },
             new Scenario
             {
@@ -96,7 +104,7 @@ namespace SpaceSim.Runtime.Menu
                 Critical = MissionResource.Power,
                 Allowance = new[] { 420f, 1200f, 900f, 120f, 600f, 4f },
                 Pressure = new[] { 0.6f, 0.6f, 0.8f, 0.7f, 0.6f, 0.4f },
-                Stars = 3, Tint = new Color32(0x7F, 0xD4, 0xFF, 0xFF),
+                Stars = 3, DifficultyIndex = 1, Tint = new Color32(0x7F, 0xD4, 0xFF, 0xFF),
             },
             new Scenario
             {
@@ -107,7 +115,7 @@ namespace SpaceSim.Runtime.Menu
                 Critical = MissionResource.Mass,
                 Allowance = new[] { 650f, 700f, 400f, 20f, 300f, 2f },
                 Pressure = new[] { 0.5f, 0.9f, 0.2f, 0.4f, 0.7f, 0.5f },
-                Stars = 4, Tint = new Color32(0xFF, 0xB5, 0x47, 0xFF),
+                Stars = 4, DifficultyIndex = 2, Tint = new Color32(0xFF, 0xB5, 0x47, 0xFF),
             },
             new Scenario
             {
@@ -118,20 +126,31 @@ namespace SpaceSim.Runtime.Menu
                 Critical = MissionResource.Comms,
                 Allowance = new[] { 900f, 2600f, 300f, 8f, 120f, 1f },
                 Pressure = new[] { 0.7f, 0.8f, 0.9f, 0.3f, 0.9f, 0.5f },
-                Stars = 5, Tint = new Color32(0xFF, 0x8F, 0xB1, 0xFF),
-            },
-            new Scenario
-            {
-                Id = "sandbox", Title = "Sandbox", Target = "Anywhere", Type = "FREE DESIGN",
-                Summary = "No objectives, no limits. Try any spacecraft, orbit and rocket and watch how the numbers react.",
-                Goals = new[] { "Unlimited budget and parts", "Simulate as often as you like", "Great for learning the systems" },
-                LearningFocus = "Experiment freely with every trade-off",
-                Critical = MissionResource.Budget,
-                Allowance = new[] { 9999f, 99999f, 99999f, 999f, 99999f, 99f },
-                Pressure = new[] { 0f, 0f, 0f, 0f, 0f, 0f },
-                Stars = 0, Tint = new Color32(0xC6, 0xF2, 0x6B, 0xFF),
+                Stars = 5, DifficultyIndex = 2, Tint = new Color32(0xFF, 0x8F, 0xB1, 0xFF),
             },
         };
+
+        /// <summary>«Песочница»: free play, started straight from the main menu (not one of the «Новая миссия» missions).</summary>
+        public static readonly Scenario Sandbox = new Scenario
+        {
+            Id = "sandbox", Title = "Sandbox", Target = "Anywhere", Type = "FREE DESIGN",
+            Summary = "No objectives, no limits. Try any spacecraft, orbit and rocket and watch how the numbers react.",
+            Goals = new[] { "Unlimited budget and parts", "Simulate as often as you like", "Great for learning the systems" },
+            LearningFocus = "Experiment freely with every trade-off",
+            Critical = MissionResource.Budget,
+            Allowance = new[] { 9999f, 99999f, 99999f, 999f, 99999f, 99f },
+            Pressure = new[] { 0f, 0f, 0f, 0f, 0f, 0f },
+            Stars = 0, Tint = new Color32(0xC6, 0xF2, 0x6B, 0xFF),
+        };
+
+        /// <summary>A research mission or the sandbox by id; saves without a goal ("" or an unknown id) are the sandbox.</summary>
+        public static Scenario FindScenario(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+                foreach (Scenario s in Scenarios)
+                    if (s.Id == id) return s;
+            return Sandbox;
+        }
 
         public static readonly Difficulty[] Difficulties =
         {

@@ -25,13 +25,25 @@ float SSCloudDensity(float3 q, float hf, float4 w, float lodBase, float lodDetai
     float cov = w.r * _CloudCoverageBoost;
     if (cov * profile < 0.01) return 0.0;
 
+    // Far away (a pixel spans many noise texels) the mip chain averages the noise towards its mean, and the coverage threshold
+    // below then erased the clouds wholesale: decks vanished when the planet was seen from afar or at a grazing angle, and popped
+    // back as the camera moved (mip changes). Past a few mips the noise is replaced by its statistical effect: the weather map's
+    // own cloud systems (tens of km per texel) with a density that grows with their coverage.
+    float farW = saturate((lodBase - 3.0) / 2.0);
+    // Its density is chosen so a vertical column through the deck lets through 1 − 0.6·c of the light (c ≈ the cloud fraction the
+    // near-field noise would show there): broken decks stay see-through from orbit instead of turning into opaque white sheets.
+    float cEff = smoothstep(0.2, 1.0, cov);
+    float densFar = -log(1.0 - 0.6 * cEff) / (_CloudExtinction * max(_SpaceSimCloudTop - _SpaceSimCloudBase, 1.0) * 0.5) * profile;
+    if (farW >= 1.0) return densFar;
+
     // The large-scale warp breaks the repeat of the noise tile where the weather map is uniform (overcast decks).
     q.xz += (w.ba - 0.5) * 14000.0;
-    float4 b = SAMPLE_TEXTURE3D_LOD(_SpaceSimNoise3D, sampler_SpaceSimNoise3D, q / SPACESIM_CLOUD_BASE_TILE, lodBase);
+    float4 b = SAMPLE_TEXTURE3D_LOD(_SpaceSimNoise3D, sampler_SpaceSimNoise3D, q / SPACESIM_CLOUD_BASE_TILE, min(lodBase, 5.0));
     float fbm = b.g * 0.625 + b.b * 0.25 + b.a * 0.125;
     float base = saturate(SSRemap(b.r, fbm - 1.0, 1.0, 0.0, 1.0));
     float dens = saturate(SSRemap(base * profile, 1.0 - cov, 1.0, 0.0, 1.0)) * cov;
-    if (dens <= 0.0 || !detail || lodDetail >= 2.5) return dens;
+    dens = lerp(dens, densFar, farW);
+    if (dens <= 0.0 || !detail || lodDetail >= 2.5 || farW > 0.0) return dens;
 
     float3 dq = q / SPACESIM_CLOUD_DETAIL_TILE;
     float3 n = SAMPLE_TEXTURE3D_LOD(_SpaceSimNoise3D, sampler_SpaceSimNoise3D, dq, lodDetail).gba;

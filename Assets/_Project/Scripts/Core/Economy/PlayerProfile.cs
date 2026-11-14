@@ -100,6 +100,11 @@ namespace SpaceSim.Economy
         public SpaceSim.Crew.CrewRosterData crew = new SpaceSim.Crew.CrewRosterData();
         /// <summary>Real time played in the flight scene [s] (shown in the load screen).</summary>
         public double playSeconds;
+        /// <summary>
+        /// Goal of the game this profile was last started with: a research mission id from the main menu ("weather-watch", …)
+        /// or "sandbox". Additive: saves from before this field read as "" and are treated as the sandbox.
+        /// </summary>
+        public string scenarioId = "";
 
         public static PlayerProfile CreateNew(string homeBodyId)
         {

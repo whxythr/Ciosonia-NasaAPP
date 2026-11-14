@@ -15,8 +15,8 @@ namespace SpaceSim.Runtime
     /// <summary>
     /// Surface exploration after landing: the sample sites around the lander, the lander's collector arm, and the astronaut
     /// on foot (first-person, <see cref="SurfaceWalker"/> physics with the planet's own gravity). E — go out / take the
-    /// nearest sample / come back in; Shift — sprint (speed and endurance from <see cref="Locomotion"/>); V — look from
-    /// behind. The suited body (<see cref="AstronautModel"/>) is drawn and casts shadows; in first person the camera sits in
+    /// nearest sample / come back in; Shift — sprint (speed and endurance from <see cref="Locomotion"/>); T (the same
+    /// rebindable key as the cabin view) — first / third person: the camera follows behind and above the body. The suited body (<see cref="AstronautModel"/>) is drawn and casts shadows; in first person the camera sits in
     /// the helmet and moves with the body's lean and stride. All rules come from Core (<see cref="SampleCollection"/>,
     /// <see cref="SampleSiteGenerator"/>, <see cref="Locomotion"/>).
     /// </summary>
@@ -27,6 +27,12 @@ namespace SpaceSim.Runtime
         const double BoardingDistance = 8.0;
         /// <summary>Distance of the camera behind the astronaut in the third-person view [m].</summary>
         const double ThirdPersonDistance = 3.4;
+        /// <summary>Highest point the third-person camera looks at above the feet [m] (lower for a short robot).</summary>
+        const double ThirdPersonPivotMax = 1.25;
+        /// <summary>Clearance of the third-person camera above the ground [m].</summary>
+        const double ThirdPersonClearance = 0.4;
+        /// <summary>Points checked on the line from the body to the third-person camera (a hill in between pulls it in).</summary>
+        const int ThirdPersonGroundSamples = 6;
         /// <summary>Extra field of view at full sprint [degrees].</summary>
         const float SprintFovKick = 5f;
 
@@ -56,6 +62,8 @@ namespace SpaceSim.Runtime
         bool warnedBlind;
         bool thirdPerson;
         Vector3 eyeLocal = new Vector3(0f, (float)SurfaceWalker.EyeHeight, 0f);
+        /// <summary>Height above the feet the third-person camera looks at [m]: just above the body's eye at rest.</summary>
+        double pivotHeight = ThirdPersonPivotMax;
         float baseFov = -1f, fovKick;
 
         public bool Eva => walker != null;
@@ -94,11 +102,15 @@ namespace SpaceSim.Runtime
         /// <summary>Head pitch [degrees, + up], as the right mouse button would set it.</summary>
         public void Look(float pitchDegrees) => lookPitch = Mathf.Clamp(pitchDegrees, -85f, 85f);
 
-        /// <summary>V: first person ↔ a view from behind the astronaut.</summary>
-        public void ToggleThirdPerson()
+        /// <summary>T: first person ↔ a view from behind and above the robot (or the astronaut).</summary>
+        public void ToggleThirdPerson() => SetThirdPerson(!thirdPerson);
+
+        /// <summary>Third person draws the whole body (the head too) and hides the visor overlay; first person puts the camera in the head.</summary>
+        public void SetThirdPerson(bool value)
         {
-            thirdPerson = !thirdPerson;
+            thirdPerson = value;
             if (model != null) model.SetFirstPerson(!thirdPerson);
+            if (visor != null && Eva) ApplyVisor();
         }
         public SurfaceWalker Walker => walker;
         public IReadOnlyList<SampleSite> Sites => sites;
@@ -318,6 +330,7 @@ namespace SpaceSim.Runtime
             seenImpacts = walker.Impacts;
             warnedBlind = robot.Blind;
             eyeLocal = model != null ? model.EyeLocal : new Vector3(0f, (float)SurfaceWalker.EyeHeight, 0f);
+            pivotHeight = Math.Min(ThirdPersonPivotMax, Math.Max(0.5, eyeLocal.y + 0.2));
             if (cameraController.Camera != null) baseFov = cameraController.Camera.fieldOfView;
             double g = walker.Gravity;
             string sprint = walker.CanSprint
@@ -325,7 +338,7 @@ namespace SpaceSim.Runtime
                   (double.IsPositiveInfinity(Locomotion.SprintEndurance(g)) ? Loc.T(" без усталости") : Loc.T(" на ≈ ") + UnitFormatter.Number(Locomotion.SprintEndurance(g), 0) + Loc.T(" с"))
                 : Loc.T("бег невозможен — слишком тяжело");
             state.Notify(Loc.T("Выход на поверхность: g = ") + UnitFormatter.Number(g, 2) + Loc.T(" м/с², шаг ") + UnitFormatter.Number(walker.WalkSpeed, 2) +
-                         Loc.T(" м/с, ") + sprint + Loc.T(", прыжок ≈ ") + UnitFormatter.Number(walker.JumpHeight, 2) + Loc.T(" м. E — образец/вернуться, V — вид со стороны.") +
+                         Loc.T(" м/с, ") + sprint + Loc.T(", прыжок ≈ ") + UnitFormatter.Number(walker.JumpHeight, 2) + Loc.T(" м. ") + FlightInput.KeyLabel(InputKey.E) + Loc.T(" — образец/вернуться, ") + FlightInput.KeyLabel(InputKey.T) + Loc.T(" — вид от третьего лица.") +
                          Wear());
             return "";
         }
@@ -471,7 +484,8 @@ namespace SpaceSim.Runtime
                 yaw = Mathf.Repeat(yaw + d.x * MouseSensitivity, 360f);
                 lookPitch = Mathf.Clamp(lookPitch - d.y * MouseSensitivity, -85f, 85f);
             }
-            if (FlightInput.GetKeyDown(InputKey.V)) ToggleThirdPerson();
+            // The cabin view's key: CockpitView leaves it to the robot while the camera is out here.
+            if (!FlightInput.MapOpen && FlightInput.GetKeyDown(InputKey.T)) ToggleThirdPerson();
             double forward = (FlightInput.GetKey(InputKey.W) ? 1 : 0) - (FlightInput.GetKey(InputKey.S) ? 1 : 0);
             double right = (FlightInput.GetKey(InputKey.D) ? 1 : 0) - (FlightInput.GetKey(InputKey.A) ? 1 : 0);
             bool sprint = FlightInput.GetKey(InputKey.LeftShift), jump = FlightInput.GetKeyDown(InputKey.Space) || driveJump;
@@ -515,19 +529,24 @@ namespace SpaceSim.Runtime
             float speedShare = walker.Sprinting ? Mathf.Clamp01((float)((walker.HorizontalSpeed - walker.WalkSpeed) / Math.Max(0.5, 4.5 - walker.WalkSpeed))) : 0f;
             fovKick = Mathf.Lerp(fovKick, SprintFovKick * speedShare, 1f - Mathf.Exp(-4f * dt));
             if (baseFov > 0f && cameraController.Camera != null) cameraController.Camera.fieldOfView = baseFov + fovKick;
-            if (visor != null)
-            {
-                // The view is the robot's camera in both views (the one from behind is rebuilt from it): its damage shows in each.
-                visor.Visible = true;
-                visor.Rim = !thirdPerson;
-                visor.Visor = (float)robot.Visor;
-                visor.Strain = thirdPerson ? 0f : (float)MathD.Clamp(1.0 - walker.Stamina.Fraction / 0.5, 0.0, 1.0) * 0.8f;
-            }
+            if (visor != null) ApplyVisor();
             if (statusPanel != null)
             {
                 statusPanel.Visible = true;
                 statusPanel.Environment = SurfaceEnvironment;
             }
+        }
+
+        /// <summary>
+        /// The visor overlay is the robot's own eye: drawn in first person only. From behind it is hidden, except a destroyed
+        /// visor, which stays black in either view (the picture is still rebuilt from that camera).
+        /// </summary>
+        void ApplyVisor()
+        {
+            visor.Visor = (float)robot.Visor;
+            visor.Visible = !thirdPerson || robot.Visor <= 0.0;
+            visor.Rim = !thirdPerson;
+            visor.Strain = thirdPerson || walker == null ? 0f : (float)MathD.Clamp(1.0 - walker.Stamina.Fraction / 0.5, 0.0, 1.0) * 0.8f;
         }
 
         void LateUpdate()
@@ -567,17 +586,31 @@ namespace SpaceSim.Runtime
             }
             else
             {
-                // Behind and above the astronaut, never below the ground.
-                Vector3d target = walker.Position + fixedUp * 1.25;
-                fixedEye = target - look * ThirdPersonDistance;
-                Vector3d dir = fixedEye.Normalized;
-                double floor = walker.PointOnGround(dir).Magnitude + 0.4;
-                if (fixedEye.Magnitude < floor) fixedEye = dir * floor;
+                // Behind and above the body, looking at it along the head's pitch; never below the ground.
+                Vector3d target = walker.Position + fixedUp * pivotHeight;
+                fixedEye = AboveGround(target - look * ThirdPersonDistance);
+                // A hill between the body and the camera: come in to the last clear point on the line.
+                Vector3d toEye = fixedEye - target;
+                for (int i = 1; i < ThirdPersonGroundSamples; i++)
+                {
+                    Vector3d onLine = target + toEye * ((double)i / ThirdPersonGroundSamples);
+                    if (onLine.Magnitude >= walker.PointOnGround(onLine.Normalized).Magnitude + 0.1) continue;
+                    fixedEye = AboveGround(target + toEye * (Math.Max(1, i - 1) / (double)ThirdPersonGroundSamples));
+                    break;
+                }
                 fixedForward = (target - fixedEye).Normalized;
             }
             eye = planet.Model.ToInertial(fixedEye, renderTime);
             forward = planet.Model.Rotation.FixedToInertial(fixedForward, renderTime);
             up = planet.Model.Rotation.FixedToInertial(fixedUp, renderTime);
+        }
+
+        /// <summary>A planet-fixed point raised, along its own vertical, to at least the camera clearance above the ground.</summary>
+        Vector3d AboveGround(Vector3d point)
+        {
+            Vector3d dir = point.Normalized;
+            double floor = walker.PointOnGround(dir).Magnitude + ThirdPersonClearance;
+            return point.Magnitude < floor ? dir * floor : point;
         }
 
         // ---- HUD ---------------------------------------------------------------------------------------------
@@ -609,14 +642,14 @@ namespace SpaceSim.Runtime
                                       UnitFormatter.Number(Locomotion.StepFrequency(walker.HorizontalSpeed, g), 1) + Loc.T(" шаг/с)")
                                     : "") +
                                 (model != null && Mathf.Abs(model.LeanDegrees) > 3f ? Loc.T(" · наклон ") + UnitFormatter.Number(model.LeanDegrees, 0) + "° (tg θ = a/g)" : "") +
-                                " · " + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.V) + " — " + (thirdPerson ? Loc.T("от первого лица") : Loc.T("вид со стороны")), note);
+                                " · " + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.T) + " — " + (thirdPerson ? Loc.T("от первого лица") : Loc.T("вид от третьего лица")), note);
                 if (walker.Blocked.Length > 0) GUILayout.Label(Loc.T("Стоп: ") + walker.Blocked, note);
             }
             else
             {
                 CollectionCheck exit = RobotEva.CanExit(planet.Model.Properties, planet.Definition.hazards, robot);
                 GUILayout.Label(Loc.T("ПОСАДКА · ") + Loc.T(planet.Definition.displayName), HudStyle.Title);
-                GUILayout.Label(exit.Ok ? FlightInput.KeyLabel(InputKey.E) + Loc.T(" — выйти на поверхность (") + MoveKeys() + Loc.T(" — идти, ") + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.Space) + Loc.T(" — прыжок, ПКМ — осмотреться, ") + FlightInput.KeyLabel(InputKey.V) + Loc.T(" — вид со стороны).") + Wear()
+                GUILayout.Label(exit.Ok ? FlightInput.KeyLabel(InputKey.E) + Loc.T(" — выйти на поверхность (") + MoveKeys() + Loc.T(" — идти, ") + FlightInput.KeyLabel(InputKey.LeftShift) + Loc.T(" — спринт, ") + FlightInput.KeyLabel(InputKey.Space) + Loc.T(" — прыжок, ПКМ — осмотреться, ") + FlightInput.KeyLabel(InputKey.T) + Loc.T(" — вид от третьего лица).") + Wear()
                     : Loc.T("Выход невозможен: ") + exit.Reason + " " + FlightInput.KeyLabel(InputKey.E) + Loc.T(" — манипулятор (до ") + SampleCollection.ArmReach + Loc.T(" м)."), note);
                 FindNearest(sim.LandedFixedPosition);
             }

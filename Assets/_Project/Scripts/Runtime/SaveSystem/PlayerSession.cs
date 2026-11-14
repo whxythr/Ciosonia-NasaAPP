@@ -32,12 +32,30 @@ namespace SpaceSim.Runtime
 
         string initializedPath;
 
+        /// <summary>
+        /// Set by the main menu right before it loads the flight scene: the goal the player just started ("sandbox" or a research
+        /// mission id). The next <see cref="Initialize"/> writes it into <see cref="PlayerProfile.scenarioId"/> (so the autosave
+        /// knows its goal) and clears it. Null = keep the goal stored in the profile («Продолжить», loading a save).
+        /// </summary>
+        public static string PendingScenarioId;
+
+        /// <summary>The scenario id stored in a profile, with old saves (no field) read as the sandbox.</summary>
+        public static string ScenarioOf(PlayerProfile p) =>
+            p == null || string.IsNullOrEmpty(p.scenarioId) ? SandboxScenarioId : p.scenarioId;
+
+        public const string SandboxScenarioId = "sandbox";
+
         public void Initialize(string homeBodyId)
         {
             initializedPath = SavePath;
             Profile = Load(homeBodyId, out string message, out bool readOnly);
             LoadMessage = message;
             ReadOnly = readOnly;
+            if (PendingScenarioId != null)
+            {
+                Profile.scenarioId = PendingScenarioId;
+                PendingScenarioId = null;
+            }
             // Every scene starts with a fresh rocket on the pad: a flight left in the air last time is over.
             if (Profile.crew != null) SpaceSim.Crew.CrewRoster.EndFlight(Profile.crew);
             if (!readOnly) Save();

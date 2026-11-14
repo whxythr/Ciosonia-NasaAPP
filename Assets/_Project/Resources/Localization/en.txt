@@ -346,7 +346,6 @@ v∞ отлёта / прибытия	Departure / arrival v∞
 Вы в космосе! Открыта звёздная система	You are in space! Star system unlocked
 карта системы	system map
 метки тел	body markers
-перелёт к другому телу	travel to another body
 Новая заправленная ракета на стартовой площадке	New fuelled rocket on the launch pad
 показать приборы	show instruments
 АНАЛИЗ ОРБИТЫ НЕДОСТУПЕН	ORBIT ANALYSIS UNAVAILABLE
@@ -367,7 +366,6 @@ v∞ отлёта / прибытия	Departure / arrival v∞
 новая ракета	new rocket
 карта	map
 метки	markers
-к другому телу	to another body
 Академия	Academy
 навигация	navigation
 орбита	orbit
@@ -801,7 +799,6 @@ Esc — отмена	Esc to cancel
 Скрыть / показать приборы	Hide / show instruments
 Схема системы (2D	System map
 Метки тел	Body markers
-Перелёт к другому телу	Travel to another body
 Анализ орбиты	Orbit analysis
 Единицы измерения	Units
 Новая ракета на площадке	New rocket on the pad
@@ -2521,7 +2518,7 @@ Ar ≈ 90 %, Ne ≈ 6 %, He ≈ 4 % (давление не задано — до
 Золин (Tholin	Tholin
 Еремус (Eremus	Eremus
 Пятая планета, создана для отработки марсианских миссий. Половина поверхности — озёра жидкого углекислого газа. Северное полушарие покрыто красной пылью — золином (сложные органические полимеры, как на Хароне), южное — льдом из-за наклона оси. 1.56 M⊕, g = 11.9 м/с², 37.8 °C, сутки 1.75 земных, год 182 дня	The fifth planet, made for rehearsing Mars missions. Half of the surface is lakes of liquid carbon dioxide. The northern hemisphere is covered with red dust — tholin (complex organic polymers, as on Charon); the southern one with ice because of the axial tilt. 1.56 M⊕, g = 11.9 m/s², 37.8 °C, day 1.75 Earth days, year 182 days
-Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, из них 7 крупных (пока не добавлены). Твёрдой поверхности нет: «площадка» — на уровне облаков	The sixth planet, the only gas giant — a mega-Jupiter and the largest object in the system. Orange, made mostly of hydrogen and helium. 864 M⊕, 12.9 R⊕, g = 50.8 m/s², −63.6 °C at the 1-bar level, day 0.329 Earth days, year 664 days, polar flattening 3.98 %. 17 moons, 7 of them major (not added yet). There is no solid surface: the “pad” is at the cloud tops
+Шестая планета, единственный газовый гигант — мегаюпитер и самый большой объект системы. Оранжевый, состоит преимущественно из водорода и гелия. 864 M⊕, 12.9 R⊕, g = 50.8 м/с², −63.6 °C на уровне 1 бар, сутки 0.329 земных, год 664 дня, полярное сжатие 3.98 %. 17 спутников, крупные из них: Ори, Оин, Бифур, Невермор, Двалин, Балин, Колосс и Гандальф. Твёрдой поверхности нет: «площадка» — на уровне облаков	The sixth planet, the only gas giant — a mega-Jupiter and the largest object in the system. Orange, made mostly of hydrogen and helium. 864 M⊕, 12.9 R⊕, g = 50.8 m/s², −63.6 °C at the 1-bar level, day 0.329 Earth days, year 664 days, polar flattening 3.98 %. 17 moons, the major ones: Ori, Oin, Bifur, Nevermour, Dwalin, Balin, Coloss and Gandalf. There is no solid surface: the “pad” is at the cloud tops
 CO₂ ≈ 95 %, N₂ ≈ 3 %, Ar ≈ 2 % (давление не задано — допущение 60 бар, чтобы CO₂ мог быть жидким	CO₂ ≈ 95 %, N₂ ≈ 3 %, Ar ≈ 2 % (pressure not specified — assumed 60 bar so that CO₂ can be liquid
 H₂ ≈ 86 %, He ≈ 13.6 %, CH₄, NH₃ (как у Юпитера: состав не задан	H₂ ≈ 86 %, He ≈ 13.6 %, CH₄, NH₃ (like Jupiter: composition not specified
 Жидкий CO₂ из озера	Liquid CO₂ from a lake
@@ -2562,3 +2559,67 @@ C — робот перегреется (предел	C — the robot will overh
 Химзащита	Chemical protection
 химзащита разрушена	chemical protection destroyed
 электроника робота откажет	the robot's electronics would fail
+образец/вернуться	sample/return
+вид от третьего лица	third person view
+Вид из кабины / снаружи · робот: 1-е / 3-е лицо	Cabin view / outside · robot: 1st / 3rd person
+Цель миссии	Mission goal
+НЕТ АВТОСОХРАНЕНИЯ	NO AUTOSAVE
+Песочница	Sandbox
+ПРОДОЛЖЕНИЕ ИГРЫ	RESUMING GAME
+НОВАЯ МИССИЯ	NEW MISSION
+КОСМИЧЕСКАЯ ПРОГРАММА	SPACE PROGRAMME
+ЗАГРУЗКА СЦЕНЫ	LOADING SCENE
+ПОДГОТОВКА СТАРТОВОГО КОМПЛЕКСА	PREPARING THE LAUNCH COMPLEX
+ГЕНЕРАЦИЯ ПОВЕРХНОСТИ	GENERATING THE SURFACE
+ГОТОВО	READY
+Совет: Esc в полёте открывает меню паузы — там же сохранение игры и настройки	Tip: in flight, Esc opens the pause menu — saving and settings are there too
+Совет: Tab открывает экран экипажа	Tip: Tab opens the crew screen
+Совет: чем выше орбита, тем больше видно — но тем дороже до неё долететь	Tip: the higher the orbit, the more you see — but the more it costs to get there
+Совет: следите за запасом топлива ступени — пустая ступень только мешает	Tip: watch each stage's fuel — an empty stage is just dead weight
+Совет: на высоте плотность атмосферы падает, а с ней и сопротивление	Tip: air density drops with altitude, and drag drops with it
+Совет: образцы продаются только после доставки на стартовую планету	Tip: samples can only be sold once delivered to the home planet
+Люмини A (Lumini A	Lumini A
+Циосония (Ciosonia	Ciosonia
+Эгида (Aegis	Aegis
+Лин (Lin	Lin
+Тиафо (Tiafoe	Tiafoe
+Внутренний и крупнейший спутник Золина. Тёмный серо-коричневый, без атмосферы, весь в кратерах, приливно захвачен. Параметры не заданы — оценка: R ≈ 310 км, ρ ≈ 2600 кг/м³, орбита ≈ 62 000 км	Tholin's inner and largest moon. Dark grey-brown, airless, covered in craters, tidally locked. Parameters not specified — estimate: R ≈ 310 km, ρ ≈ 2600 kg/m³, orbit ≈ 62,000 km
+Внешний малый спутник Золина неправильной формы, рыхлая груда обломков, покрытая красноватой толиновой пылью с планеты. Приливно захвачен. Параметры не заданы — оценка: R ≈ 95 км, ρ ≈ 1900 кг/м³, орбита ≈ 165 000 км	Tholin's small, irregular outer moon: a loose rubble pile covered in reddish tholin dust from the planet. Tidally locked. Parameters not specified — estimate: R ≈ 95 km, ρ ≈ 1900 kg/m³, orbit ≈ 165,000 km
+Ори (Ori	Ori
+Оин (Oin	Oin
+Бифур (Bifur	Bifur
+Невермор (Nevermour	Nevermour
+Двалин (Dwalin	Dwalin
+Балин (Balin	Balin
+Колосс (Coloss	Coloss
+Гандальф (Gandalf	Gandalf
+Ближайший к Еремусу крупный спутник, внутри его радиационных поясов. Бледно-персиковый: бугристые нагорья, изрытые мелкими кратерами, и гладкие светлые равнины. Приливно захвачен, без атмосферы. −135 °C, g = 0.258 м/с², сутки = обращение = 0.474 земных	The closest major moon of Eremus, inside its radiation belts. Pale peach: knobbly highlands pitted with small craters, and smooth light plains. Tidally locked, no atmosphere. −135 °C, g = 0.258 m/s², day = orbit = 0.474 Earth days
+Второй спутник Еремуса. Ржаво-красный, поверхность изрезана грядами и разломами, на одном краю — поле тёмных ям. Приливно захвачен, без атмосферы, в радиационных поясах. −139 °C, g = 0.439 м/с², сутки = обращение = 0.711 земных	The second moon of Eremus. Rust-red, its surface cut by ridges and faults, with a field of dark pits on one limb. Tidally locked, no atmosphere, inside the radiation belts. −139 °C, g = 0.439 m/s², day = orbit = 0.711 Earth days
+Третий спутник Еремуса. Светло-кремовый, весь изрыт мелкими кратерами; у экватора — более гладкий пояс. Приливно захвачен, без атмосферы, в радиационных поясах. −148 °C, g = 0.332 м/с², сутки = обращение = 0.95 земных	The third moon of Eremus. Light cream, pitted all over by small craters; a smoother belt along the equator. Tidally locked, no atmosphere, inside the radiation belts. −148 °C, g = 0.332 m/s², day = orbit = 0.95 Earth days
+Четвёртый спутник Еремуса. Оранжевый, с большим тёмным гладким «морем» и пятнистыми неровными нагорьями. Приливно захвачен, без атмосферы, в радиационных поясах. Полярное сжатие 0.131 % (не моделируется). −155 °C, g = 0.582 м/с², сутки = обращение = 1.35 земных	The fourth moon of Eremus. Orange, with a large dark smooth “sea” and mottled rough highlands. Tidally locked, no atmosphere, inside the radiation belts. Polar flattening 0.131 % (not modelled). −155 °C, g = 0.582 m/s², day = orbit = 1.35 Earth days
+Пятый спутник Еремуса. Гладкий, бледно-персиковый, почти без кратеров, с едва заметными трещинами. Приливно захвачен, без атмосферы, в радиационных поясах. −152 °C, g = 1.36 м/с², сутки = обращение = 2.40 земных	The fifth moon of Eremus. Smooth, pale peach, almost without craters, with barely visible cracks. Tidally locked, no atmosphere, inside the radiation belts. −152 °C, g = 1.36 m/s², day = orbit = 2.40 Earth days
+Шестой спутник Еремуса и самый тёплый из них (−102 °C). Персиковые равнины в светлых пятнах инея; на юге — чёрное поле застывшей лавы (допущение: приливный разогрев недр). Приливно захвачен, без атмосферы, на краю радиационных поясов. g = 1.55 м/с², сутки = обращение = 3.73 земных	The sixth moon of Eremus and the warmest of them (−102 °C). Peach plains with bright frost spots; in the south, a black field of solidified lava (assumption: tidal heating of the interior). Tidally locked, no atmosphere, at the edge of the radiation belts. g = 1.55 m/s², day = orbit = 3.73 Earth days
+Седьмой и самый большой спутник Еремуса (0.24 M⊕, g = 5.16 м/с²) — аналог Титана. При −179 °C «океан» не может быть водой: это моря жидкого метана и этана под азотной атмосферой (давление не задано — допущение 1.5 бар); бирюзовый цвет — метан поглощает красный свет. Суша — лёд и порода под рыжеватыми органическими осадками, облака — метановые. Приливно захвачен, сутки = обращение = 9.42 земных	The seventh and largest moon of Eremus (0.24 M⊕, g = 5.16 m/s²) — a Titan analogue. At −179 °C the “ocean” cannot be water: these are seas of liquid methane and ethane under a nitrogen atmosphere (pressure not specified — assumed 1.5 bar); the teal colour comes from methane absorbing red light. The land is ice and rock under reddish organic sediment, the clouds are methane. Tidally locked, day = orbit = 9.42 Earth days
+Восьмой, самый далёкий крупный спутник Еремуса. Жёлто-зелёный с лососевыми оттенками, усыпан светлыми круглыми пятнами. Единственный не захваченный приливом: сутки 0.481 земных, обращение 12.4 суток; самая наклонная (8.14°) и вытянутая орбита. Полярное сжатие 0.685 % (не моделируется). −189 °C — холоднее предела скафандра, g = 0.798 м/с². Масса в данных — опечатка; принята 2.75·10²¹ кг (из g и ρ	The eighth and most distant major moon of Eremus. Yellow-green with salmon tints, dotted with bright round spots. The only one not tidally locked: day 0.481 Earth days, orbit 12.4 days; the most inclined (8.14°) and most elongated orbit. Polar flattening 0.685 % (not modelled). −189 °C — colder than the suit limit, g = 0.798 m/s². The mass in the data is a typo; 2.75·10²¹ kg is assumed (from g and ρ
+N₂ ≈ 95 %, CH₄ ≈ 5 % (давление и состав не заданы — допущение: как у Титана, 1.5 бар	N₂ ≈ 95 %, CH₄ ≈ 5 % (pressure and composition not specified — assumed Titan-like, 1.5 bar
+Бугристая порода нагорий	Knobbly highland rock
+Персиковый реголит	Peach regolith
+Порода гряд	Ridge rock
+Порода со дна тёмной ямы	Rock from the floor of a dark pit
+Ударная брекчия	Impact breccia
+Кремовый реголит	Cream regolith
+Оранжевый реголит	Orange regolith
+Порода из трещины	Rock from a crack
+Бледный реголит	Pale regolith
+Застывшая базальтовая лава	Solidified basalt lava
+Вулканическое стекло	Volcanic glass
+Водяной иней светлых пятен	Water frost from the bright spots
+Жидкий метан и этан из моря	Liquid methane and ethane from a sea
+Водяной лёд коренной породы	Water-ice bedrock
+Ледяная галька	Ice pebbles
+Эвапорит берегов (бензол, бутан	Shoreline evaporite (benzene, butane
+Органические осадки	Organic sediment
+Сложная органика из осадков	Complex organics from the sediment
+Зеленоватая порода	Greenish rock
+Жёлто-зелёный реголит	Yellow-green regolith
+Иней CO₂ светлых пятен	CO₂ frost from the bright spots
