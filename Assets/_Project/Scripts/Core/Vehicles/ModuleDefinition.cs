@@ -203,6 +203,11 @@ namespace SpaceSim.Vehicles
         public int price;
         /// <summary>Not available until bought in the shop.</summary>
         public bool requiresPurchase;
+        /// <summary>
+        /// Career technology tier 0..4 (see SpaceSim.Economy.TechTree). −1 = not set here: <see cref="ModuleCatalog"/> fills it
+        /// from its career table or derives it from the module's data (ModuleCatalog.Career.cs).
+        /// </summary>
+        public int techTier = -1;
 
         // Cabin
         public CabinKind cabinKind;

@@ -51,7 +51,7 @@ namespace SpaceSim.Runtime
                          N(p.TwrAfter, 2) + Loc.T(" · масса ") + Mass(p.MassAfter);
             string hint = CardHint(m, locked, stage);
             string price = Loc.T("Цена: ") + Price(m.price) +
-                           (locked ? Loc.T(" · не куплено") : m.requiresPurchase ? Loc.T(" · куплено") : "");
+                           (locked ? LockNote(m) : IsCareer ? Loc.T(" · куплено") : "");
             int count = CountOnRocket(m.id);
             if (count > 0) price += Loc.T(" · на ракете: ") + count + Loc.T(" шт.");
 
@@ -135,7 +135,7 @@ namespace SpaceSim.Runtime
         {
             string click = HudStyle.KeyText(Loc.T("Клик"));
             string drag = HudStyle.KeyText(Loc.T("перетащите"));
-            if (locked) return click + Loc.T(" — открыть магазин (") + FlightInput.KeyLabel(InputKey.K) + Loc.T("): деталь ещё не куплена.");
+            if (locked) return click + Loc.T(" — открыть магазин (") + FlightInput.KeyLabel(InputKey.K) + "): " + LockHint(m);
             if (m.mount == ModuleMount.Payload)
                 return click + (m.IsWrap ? Loc.T(" — обернуть зонд защитным слоем") : Loc.T(" — установить в головной отсек")) +
                        Loc.T(", или ") + drag + Loc.T(" на ракету.");

@@ -129,6 +129,41 @@ namespace SpaceSim.Runtime
             return m;
         }
 
+        /// <summary>Sandbox or Career of the loaded save (fixed for the save's lifetime).</summary>
+        public GameMode Mode => Profile != null ? Profile.gameMode : GameMode.Sandbox;
+
+        /// <summary>
+        /// Public income API for other systems (science instruments, contracts): adds credits with a reason, logs it in the ledger
+        /// and saves. False for a non-positive amount. Core equivalent: <see cref="PlayerProfile.AwardFunds"/>.
+        /// </summary>
+        public bool AwardFunds(int amount, string reason)
+        {
+            if (Profile == null || !Profile.AwardFunds(amount, reason)) return false;
+            Commit();
+            return true;
+        }
+
+        /// <summary>Adds research points with a reason (science results) and saves. Core: <see cref="PlayerProfile.AwardScience"/>.</summary>
+        public bool AwardScience(double points, string reason)
+        {
+            if (Profile == null || !Profile.AwardScience(points, reason)) return false;
+            Commit();
+            return true;
+        }
+
+        /// <summary>Career: opens a technology tier for research points (<see cref="TechTree.TryUnlock"/>) and saves.</summary>
+        public PurchaseResult UnlockTier(int tier, out string message)
+        {
+            if (ReadOnly)
+            {
+                message = Loc.T("Профиль только для чтения (сохранение от более новой версии игры) — покупки недоступны.");
+                return PurchaseResult.ReadOnlyProfile;
+            }
+            PurchaseResult r = TechTree.TryUnlock(Profile, tier, out message);
+            if (r == PurchaseResult.Success) Commit();
+            return r;
+        }
+
         public void SetBlueprint(RocketBlueprint design)
         {
             if (design == null) return;

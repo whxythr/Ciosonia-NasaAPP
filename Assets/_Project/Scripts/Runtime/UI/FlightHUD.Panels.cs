@@ -126,6 +126,7 @@ namespace SpaceSim.Runtime
                 int aboard = SpaceSim.Crew.CrewRoster.Aboard(session.Profile.crew).Count;
                 s.Rows.Add(new KeyValuePair<string, string>(Loc.T("Экипаж на борту"), aboard > 0 ? aboard.ToString() : Loc.T("нет")));
                 s.Rows.Add(new KeyValuePair<string, string>(Loc.T("Исследования"), UnitFormatter.Number(session.Profile.researchPoints, 0) + Loc.T(" очк.")));
+                s.Rows.Add(new KeyValuePair<string, string>(Loc.T("Режим"), GameModeRules.Name(session.Profile.gameMode)));
                 s.Rows.Add(new KeyValuePair<string, string>(Loc.T("Кредиты"), UnitFormatter.Number(session.Profile.credits, 0) + Loc.T(" кр")));
                 foreach (MilestoneDefinition m in ResearchMilestones.All)
                     s.Goals.Add(new KeyValuePair<string, bool>(m.Name, session.Profile.HasMilestone(m.Id)));
@@ -346,7 +347,7 @@ namespace SpaceSim.Runtime
                 y += 20f;
             }
             // Economy and view settings: small, they rarely matter mid-flight.
-            string money = session != null ? Loc.T("КРЕДИТЫ ") + UnitFormatter.Number(session.Profile.credits, 0) + Loc.T("  ·  ИССЛ. ") +
+            string money = session != null ? GameModeRules.Name(session.Profile.gameMode).ToUpperInvariant() + "  ·  " + Loc.T("КРЕДИТЫ ") + UnitFormatter.Number(session.Profile.credits, 0) + Loc.T("  ·  ИССЛ. ") +
                                              UnitFormatter.Number(session.Profile.researchPoints, 0) : "";
             GUI.Label(new Rect(right - 600f, y + 4f, 600f, 14f), money, HudStyle.Style(Face.Mono, 10, HudStyle.TextMuted, TextAnchor.MiddleRight));
             string cam = (cameraController.Focus == SpaceCameraController.FocusTarget.Planet ? Loc.T("камера: планета") : Loc.T("камера: аппарат")) +

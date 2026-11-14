@@ -158,7 +158,7 @@ namespace SpaceSim.Tests
 
             b = RocketBlueprint.CreateDefault();
             b.stages[0].tanks.Add(new TankLoad { moduleId = ModuleCatalog.TankK140, propellantLoaded = 140000 });
-            var locked = BlueprintCompiler.Compile(b, id => false);
+            var locked = BlueprintCompiler.Compile(b, id => id != ModuleCatalog.TankK140); // only the new tank is not owned
             Assert.IsTrue(locked.Issues.Exists(i => i.Code == BlueprintIssueCode.LockedModule));
             Assert.AreEqual(300000.0, locked.Configuration.stages[0].propellantMass, "unbought tank not installed");
             var owned = BlueprintCompiler.Compile(b, id => true);

@@ -177,7 +177,7 @@ namespace SpaceSim.Runtime
             {
                 sb.Append(id);
                 ModuleDefinition m = ModuleCatalog.Find(id);
-                if (m != null && m.requiresPurchase) sb.Append(body.OwnsModule(id) ? "+" : "-");
+                if (m != null) sb.Append(body.OwnsModule(id) ? "+" : "-"); // any part can be locked in a Career
                 sb.Append(',');
             }
             foreach (StageBlueprint s in design.stages)

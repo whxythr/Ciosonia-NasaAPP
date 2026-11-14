@@ -126,7 +126,7 @@ namespace SpaceSim.Rover
             {
                 ModuleDefinition m = ModuleCatalog.Find(id);
                 if (m == null || m.mechanismKind != MechanismKind.Drill) continue;
-                if (m.requiresPurchase && isUnlocked != null && !isUnlocked(m.id)) continue;
+                if (isUnlocked != null && !isUnlocked(m.id)) continue;
                 p = Math.Max(p, m.powerDraw);
             }
             return p;

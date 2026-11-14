@@ -72,6 +72,9 @@ namespace SpaceSim.Crew
     {
         public const int MaxLevel = 5;
         public const int HireCost = 3000;
+
+        /// <summary>What hiring costs this profile: <see cref="HireCost"/> in a Career, nothing in Sandbox.</summary>
+        public static int HireCostFor(PlayerProfile profile) => profile != null && profile.IsCareer ? HireCost : 0;
         /// <summary>Main-skill gain of one finished training course.</summary>
         public const int TrainingGain = 6;
 
@@ -229,12 +232,12 @@ namespace SpaceSim.Crew
                 reason = "not an applicant";
                 return false;
             }
-            if (profile.credits < HireCost)
+            if (profile.IsCareer && profile.credits < HireCost)
             {
                 reason = "not enough credits";
                 return false;
             }
-            profile.credits -= HireCost;
+            if (profile.IsCareer) profile.credits -= HireCost; // Sandbox: no money checks
             m.status = CrewStatus.Available;
             reason = "";
             return true;

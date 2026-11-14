@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SpaceSim.Localization;
 using SpaceSim.Units;
 using SpaceSim.Vehicles;
 
@@ -67,6 +68,17 @@ namespace SpaceSim.Economy
         public bool HasSolved(string exerciseId) => solvedExercises.Contains(exerciseId);
     }
 
+    /// <summary>One line of the money/research history (newest last; the profile keeps the last <see cref="PlayerProfile.LedgerSize"/>).</summary>
+    [Serializable]
+    public class LedgerEntry
+    {
+        public string reason = "";
+        /// <summary>Credits gained (+) or spent (−).</summary>
+        public int credits;
+        /// <summary>Research points gained (+) or spent (−).</summary>
+        public double research;
+    }
+
     /// <summary>
     /// Everything that persists between game sessions (no transient physics state). Versioned: see
     /// <see cref="ProfileMigration"/>. Plain serializable data — the Runtime layer writes it as JSON.
@@ -74,10 +86,21 @@ namespace SpaceSim.Economy
     [Serializable]
     public class PlayerProfile
     {
-        public const int CurrentVersion = 1;
+        /// <summary>v2: game mode, career tiers, ledger.</summary>
+        public const int CurrentVersion = 2;
         public const int StartingCredits = 10000;
+        public const int LedgerSize = 40;
 
         public int version = CurrentVersion;
+        /// <summary>
+        /// Sandbox or Career: set by <see cref="CreateNew(string, GameMode)"/> and never changed afterwards (no setter API).
+        /// A file without the field (v1 and older) loads as Sandbox — see <see cref="ProfileMigration"/>.
+        /// </summary>
+        public GameMode gameMode = GameMode.Sandbox;
+        /// <summary>Career technology tiers opened (tier 0 is always open and not listed).</summary>
+        public List<int> unlockedTiers = new List<int>();
+        /// <summary>Recent income and spending (shop «Финансы»).</summary>
+        public List<LedgerEntry> ledger = new List<LedgerEntry>();
         public int credits = StartingCredits;
         public double researchPoints;
         /// <summary>Purchased module ids (free modules are always available).</summary>
@@ -103,24 +126,77 @@ namespace SpaceSim.Economy
         /// <summary>Orbital science maps (scanned cells and measured values per body). Additive: older saves simply lack it.</summary>
         public SpaceSim.Science.ScienceArchive science = new SpaceSim.Science.ScienceArchive();
 
-        public static PlayerProfile CreateNew(string homeBodyId)
+        /// <summary>A new Sandbox profile (also what the flight scene creates when there is no save at all).</summary>
+        public static PlayerProfile CreateNew(string homeBodyId) => CreateNew(homeBodyId, GameMode.Sandbox);
+
+        /// <summary>A new profile in the given mode. Career: <see cref="GameModeRules.CareerStartingCredits"/> and the starter kit owned.</summary>
+        public static PlayerProfile CreateNew(string homeBodyId, GameMode mode)
         {
-            var p = new PlayerProfile();
+            var p = new PlayerProfile { gameMode = mode };
             if (!string.IsNullOrEmpty(homeBodyId))
             {
                 p.visitedBodies.Add(homeBodyId);
                 p.unlockedBodies.Add(homeBodyId);
             }
+            if (mode == GameMode.Career)
+            {
+                p.credits = GameModeRules.CareerStartingCredits;
+                foreach (string id in ModuleCatalog.CareerStarterKit) p.ownedModules.Add(id);
+                p.Record(Loc.T("Стартовый бюджет карьеры"), p.credits, 0.0);
+            }
             SpaceSim.Crew.CrewRoster.EnsureRoster(p.crew);
             return p;
         }
 
-        /// <summary>True if the module may be used: free modules always, shop modules once bought.</summary>
+        public bool IsCareer => gameMode == GameMode.Career;
+        public bool IsSandbox => gameMode != GameMode.Career;
+
+        /// <summary>
+        /// True if the module may be used. Sandbox: every catalog module. Career: only modules the player owns (the starter kit and
+        /// purchases; a purchase needs its tier open).
+        /// </summary>
         public bool Owns(string moduleId)
         {
             ModuleDefinition m = ModuleCatalog.Find(moduleId);
             if (m == null) return false;
-            return !m.requiresPurchase || ownedModules.Contains(moduleId);
+            if (!IsCareer) return true;
+            return ownedModules.Contains(moduleId);
+        }
+
+        /// <summary>Career: the module's technology tier is open (always true in Sandbox).</summary>
+        public bool TierUnlockedFor(string moduleId) => TechTree.IsUnlocked(this, ModuleCatalog.TierOf(moduleId));
+
+        // ───────────── public income API (milestones, market, science instruments, future contracts) ─────────────
+
+        /// <summary>
+        /// Adds credits from any source (science results, contracts, rewards) and logs <paramref name="reason"/> in the ledger.
+        /// Counts toward <see cref="lifetimeEarnings"/>. Works in both modes (Sandbox simply never needs the money).
+        /// False (nothing changes) for a non-positive amount. The Runtime wrapper that also saves is PlayerSession.AwardFunds.
+        /// </summary>
+        public bool AwardFunds(int amount, string reason) => Award(amount, 0.0, reason);
+
+        /// <summary>Adds research points (science) and logs the reason. False for a non-positive or invalid amount.</summary>
+        public bool AwardScience(double points, string reason) => Award(0, points, reason);
+
+        /// <summary>Credits and/or research points for one reason (one ledger line). Negative or invalid parts are ignored.</summary>
+        public bool Award(int funds, double science, string reason)
+        {
+            if (funds < 0) funds = 0;
+            if (!(science > 0.0) || double.IsInfinity(science)) science = 0.0;
+            if (funds == 0 && science == 0.0) return false;
+            credits += funds;
+            lifetimeEarnings += funds;
+            researchPoints += science;
+            Record(reason, funds, science);
+            return true;
+        }
+
+        /// <summary>Appends a ledger line (keeps the last <see cref="LedgerSize"/>).</summary>
+        public void Record(string reason, int creditsDelta, double researchDelta)
+        {
+            if (ledger == null) ledger = new List<LedgerEntry>();
+            ledger.Add(new LedgerEntry { reason = reason ?? "", credits = creditsDelta, research = researchDelta });
+            if (ledger.Count > LedgerSize) ledger.RemoveRange(0, ledger.Count - LedgerSize);
         }
 
         public bool HasMilestone(string id) => achievedMilestones.Contains(id);
@@ -167,12 +243,7 @@ namespace SpaceSim.Economy
         /// <summary>The rocket was lost or replaced: undelivered samples are gone (their sites stay taken). Returns how many.</summary>
         public int LoseCargo() => samples.RemoveAll(s => !s.delivered);
 
-        internal void Earn(int amount)
-        {
-            if (amount <= 0) return;
-            credits += amount;
-            lifetimeEarnings += amount;
-        }
+        internal void Earn(int amount, string reason = "") => AwardFunds(amount, reason);
     }
 
     public enum MigrationResult
@@ -196,6 +267,23 @@ namespace SpaceSim.Economy
                 p.version = 1;
                 changed = true;
             }
+            if (p.version < 2)
+            {
+                // v1 → v2: game modes. A v1 file has no gameMode, so JsonUtility leaves the default Sandbox. Its credits and
+                // ownedModules come from the old hybrid economy where almost every part was free: turning it into a Career would
+                // take away parts the player was flying with, so it stays Sandbox (credits, purchases and milestones are kept).
+                p.version = 2;
+                changed = true;
+            }
+            if (!Enum.IsDefined(typeof(GameMode), p.gameMode))
+            {
+                // A damaged / hand-edited value never turns into a free-for-all: the stricter mode wins.
+                p.gameMode = GameMode.Career;
+                changed = true;
+            }
+            if (p.unlockedTiers == null) { p.unlockedTiers = new List<int>(); changed = true; }
+            if (p.ledger == null) { p.ledger = new List<LedgerEntry>(); changed = true; }
+            if (p.unlockedTiers.RemoveAll(t => t <= 0 || t > TechTree.MaxTier) > 0) changed = true;
             if (p.ownedModules == null) { p.ownedModules = new List<string>(); changed = true; }
             if (p.samples == null) { p.samples = new List<SampleRecord>(); changed = true; }
             if (p.visitedBodies == null) { p.visitedBodies = new List<string>(); changed = true; }
