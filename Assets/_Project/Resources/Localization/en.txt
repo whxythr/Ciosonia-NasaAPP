@@ -2803,3 +2803,6 @@ Z радиально	Z radial
 Фазовый угол: нужен / сейчас	Phase angle: required / now
 Щёлкните по траектории: точка для ускорения времени или узла манёвра	Click the trajectory: a point to warp to or to place a manoeuvre node
 Эта точка уже пройдена	This point has already been passed
+Орбитальное картирование	Orbital mapping
+Наука: картирование	Science: mapping
+Карьера: мгновенный манёвр недоступен — выполните его двигателем	Career: the instant manoeuvre is not available — perform it with the engine

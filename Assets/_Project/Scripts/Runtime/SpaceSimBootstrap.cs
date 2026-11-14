@@ -140,6 +140,7 @@ namespace SpaceSim.Runtime
             // Science instruments and the science map (outside the flight stack: maps survive body switches).
             Science = Create<ScienceSession>("Science");
             Science.Initialize(Session, System);
+            Science.Notify = text => { if (FlightState != null) FlightState.Notify(text); }; // career mapping rewards
             ScienceMap = Science.gameObject.AddComponent<ScienceMapUI>();
             ScienceMap.Initialize(Science, System);
 

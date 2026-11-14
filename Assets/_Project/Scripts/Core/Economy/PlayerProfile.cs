@@ -125,6 +125,11 @@ namespace SpaceSim.Economy
         public double playSeconds;
         /// <summary>Orbital science maps (scanned cells and measured values per body). Additive: older saves simply lack it.</summary>
         public SpaceSim.Science.ScienceArchive science = new SpaceSim.Science.ScienceArchive();
+        /// <summary>
+        /// Career: the share of each body/layer map already paid for (<see cref="SpaceSim.Science.ScienceRewards"/>), saved with the
+        /// maps so a reload never pays twice. Additive: older saves simply lack it.
+        /// </summary>
+        public List<SpaceSim.Science.ScienceRewardRecord> scienceRewards = new List<SpaceSim.Science.ScienceRewardRecord>();
 
         /// <summary>A new Sandbox profile (also what the flight scene creates when there is no save at all).</summary>
         public static PlayerProfile CreateNew(string homeBodyId) => CreateNew(homeBodyId, GameMode.Sandbox);
@@ -283,6 +288,8 @@ namespace SpaceSim.Economy
             }
             if (p.unlockedTiers == null) { p.unlockedTiers = new List<int>(); changed = true; }
             if (p.ledger == null) { p.ledger = new List<LedgerEntry>(); changed = true; }
+            if (p.science == null) { p.science = new SpaceSim.Science.ScienceArchive(); changed = true; }
+            if (p.scienceRewards == null) { p.scienceRewards = new List<SpaceSim.Science.ScienceRewardRecord>(); changed = true; }
             if (p.unlockedTiers.RemoveAll(t => t <= 0 || t > TechTree.MaxTier) > 0) changed = true;
             if (p.ownedModules == null) { p.ownedModules = new List<string>(); changed = true; }
             if (p.samples == null) { p.samples = new List<SampleRecord>(); changed = true; }

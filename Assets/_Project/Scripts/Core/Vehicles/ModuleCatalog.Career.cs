@@ -42,6 +42,7 @@ namespace SpaceSim.Vehicles
             { Seismometer, 2 }, { AcidCoating, 2 }, { CollectorAdvanced, 2 }, { LegsHeavy, 2 }, { HeatShieldHeavy, 2 },
             { BatteryLarge, 2 }, { StarTracker, 2 }, { DishLarge, 2 }, { Relay, 2 }, { WheelSmall, 2 }, { RoverChassis, 2 },
             { RoverDrive, 2 }, { DrillSmall, 2 }, { Manipulator, 2 }, { Cargo40, 2 },
+            { TemperatureRadar, 2 }, { PressureRadar, 2 }, { TerrainScanner, 2 }, // orbital mapping needs an orbit first
             // Tier 3 — interplanetary (milestone: escape the home planet)
             { EngineNuclearSmall, 3 }, { TankHydrogen8, 3 }, { EngineHall, 3 }, { EngineIon, 3 }, { TankXenon1, 3 }, { TankXenon8, 3 },
             { RadiationShieldHeavy, 3 }, { Rtg, 3 }, { SolarLarge, 3 }, { WheelLarge, 3 }, { DrillLarge, 3 }, { CargoPressurized20, 3 },

@@ -1187,8 +1187,11 @@ namespace SpaceSim.Runtime
                 y += 30f;
                 if (GUI.Button(new Rect(x, y, w, 26f), Loc.T("ВЫПОЛНИТЬ С ПОМОЩНИКОМ (ДВИГАТЕЛЬ)"), HudStyle.Primary)) m.StartAssistedBurn();
                 y += 30f;
-                if (GUI.Button(new Rect(x, y, w, 24f), Loc.T("МГНОВЕННО — ПЕСОЧНИЦА / ЧИТ (без топлива)"), HudStyle.Button)) m.StartInstantSandbox();
-                y += 28f;
+                if (m.InstantBurnAllowed) // Sandbox only: a Career pays for its Δv
+                {
+                    if (GUI.Button(new Rect(x, y, w, 24f), Loc.T("МГНОВЕННО — ПЕСОЧНИЦА / ЧИТ (без топлива)"), HudStyle.Button)) m.StartInstantSandbox();
+                    y += 28f;
+                }
                 GUI.Label(new Rect(x, y, w, 44f), Loc.T("Вручную: развернитесь на тангаж ") + SpaceSim.Units.UnitFormatter.Number(g.Pitch, 1) + Loc.T("°, курс ") +
                     SpaceSim.Units.UnitFormatter.Number(g.Heading, 1) + Loc.T("° и включите двигатель за половину прожига до узла; остаток Δv — в HUD."), HudStyle.Small);
                 y += 46f;

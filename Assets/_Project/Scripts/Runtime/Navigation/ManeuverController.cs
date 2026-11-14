@@ -398,10 +398,21 @@ namespace SpaceSim.Runtime
             Notify(Loc.T("Помощник: разворот к узлу манёвра; двигатель включится за половину прожига до узла."));
         }
 
+        /// <summary>
+        /// The instant (propellant-free) manoeuvre is a Sandbox tool: hidden and refused in a Career, where Δv must be paid for.
+        /// (In Sandbox it still marks the flight as test-tool use, like the initial-conditions window.)
+        /// </summary>
+        public bool InstantBurnAllowed => boot == null || boot.Session == null || boot.Session.Profile == null || !boot.Session.Profile.IsCareer;
+
         /// <summary>Sandbox/cheat: adds the node's Δv to the velocity at the node time — no propellant is burnt; flight rewards stop counting.</summary>
         public void StartInstantSandbox()
         {
             if (Node == null) return;
+            if (!InstantBurnAllowed)
+            {
+                Notify(Loc.T("Карьера: мгновенный манёвр недоступен — выполните его двигателем."));
+                return;
+            }
             NodeConfirmed = true;
             Mode = BurnMode.InstantSandbox;
             BurnStatus = Loc.T("мгновенно в момент узла (песочница)");

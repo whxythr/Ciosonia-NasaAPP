@@ -188,7 +188,32 @@ namespace SpaceSim.Runtime
             session.Profile.science = ScienceArchiveCodec.Write(Store);
             Store.Dirty = false;
             unsaved = true;
+            CollectRewards();
         }
+
+        /// <summary>
+        /// Career: research points and credits for newly mapped coverage (<see cref="ScienceRewards"/>), paid once per percent and
+        /// saved together with the maps. Coverage from a flight that used a test tool is written off unpaid. Sandbox: nothing.
+        /// </summary>
+        void CollectRewards()
+        {
+            if (session == null || session.Profile == null || session.ReadOnly) return;
+            FlightBody body = FlightBody.Current;
+            bool forfeit = body != null && body.UsedTestTool;
+            ScienceRewardPayout p = ScienceRewards.Collect(session.Profile, Store, HomeSystemCatalog.HomeWorldId, forfeit);
+            LastPayout = p;
+            if (!p.Paid) return;
+            session.Save(); // the payment and the paid share go to disk together with the maps
+            unsaved = false;
+            lastSave = Time.unscaledTime;
+            Notify?.Invoke(SpaceSim.Localization.Loc.T("Наука: картирование +") + SpaceSim.Units.UnitFormatter.Number(p.Research, 1) +
+                           SpaceSim.Localization.Loc.T(" очк., +") + p.Credits + SpaceSim.Localization.Loc.T(" кр."));
+        }
+
+        /// <summary>The last reward settlement (Career).</summary>
+        public ScienceRewardPayout LastPayout { get; private set; }
+        /// <summary>Flight notifications (set by the bootstrap).</summary>
+        public System.Action<string> Notify;
 
         void SaveNow()
         {
