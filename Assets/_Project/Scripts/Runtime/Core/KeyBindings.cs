@@ -61,6 +61,7 @@ namespace SpaceSim.Runtime
             new KeyAction(InputKey.L, GroupWindows, "Академия"),
             new KeyAction(InputKey.M, GroupWindows, "Карта (3D)"),
             new KeyAction(InputKey.F1, GroupWindows, "Flight Manual"),
+            new KeyAction(InputKey.F2, GroupWindows, "Научная карта"),
             new KeyAction(InputKey.I, GroupWindows, "Начальные условия (тест)"),
 
             new KeyAction(InputKey.H, GroupInterface, "Скрыть / показать приборы"),

@@ -1663,6 +1663,19 @@ namespace SpaceSim.Runtime
                     Ball(slot, c.Accent, 0.05f * s, new Vector3(0.18f * s, 0.78f * s, 0.09f * s), "Led");
                     return;
             }
+            if (m.IsScanner)
+            {
+                // Orbital mapper: electronics box with a nadir dish (radars) or a lens (terrain scanner).
+                Box(slot, c.White, new Vector3(0.6f * s, 0.4f * s, 0.45f * s), new Vector3(0f, 0.35f * s, -0.15f * s), "Body");
+                if (m.scanLayer == SpaceSim.Science.ScienceLayer.Terrain)
+                    AxisCylinder(slot, c.Black, 0.25f * s, 0.3f * s, new Vector3(0f, 0.35f * s, 0.2f * s), Vector3.forward, "Lens");
+                else
+                {
+                    GameObject dish = MeshPart(slot, Dish, c.Metal, new Vector3(0.7f * s, 0.2f * s, 0.7f * s), new Vector3(0f, 0.75f * s, 0f), "Dish");
+                    dish.transform.localRotation = Quaternion.Euler(m.scanLayer == SpaceSim.Science.ScienceLayer.Pressure ? 60f : 30f, 0f, 0f);
+                }
+                return;
+            }
             Box(slot, c.White, new Vector3(0.6f * s, 0.5f * s, 0.45f * s), new Vector3(0f, 0.5f * s, -0.15f * s), "Body");
         }
 
