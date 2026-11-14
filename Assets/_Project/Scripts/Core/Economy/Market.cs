@@ -57,8 +57,7 @@ namespace SpaceSim.Economy
             MilestoneDefinition def = Find(id);
             if (def == null || profile.HasMilestone(id)) return null;
             profile.achievedMilestones.Add(id);
-            profile.Earn(def.CreditReward);
-            profile.researchPoints += def.ResearchReward;
+            profile.Award(def.CreditReward, def.ResearchReward, Loc.T("Достижение «") + def.Name + "»");
             return def;
         }
     }
@@ -85,8 +84,8 @@ namespace SpaceSim.Economy
             SampleRecord s = profile.samples[index];
             credits = SellPrice(s);
             profile.samples.RemoveAt(index);
-            profile.Earn(credits);
-            profile.researchPoints += s.scientificValue * (s.analysed ? Math.Max(1.0, s.analysisMultiplier) : 1.0);
+            profile.Award(credits, s.scientificValue * (s.analysed ? Math.Max(1.0, s.analysisMultiplier) : 1.0),
+                Loc.T("Продажа образца «") + (string.IsNullOrEmpty(s.name) ? s.id : s.name) + "»");
             return true;
         }
     }

@@ -43,7 +43,9 @@ namespace SpaceSim.Runtime
         View view;
         bool dirty = true;
         int viewLanguage = -1;
-        (int credits, double research, int owned, int samples, int milestones, int visited, bool readOnly) signature;
+        (int credits, double research, int owned, int samples, int milestones, int visited, bool readOnly, int tiers) signature;
+        /// <summary>Career: technology tier shown in the shop tab.</summary>
+        int shopTier;
 
         string status = "";
         Color statusColor = Color.white;
@@ -121,6 +123,15 @@ namespace SpaceSim.Runtime
             if (state != null) state.Notify(Loc.T("Магазин: ") + message);
         }
 
+        void UnlockTier(int tier)
+        {
+            if (session == null || session.Profile == null) return;
+            PurchaseResult result = session.UnlockTier(tier, out string message);
+            bool ok = result == PurchaseResult.Success;
+            SetStatus(message, ok ? HudStyle.Accent : HudStyle.Warning);
+            if (ok && state != null) state.Notify(Loc.T("Исследования: ") + message);
+        }
+
         void Sell(string sampleId, string sampleName)
         {
             if (session == null || session.Profile == null) return;
@@ -189,6 +200,21 @@ namespace SpaceSim.Runtime
             public string Lifetime = "";
             public readonly List<HazardRow> Hazards = new List<HazardRow>();
             public string HazardRules = "";
+            /// <summary>Career (false = Sandbox: nothing to buy).</summary>
+            public bool Career;
+            public string ModeLine = "";
+            public readonly List<TierRow> Tiers = new List<TierRow>();
+            /// <summary>Recent income and spending, newest first.</summary>
+            public readonly List<KeyValuePair<string, string>> Ledger = new List<KeyValuePair<string, string>>();
+        }
+
+        sealed class TierRow
+        {
+            public int Index;
+            public string Tab = "", Title = "", StateText = "", ButtonLabel = "";
+            public bool Unlocked, CanResearch;
+            public Color StateColor;
+            public readonly List<ShopRow> Items = new List<ShopRow>();
         }
 
         bool NeedsRebuild()
@@ -198,9 +224,9 @@ namespace SpaceSim.Runtime
             return p != null && CurrentSignature(p) != signature;
         }
 
-        (int, double, int, int, int, int, bool) CurrentSignature(PlayerProfile p) =>
+        (int, double, int, int, int, int, bool, int) CurrentSignature(PlayerProfile p) =>
             (p.credits, p.researchPoints, p.ownedModules.Count, p.samples.Count, p.achievedMilestones.Count, p.visitedBodies.Count,
-                session.ReadOnly);
+                session.ReadOnly, p.unlockedTiers != null ? p.unlockedTiers.Count : 0);
 
         void BuildView()
         {
@@ -220,7 +246,39 @@ namespace SpaceSim.Runtime
                     ? Loc.T("сохранение создано более новой версией игры — изменения не сохраняются.")
                     : session.LoadMessage);
 
-            foreach (ShopItem item in SpaceSim.Economy.Shop.Items) v.Shop.Add(BuildShopRow(p, item));
+            v.Career = p.IsCareer;
+            v.ModeLine = Loc.T("Режим: ") + GameModeRules.Name(p.gameMode) + " — " + GameModeRules.Description(p.gameMode);
+            if (v.Career)
+            {
+                foreach (TechTier t in TechTree.Tiers)
+                {
+                    TechTierState ts = TechTree.StateOf(p, t.Index);
+                    var tr = new TierRow
+                    {
+                        Index = t.Index,
+                        Unlocked = ts == TechTierState.Unlocked,
+                        CanResearch = ts == TechTierState.Researchable,
+                        Tab = (ts == TechTierState.Unlocked ? "✓ " : "○ ") + Loc.T("Ур. ") + t.Index,
+                        Title = Loc.T("Уровень ") + t.Index + " · " + t.Name,
+                        StateText = TechTree.Requirement(p, t.Index),
+                        ButtonLabel = Loc.T("Исследовать за ") + Points(TechTree.CostFor(p, t.Index)),
+                        StateColor = ts == TechTierState.Unlocked ? HudStyle.Accent
+                            : ts == TechTierState.Researchable ? new Color(0.55f, 0.95f, 0.6f) : HudStyle.Warning
+                    };
+                    foreach (ShopItem item in SpaceSim.Economy.Shop.InTier(t.Index)) tr.Items.Add(BuildShopRow(p, item));
+                    v.Tiers.Add(tr);
+                }
+                if (shopTier < 0 || shopTier > TechTree.MaxTier) shopTier = 0;
+            }
+            if (p.ledger != null)
+                for (int i = p.ledger.Count - 1; i >= 0 && v.Ledger.Count < 12; i--)
+                {
+                    LedgerEntry e = p.ledger[i];
+                    var parts = new List<string>();
+                    if (e.credits != 0) parts.Add((e.credits > 0 ? "+" : "−") + Credits(Math.Abs(e.credits)));
+                    if (e.research != 0.0) parts.Add((e.research > 0 ? "+" : "−") + Points(Math.Abs(e.research)));
+                    v.Ledger.Add(new KeyValuePair<string, string>(e.reason, string.Join(" · ", parts)));
+                }
             BuildMarket(v, p);
             BuildResearch(v, p);
             BuildHazards(v);
@@ -252,10 +310,7 @@ namespace SpaceSim.Runtime
                     row.StateColor = new Color(0.55f, 0.95f, 0.6f);
                     break;
                 case ShopItemState.Locked:
-                    MilestoneDefinition req = ResearchMilestones.Find(item.RequiredMilestone);
-                    row.StateText = req != null
-                        ? Loc.T("Заблокировано: требуется «") + req.Name + "» — " + req.Condition
-                        : Loc.T("Заблокировано: требуется достижение «") + item.RequiredMilestone + "».";
+                    row.StateText = Loc.T("Заблокировано: ") + TechTree.Requirement(p, item.Tier);
                     row.StateColor = HudStyle.Warning;
                     break;
                 default:
@@ -328,7 +383,7 @@ namespace SpaceSim.Runtime
             var collectors = new List<string>();
             foreach (ModuleDefinition m in ModuleCatalog.InCategory(ModuleCategory.Mechanics))
                 if (m.IsSampleCollector) collectors.Add(m.name + " — " + KindList(m.sampleKinds) + Loc.T(", до ") + Mass(m.sampleCapacity) +
-                               (m.requiresPurchase ? Loc.T(" (магазин)") : Loc.T(" (бесплатно)")));
+                               (p.Owns(m.id) ? Loc.T(" (есть)") : Loc.T(" (магазин)")));
             v.CollectorInfo = collectors.Count > 0 ? string.Join("; ", collectors) + "." : "";
         }
 
@@ -337,15 +392,16 @@ namespace SpaceSim.Runtime
             foreach (MilestoneDefinition m in ResearchMilestones.All)
             {
                 var unlocks = new List<string>();
-                foreach (ShopItem item in SpaceSim.Economy.Shop.Items)
-                    if (item.RequiredMilestone == m.Id) unlocks.Add(item.Module.name);
+                if (p.IsCareer)
+                    foreach (TechTier t in TechTree.Tiers)
+                        if (t.RequiredMilestone == m.Id) unlocks.Add(Loc.T("уровень техники ") + t.Index + " «" + t.Name + "»");
                 v.Milestones.Add(new MilestoneRow
                 {
                     Achieved = p.HasMilestone(m.Id),
                     Name = m.Name,
                     Condition = m.Condition,
                     Rewards = Loc.T("Награда: +") + Credits(m.CreditReward) + " · +" + Points(m.ResearchReward),
-                    Unlocks = unlocks.Count > 0 ? Loc.T("Открывает в магазине: ") + string.Join(", ", unlocks) : ""
+                    Unlocks = unlocks.Count > 0 ? Loc.T("Открывает для исследования: ") + string.Join(", ", unlocks) : ""
                 });
             }
 
@@ -522,6 +578,7 @@ namespace SpaceSim.Runtime
             GUILayout.EndHorizontal();
             GUILayout.Label(Loc.T("Цены, условия открытия и сделки задаёт ядро игры; каждая покупка и продажа сразу сохраняется в профиле."),
                 HudStyle.Small);
+            GUILayout.Label(view.ModeLine, HudStyle.Small);
             if (view.ReadOnly) Colored(view.ReadOnlyText, note, HudStyle.Danger);
         }
 
@@ -550,9 +607,47 @@ namespace SpaceSim.Runtime
             float specsWidth = Mathf.Min(360f, panelInner * 0.42f);
             float textWidth = Mathf.Max(120f, panelInner - specsWidth - 12f);
 
-            shopScroll = GUILayout.BeginScrollView(shopScroll, GUILayout.Height(height));
-            if (view.Shop.Count == 0) GUILayout.Label(Loc.T("В магазине пока ничего нет."), HudStyle.Small);
-            foreach (ShopRow row in view.Shop)
+            if (!view.Career)
+            {
+                GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(contentWidth));
+                Colored(Loc.T("ПЕСОЧНИЦА"), HudStyle.Title, HudStyle.Accent);
+                GUILayout.Label(Loc.T("Все модули каталога уже доступны в ангаре — покупать ничего не нужно, бюджет нигде не проверяется. ") +
+                                Loc.T("Рынок образцов и исследования работают как обычно. Режим выбирается при создании новой игры в главном меню."),
+                    note);
+                GUILayout.EndVertical();
+                return;
+            }
+
+            // Career: technology tiers as sub-tabs; the selected tier's status (and research button) above its modules.
+            float tierTab = Mathf.Min(150f, (contentWidth - 16f) / Mathf.Max(1, view.Tiers.Count));
+            GUILayout.BeginHorizontal();
+            foreach (TierRow t in view.Tiers)
+            {
+                int index = t.Index;
+                bool on = shopTier == index;
+                if (GUILayout.Toggle(on, t.Tab, HudStyle.Tab, GUILayout.Width(tierTab), GUILayout.Height(22)) && !on) Defer(() => shopTier = index);
+            }
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+            TierRow tier = shopTier >= 0 && shopTier < view.Tiers.Count ? view.Tiers[shopTier] : null;
+            if (tier == null) return;
+            GUILayout.BeginHorizontal(GUILayout.Width(contentWidth));
+            GUILayout.BeginVertical();
+            GUILayout.Label(tier.Title, HudStyle.Title);
+            Colored(tier.StateText, note, tier.StateColor);
+            GUILayout.EndVertical();
+            GUILayout.FlexibleSpace();
+            if (!tier.Unlocked)
+            {
+                int tierIndex = tier.Index;
+                if (Button(tier.ButtonLabel, tier.CanResearch, GUILayout.Width(220), GUILayout.Height(26))) Defer(() => UnlockTier(tierIndex));
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.Space(4);
+
+            shopScroll = GUILayout.BeginScrollView(shopScroll, GUILayout.Height(Mathf.Max(80f, height - 70f)));
+            if (tier.Items.Count == 0) GUILayout.Label(Loc.T("В магазине пока ничего нет."), HudStyle.Small);
+            foreach (ShopRow row in tier.Items)
             {
                 string id = row.Id;
                 GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(contentWidth));
@@ -573,7 +668,7 @@ namespace SpaceSim.Runtime
                 GUILayout.BeginVertical(GUILayout.Width(textWidth));
                 GUILayout.Label(row.Description, HudStyle.Small);
                 GUILayout.Space(4);
-                Colored(Loc.T("Что даёт в игре: ") + row.Effect, note, HudStyle.Accent);
+                if (!string.IsNullOrEmpty(row.Effect)) Colored(Loc.T("Что даёт в игре: ") + row.Effect, note, HudStyle.Accent);
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
 
@@ -587,7 +682,7 @@ namespace SpaceSim.Runtime
             }
             GUILayout.Space(4);
             GUILayout.Label(Loc.T("Купленные модули появляются в ангаре (кнопка АНГАР / B на стартовой площадке) — там их ставят на ракету. ") +
-                            Loc.T("Покупка разовая: модуль остаётся в профиле. Остальные модули каталога бесплатны и уже доступны в ангаре."),
+                            Loc.T("Покупка разовая: модуль остаётся в профиле и ставится на любое число ракет. Уровни техники открываются очками исследований после достижений."),
                 HudStyle.Small);
             GUILayout.EndScrollView();
         }
@@ -682,6 +777,12 @@ namespace SpaceSim.Runtime
             GUILayout.Label(Loc.T("Открытия"), HudStyle.Title);
             GUILayout.Label(view.Visited, note);
             GUILayout.Label(view.Lifetime, HudStyle.Small);
+            if (view.Ledger.Count > 0)
+            {
+                GUILayout.Space(6);
+                GUILayout.Label(Loc.T("Финансы · последние операции"), HudStyle.Title);
+                foreach (KeyValuePair<string, string> line in view.Ledger) HudStyle.Row(line.Key, line.Value, Mathf.Max(200f, contentWidth - 260f));
+            }
 
             GUILayout.Space(8);
             GUILayout.Label(Loc.T("Опасности окружения"), HudStyle.Title);

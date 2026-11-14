@@ -494,7 +494,7 @@ namespace SpaceSim.Vehicles
                 result.Issues.Add(new BlueprintIssue(BlueprintIssueCode.UnknownModule, stageIndex, Loc.T("Неизвестный модуль «") + id + Loc.T("» пропущен.")));
                 return null;
             }
-            if (m.requiresPurchase && isUnlocked != null && !isUnlocked(m.id))
+            if (isUnlocked != null && !isUnlocked(m.id))
             {
                 result.Issues.Add(new BlueprintIssue(BlueprintIssueCode.LockedModule, stageIndex, m.name + Loc.T(" не куплен — не установлен.")));
                 return null;

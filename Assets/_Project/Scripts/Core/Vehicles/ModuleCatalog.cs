@@ -8,7 +8,7 @@ namespace SpaceSim.Vehicles
     /// tank dry fractions 4–15 %; real power densities of panels and RTGs). Modules marked requiresPurchase are sold in the shop (M3).
     /// Ids are saved in player designs: never change one.
     /// </summary>
-    public static class ModuleCatalog
+    public static partial class ModuleCatalog
     {
         // Cabins
         public const string ProbeCore = "core-probe";
@@ -132,6 +132,7 @@ namespace SpaceSim.Vehicles
                 if (all == null || allLanguage != Loc.Version)
                 {
                     all = Build(); // names and descriptions are translated when built
+                    ApplyCareerData(all); // career tier + price of every module (ModuleCatalog.Career.cs)
                     allLanguage = Loc.Version;
                 }
                 return all;

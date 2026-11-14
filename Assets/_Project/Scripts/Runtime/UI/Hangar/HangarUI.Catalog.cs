@@ -310,7 +310,7 @@ namespace SpaceSim.Runtime
             if (locked)
             {
                 Fill(Inset(r, 1f), new Color(0.01f, 0.02f, 0.05f, 0.55f));
-                Colored(new Rect(r.x, thumb.yMax - 18f, r.width, 18f), Price(m.price), centeredSmall, HudStyle.Amber);
+                Colored(new Rect(r.x, thumb.yMax - 18f, r.width, 18f), LockLabel(m), centeredSmall, HudStyle.Amber);
             }
             Color nameColor = locked ? HudStyle.TextDim : (hover ? HudStyle.TextStrong : HudStyle.TextSoft);
             Colored(new Rect(r.x + 4f, r.y + 74f, r.width - 8f, 34f), m.name, tileName, nameColor);
@@ -343,14 +343,15 @@ namespace SpaceSim.Runtime
             ProjectPrice(out long total, out long toBuy);
             float x = r.x + 2f, y = r.y + 8f;
             bool hasProfile = session != null && session.Profile != null;
-            string budget = hasProfile ? Credits(session.Profile.credits) : "—";
-            GUI.Label(new Rect(x, y, 160f, 14f), Loc.T("БЮДЖЕТ"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
+            bool sandbox = hasProfile && !IsCareer;
+            string budget = sandbox ? Loc.T("бесплатно") : hasProfile ? Credits(session.Profile.credits) : "—";
+            GUI.Label(new Rect(x, y, 200f, 14f), Loc.T("БЮДЖЕТ") + (hasProfile ? " · " + ModeTag : ""), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
             GUI.Label(new Rect(x, y + 14f, 200f, 32f), budget, HudStyle.Style(HudStyle.Face.Mono, 24,
                 hasProfile && toBuy > session.Profile.credits ? HudStyle.Danger : HudStyle.Accent));
             // Price of the project and what is still to buy, small on the right.
             GUIStyle k = HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted, TextAnchor.MiddleRight);
             GUI.Label(new Rect(r.xMax - 150f, y, 148f, 14f), Loc.T("ПРОЕКТ ") + Credits(total), k);
-            GUI.Label(new Rect(r.xMax - 150f, y + 18f, 148f, 14f), toBuy > 0 ? Loc.T("КУПИТЬ ") + Credits(toBuy) : Loc.T("ВСЁ КУПЛЕНО"),
+            GUI.Label(new Rect(r.xMax - 150f, y + 18f, 148f, 14f), toBuy > 0 ? Loc.T("КУПИТЬ ") + Credits(toBuy) : sandbox ? Loc.T("ПЕСОЧНИЦА") : Loc.T("ВСЁ КУПЛЕНО"),
                 HudStyle.Style(HudStyle.Face.Mono, 10, toBuy > 0 ? HudStyle.Warning : HudStyle.TextMuted, TextAnchor.MiddleRight));
             GUI.Label(new Rect(r.xMax - 150f, y + 36f, 148f, 14f), Mass(report.LaunchMass), k);
         }

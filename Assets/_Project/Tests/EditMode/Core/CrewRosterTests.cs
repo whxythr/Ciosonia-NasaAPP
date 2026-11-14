@@ -113,7 +113,7 @@ namespace SpaceSim.Tests
         [Test]
         public void HiringCostsCreditsAndNeedsEnough()
         {
-            PlayerProfile p = PlayerProfile.CreateNew("home");
+            PlayerProfile p = PlayerProfile.CreateNew("home", GameMode.Career); // Sandbox hires for free (GameModeTests)
             CrewMember applicant = p.crew.members.Find(m => m.status == CrewStatus.Applicant);
             p.credits = CrewRoster.HireCost - 1;
             Assert.IsFalse(CrewRoster.Hire(p, p.crew, applicant.id, out _));

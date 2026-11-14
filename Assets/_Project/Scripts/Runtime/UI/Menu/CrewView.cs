@@ -121,7 +121,7 @@ namespace SpaceSim.Runtime.Menu
 
             int applicants = counts[4];
             hire.style.display = applicants > 0 ? DisplayStyle.Flex : DisplayStyle.None;
-            hire.text = "+  " + Loc.T("НАНЯТЬ КАНДИДАТА") + "  ·  " + UnitFormatter.Number(CrewRoster.HireCost, 0) + Loc.T(" кр") +
+            hire.text = "+  " + Loc.T("НАНЯТЬ КАНДИДАТА") + "  ·  " + HireText(p) +
                         "   (" + Loc.T("у вас ") + UnitFormatter.Number(p.credits, 0) + Loc.T(" кр") + ")";
             ApplyFonts(root);
         }
@@ -171,6 +171,13 @@ namespace SpaceSim.Runtime.Menu
             return row;
         }
 
+        /// <summary>Hiring price for the profile's game mode ("3 000 кр", Sandbox: "бесплатно").</summary>
+        static string HireText(PlayerProfile p)
+        {
+            int cost = CrewRoster.HireCostFor(p);
+            return cost > 0 ? UnitFormatter.Number(cost, 0) + Loc.T(" кр") : Loc.T("бесплатно");
+        }
+
         void BuildDetail(PlayerProfile p, CrewMember m)
         {
             var head = Add(detail, El("crew-detail__head"));
@@ -210,7 +217,7 @@ namespace SpaceSim.Runtime.Menu
                     break;
                 case CrewStatus.Applicant:
                     at.Add(Text("Кандидат в отряд", "crew-assign__title"));
-                    at.Add(Text(Loc.T("НАЙМ") + " · " + UnitFormatter.Number(CrewRoster.HireCost, 0) + Loc.T(" кр"), "crew-assign__sub", "t-mono"));
+                    at.Add(Text(Loc.T("НАЙМ") + " · " + HireText(p), "crew-assign__sub", "t-mono"));
                     break;
                 default:
                     at.Add(Text("Без назначения", "crew-assign__title"));
@@ -222,7 +229,7 @@ namespace SpaceSim.Runtime.Menu
 
             var buttons = Add(detail, El("hz-detail__buttons"));
             if (m.status == CrewStatus.Applicant)
-                buttons.Add(ButtonEl(Loc.T("НАНЯТЬ") + " · " + UnitFormatter.Number(CrewRoster.HireCost, 0) + Loc.T(" кр"), () => DoHire(m.id), primary: true));
+                buttons.Add(ButtonEl(Loc.T("НАНЯТЬ") + " · " + HireText(p), () => DoHire(m.id), primary: true));
             else
             {
                 Button train = ButtonEl("НА ОБУЧЕНИЕ", () =>

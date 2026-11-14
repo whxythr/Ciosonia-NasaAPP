@@ -2562,3 +2562,52 @@ C — робот перегреется (предел	C — the robot will overh
 Химзащита	Chemical protection
 химзащита разрушена	chemical protection destroyed
 электроника робота откажет	the robot's electronics would fail
+Карьера	Career
+Песочница	Sandbox
+РЕЖИМ ИГРЫ	GAME MODE
+Стартовый бюджет, каждый модуль покупается один раз, уровни техники открываются достижениями и очками исследований	Starting budget; every module is bought once; technology tiers open with milestones and research points
+Все модули доступны сразу и бесплатно, без покупок и проверок бюджета	Every module is available at once and for free, with no purchases and no budget checks
+Стартовый бюджет карьеры	Career starting budget
+Основы ракетостроения	Rocketry basics
+Суборбитальные полёты	Suborbital flight
+Орбитальная техника	Orbital technology
+Межпланетные полёты	Interplanetary flight
+Дальний космос	Deep space
+Уровень	Tier
+Ур	T
+открыт	open
+закрыт	locked
+исследовать за	research for
+требуется	requires
+без достижения	without the milestone:
+сначала — уровень	first tier
+Песочница: все уровни техники уже открыты	Sandbox: every technology tier is already open
+Нет такого уровня техники	There is no such technology tier
+уже открыт	is already open
+Сначала откройте уровень	First open tier
+Не хватает очков исследований: нужно	Not enough research points: need
+Исследован уровень	Researched tier
+Открыт уровень	Opened tier
+его модули можно покупать	its modules can now be bought
+уже доступен — покупать ничего не нужно	is already available — nothing needs to be bought
+Покупка	Purchase
+Достижение	Milestone
+Продажа образца	Sample sale
+Исследовать за	Research for
+Заблокировано	Locked
+уровень техники	technology tier
+Открывает для исследования	Opens for research
+Все модули каталога уже доступны в ангаре — покупать ничего не нужно, бюджет нигде не проверяется	Every catalog module is already available in the hangar — nothing needs to be bought and the budget is never checked
+Рынок образцов и исследования работают как обычно. Режим выбирается при создании новой игры в главном меню	The sample market and research work as usual. The mode is chosen when a new game is created in the main menu
+Покупка разовая: модуль остаётся в профиле и ставится на любое число ракет. Уровни техники открываются очками исследований после достижений	Purchases are one-time: the module stays in the profile and can be installed on any number of rockets. Technology tiers open with research points after milestones
+Финансы · последние операции	Finances · recent transactions
+Карьера: на ракете есть некупленные детали	Career: the rocket has parts that are not bought
+купите их в магазине за	buy them in the shop for
+или снимите с ракеты	or remove them from the rocket
+До новой игры	Before new game
+Новая игра	New game
+Текущая игра останется в «Сохранениях»	The current game stays in «Saves»
+Не удалось начать новую игру	Could not start a new game
+НАЧАТЬ НОВУЮ ИГРУ	START NEW GAME
+ВСЁ ОТКРЫТО	ALL UNLOCKED
+БЮДЖЕТ	BUDGET

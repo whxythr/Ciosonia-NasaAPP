@@ -7,15 +7,18 @@ namespace SpaceSim.Tests
 {
     public class EconomyTests
     {
-        static PlayerProfile NewProfile() => PlayerProfile.CreateNew(HomeSystemCatalog.HomeWorldId);
+        /// <summary>The shop rules apply to a Career (Sandbox owns everything: see GameModeTests).</summary>
+        static PlayerProfile NewProfile() => PlayerProfile.CreateNew(HomeSystemCatalog.HomeWorldId, GameMode.Career);
+
+        const int Start = GameModeRules.CareerStartingCredits;
 
         [Test]
         public void NewProfile_HasStartingCreditsAndFreeModulesOnly()
         {
             var p = NewProfile();
-            Assert.AreEqual(PlayerProfile.StartingCredits, p.credits);
-            Assert.IsTrue(p.Owns(ModuleCatalog.EngineSokol), "free modules are always available");
-            Assert.IsFalse(p.Owns(ModuleCatalog.TankK140), "shop modules must be bought");
+            Assert.AreEqual(Start, p.credits);
+            Assert.IsTrue(p.Owns(ModuleCatalog.EngineSokol), "the starter kit is owned");
+            Assert.IsFalse(p.Owns(ModuleCatalog.TankK140), "everything else must be bought");
             Assert.Contains(HomeSystemCatalog.HomeWorldId, p.visitedBodies);
             Assert.AreEqual(2, p.blueprint.stages.Count);
         }
@@ -25,7 +28,7 @@ namespace SpaceSim.Tests
         {
             var p = NewProfile();
             Assert.AreEqual(PurchaseResult.Success, Shop.TryPurchase(p, ModuleCatalog.TankK140, out _));
-            Assert.AreEqual(PlayerProfile.StartingCredits - 6000, p.credits);
+            Assert.AreEqual(Start - 6000, p.credits);
             Assert.IsTrue(p.Owns(ModuleCatalog.TankK140));
             Assert.AreEqual(PurchaseResult.AlreadyOwned, Shop.TryPurchase(p, ModuleCatalog.TankK140, out _));
 
@@ -41,10 +44,13 @@ namespace SpaceSim.Tests
             var p = NewProfile();
             Assert.AreEqual(PurchaseResult.RequirementsNotMet, Shop.TryPurchase(p, ModuleCatalog.RadiationShield, out string msg));
             StringAssert.Contains("Первый выход в космос", msg);
-            Assert.AreEqual(PurchaseResult.NotForSale, Shop.TryPurchase(p, ModuleCatalog.EngineSokol, out _));
+            Assert.AreEqual(PurchaseResult.AlreadyOwned, Shop.TryPurchase(p, ModuleCatalog.EngineSokol, out _), "starter kit");
+            Assert.AreEqual(PurchaseResult.NotForSale, Shop.TryPurchase(p, "no-such-module", out _));
 
             ResearchMilestones.Award(p, ResearchMilestones.ReachSpace);
+            ResearchMilestones.Award(p, ResearchMilestones.FirstOrbit);
             ResearchMilestones.Award(p, ResearchMilestones.EscapeHome);
+            for (int tier = 1; tier <= 3; tier++) Assert.AreEqual(PurchaseResult.Success, TechTree.TryUnlock(p, tier, out _));
             p.credits = 100;
             Assert.AreEqual(PurchaseResult.InsufficientFunds, Shop.TryPurchase(p, ModuleCatalog.RadiationShieldHeavy, out _));
             Assert.AreEqual(100, p.credits);
@@ -53,15 +59,17 @@ namespace SpaceSim.Tests
         }
 
         [Test]
-        public void EveryShopItemIsAPurchasableModuleWithAnEffect()
+        public void EveryCatalogModuleIsSoldWithAPriceAndATier()
         {
+            Assert.AreEqual(ModuleCatalog.All.Count, Shop.Items.Count, "career: every component is for sale");
             foreach (ShopItem item in Shop.Items)
             {
                 Assert.IsNotNull(item.Module);
-                Assert.IsTrue(item.Module.requiresPurchase, item.Module.id);
-                Assert.Greater(item.Price, 0);
-                Assert.IsFalse(string.IsNullOrEmpty(item.Effect));
+                Assert.Greater(item.Price, 0, item.Module.id);
+                Assert.That(item.Tier, Is.InRange(0, TechTree.MaxTier), item.Module.id);
                 if (item.RequiredMilestone != null) Assert.IsNotNull(ResearchMilestones.Find(item.RequiredMilestone));
+                // The classic upgrades keep their hand-written effect.
+                if (item.Module.requiresPurchase) Assert.IsFalse(string.IsNullOrEmpty(item.Effect), item.Module.id);
             }
         }
 
@@ -71,10 +79,10 @@ namespace SpaceSim.Tests
             var p = NewProfile();
             var m = ResearchMilestones.Award(p, ResearchMilestones.FirstOrbit);
             Assert.IsNotNull(m);
-            Assert.AreEqual(PlayerProfile.StartingCredits + m.CreditReward, p.credits);
+            Assert.AreEqual(Start + m.CreditReward, p.credits);
             Assert.AreEqual(m.ResearchReward, p.researchPoints);
             Assert.IsNull(ResearchMilestones.Award(p, ResearchMilestones.FirstOrbit), "only once");
-            Assert.AreEqual(PlayerProfile.StartingCredits + m.CreditReward, p.credits);
+            Assert.AreEqual(Start + m.CreditReward, p.credits);
             Assert.AreEqual(m.CreditReward, p.lifetimeEarnings);
         }
 
@@ -92,7 +100,7 @@ namespace SpaceSim.Tests
             Assert.AreEqual(2, p.DeliverCargo());
             Assert.IsTrue(Market.Sell(p, "b", out int credits));
             Assert.AreEqual(1050, credits);
-            Assert.AreEqual(PlayerProfile.StartingCredits + 1050, p.credits);
+            Assert.AreEqual(Start + 1050, p.credits);
             Assert.AreEqual(7.5, p.researchPoints, 1e-9);
             Assert.AreEqual(1, p.samples.Count);
             Assert.IsFalse(Market.Sell(p, "missing", out _));
@@ -110,7 +118,8 @@ namespace SpaceSim.Tests
             var withGhost = NewProfile();
             withGhost.ownedModules.Add("module-from-the-future");
             Assert.AreEqual(MigrationResult.Migrated, ProfileMigration.Migrate(withGhost));
-            Assert.IsEmpty(withGhost.ownedModules);
+            Assert.IsFalse(withGhost.ownedModules.Contains("module-from-the-future"));
+            CollectionAssert.AreEquivalent(ModuleCatalog.CareerStarterKit, withGhost.ownedModules, "known modules stay");
 
             Assert.AreEqual(MigrationResult.UpToDate, ProfileMigration.Migrate(NewProfile()));
             Assert.AreEqual(MigrationResult.TooNew, ProfileMigration.Migrate(new PlayerProfile { version = 99 }));

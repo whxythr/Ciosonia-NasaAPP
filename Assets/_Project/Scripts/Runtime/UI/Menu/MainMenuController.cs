@@ -86,6 +86,7 @@ namespace SpaceSim.Runtime.Menu
             menuItems.Clear();
             scenarioCards.Clear();
             difficultyTiles.Clear();
+            modeTiles.Clear();
             resourceRows.Clear();
             history.Clear();
             current = null;
@@ -205,6 +206,42 @@ namespace SpaceSim.Runtime.Menu
                 menuItems[i].EnableInClassList("menu-item--selected", i == index);
         }
 
+        GameMode newGameMode = GameMode.Career;
+        readonly List<(GameMode mode, VisualElement tile)> modeTiles = new List<(GameMode, VisualElement)>();
+        Label newGameNote;
+
+        /// <summary>Mode of the game «НАЧАТЬ НОВУЮ ИГРУ» creates (New Mission screen).</summary>
+        public GameMode NewGameMode => newGameMode;
+
+        public void SelectGameMode(GameMode mode)
+        {
+            newGameMode = mode;
+            foreach (var (m, tile) in modeTiles) tile.EnableInClassList("diff-tile--selected", m == mode);
+            if (newGameNote != null)
+                newGameNote.text = Loc.T("Новая игра: ") + GameModeRules.Name(mode) +
+                                   (PlayerSession.ReadProfileFile() != null || System.IO.File.Exists(PlayerSession.SavePath)
+                                       ? Loc.T(". Текущая игра останется в «Сохранениях».")
+                                       : ".");
+        }
+
+        /// <summary>
+        /// Starts a NEW game in the selected mode (the only place a mode is chosen): the current game is kept as a save slot first
+        /// (<see cref="NewGame.Start"/>), then the flight scene loads the fresh profile.
+        /// </summary>
+        public void StartNewGame()
+        {
+            try
+            {
+                NewGame.Start(newGameMode);
+            }
+            catch (Exception e)
+            {
+                if (newGameNote != null) newGameNote.text = Loc.T("Не удалось начать новую игру: ") + e.Message;
+                return;
+            }
+            BeginMission();
+        }
+
         public void OpenQuitDialog() => modal.AddToClassList("modal--open");
 
         public void BeginMission()
@@ -242,7 +279,9 @@ namespace SpaceSim.Runtime.Menu
             NavItem(nav, "АКАДЕМИЯ", () => Show(AcademyScreen));
 
             var column = Add(screen, El("main-column"));
-            column.Add(Text(Loc.T("ПРОФИЛЬ") + "  /  " + (profile != null ? Loc.T("АВТОСОХРАНЕНИЕ") : Loc.T("НОВАЯ ИГРА")), "eyebrow", "t-mono"));
+            column.Add(Text(Loc.T("ПРОФИЛЬ") + "  /  " + (profile != null
+                ? Loc.T("АВТОСОХРАНЕНИЕ") + "  ·  " + GameModeRules.Name(profile.gameMode).ToUpperInvariant()
+                : Loc.T("НОВАЯ ИГРА")), "eyebrow", "t-mono"));
             column.Add(Text("HORIZON", "title"));
             var status = Add(column, El("hz-status"));
             status.Add(El("hz-status__mark"));
@@ -254,9 +293,14 @@ namespace SpaceSim.Runtime.Menu
             var list = Add(screen, El("menu-list"));
             string saved = profile != null ? Loc.T("АВТОСОХР.") + " · " + SaveSlots.Ago(DateTimeOf(profile.lastSavedUtc)).ToUpperInvariant() : Loc.T("НОВЫЙ ПРОФИЛЬ");
             AddMenuItem(list, "ПРОДОЛЖИТЬ", saved, () => Show(LoadScreen));
-            AddMenuItem(list, "НОВАЯ МИССИЯ", null, () => Show(NewMissionScreen));
+            AddMenuItem(list, "НОВАЯ МИССИЯ", null, () => { Show(NewMissionScreen); SelectGameMode(GameMode.Career); });
             AddMenuItem(list, "КОМАНДНАЯ МИССИЯ", null, () => Show(TeamScreen));
-            AddMenuItem(list, "ПЕСОЧНИЦА", null, () => { Show(NewMissionScreen); SelectScenario(MenuCatalog.Scenarios.Length - 1); });
+            AddMenuItem(list, "ПЕСОЧНИЦА", null, () =>
+            {
+                Show(NewMissionScreen);
+                SelectScenario(MenuCatalog.Scenarios.Length - 1);
+                SelectGameMode(GameMode.Sandbox);
+            });
             AddMenuItem(list, "НАСТРОЙКИ", null, () => Show(SettingsScreen));
             SelectMenuItem(0);
 
@@ -430,6 +474,7 @@ namespace SpaceSim.Runtime.Menu
             var title = Add(main, El("hz-row__title"));
             title.Add(Text(m.name, "hz-row__name"));
             if (m.IsAutosave) title.Add(Text("АВТО", "hz-tag", "t-mono"));
+            title.Add(Text(GameModeRules.Name(m.gameMode).ToUpperInvariant(), "hz-tag", "t-mono"));
             main.Add(Text((m.IsAutosave ? Loc.T("ЖИВОЙ ПРОФИЛЬ") : Loc.T("РУЧНОЕ")) + "  ·  " + m.SavedLocal.ToString("dd.MM  HH:mm"), "hz-row__sub", "t-mono"));
             Add(row, Text(UnitFormatter.Number(m.credits, 0) + Loc.T(" кр"), "hz-row__cell", "t-mono")).style.width = 170;
             Add(row, Text(UnitFormatter.Number(m.research, 0) + Loc.T(" очк."), "hz-row__cell", "hz-row__cell--green", "t-mono")).style.width = 140;
@@ -462,6 +507,7 @@ namespace SpaceSim.Runtime.Menu
             }
             loadDetail.Add(Text(m.name, "hz-detail__name", "t-strong"));
             Kv(loadDetail, "Сохранено", m.SavedLocal == DateTime.MinValue ? "—" : m.SavedLocal.ToString("dd.MM.yyyy  HH:mm"));
+            Kv(loadDetail, "Режим", GameModeRules.Name(m.gameMode));
             Kv(loadDetail, "Полётов", m.flights.ToString());
             Kv(loadDetail, "Экипаж", m.crew + (m.crewInFlight > 0 ? Loc.T(" (в полёте: ") + m.crewInFlight + ")" : ""));
             Kv(loadDetail, "Кредиты", UnitFormatter.Number(m.credits, 0) + Loc.T(" кр"));
@@ -671,7 +717,23 @@ namespace SpaceSim.Runtime.Menu
             legend.Add(Text("TIGHT", "res-legend__label"));
 
             var config = Add(body, El("config"));
-            Add(config, Text("DIFFICULTY", "section-label", "t-strong")).style.marginTop = 0;
+            // Game mode of the new save: chosen only here, fixed for the save's whole life.
+            Add(config, Text("РЕЖИМ ИГРЫ", "section-label", "t-strong")).style.marginTop = 0;
+            foreach (GameMode mode in new[] { GameMode.Career, GameMode.Sandbox })
+            {
+                GameMode chosen = mode;
+                var tile = new Button(() => SelectGameMode(chosen));
+                tile.AddToClassList("diff-tile");
+                var head = Add(tile, El("diff-tile__head"));
+                head.Add(Text(GameModeRules.Name(mode).ToUpperInvariant(), "diff-tile__title", "t-strong"));
+                head.Add(Text(mode == GameMode.Career
+                    ? Loc.T("БЮДЖЕТ ") + UnitFormatter.Number(GameModeRules.CareerStartingCredits, 0) + Loc.T(" кр")
+                    : Loc.T("ВСЁ ОТКРЫТО"), "diff-tile__tag", "t-strong"));
+                tile.Add(Text(GameModeRules.Description(mode), "diff-tile__text"));
+                modeTiles.Add((mode, tile));
+                config.Add(tile);
+            }
+            Add(config, Text("DIFFICULTY", "section-label", "t-strong")).style.marginTop = 14;
             for (int i = 0; i < MenuCatalog.Difficulties.Length; i++)
             {
                 var d = MenuCatalog.Difficulties[i];
@@ -692,11 +754,13 @@ namespace SpaceSim.Runtime.Menu
             ToggleRow(config, "Show real-world equivalents", false);
 
             var cta = Add(config, El("cta-stack"));
-            cta.Add(ButtonEl("BEGIN MISSION DESIGN", BeginMission, primary: true));
+            cta.Add(ButtonEl("НАЧАТЬ НОВУЮ ИГРУ", StartNewGame, primary: true));
+            newGameNote = Add(cta, Text("", "hz-note"));
             cta.Add(ButtonEl("PLAY AS A TEAM", () => Show(TeamScreen)));
 
             SelectScenario(scenarioIndex);
             SelectDifficulty(difficultyIndex);
+            SelectGameMode(newGameMode);
         }
 
         void RefreshScenarioDetail()
