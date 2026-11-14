@@ -22,7 +22,9 @@ namespace SpaceSim.Runtime
         /// <summary>Rocket systems: release the parachutes · extend/retract the legs · RCS on/off.</summary>
         Alpha1, Alpha2, Alpha3,
         /// <summary>The 2D schematic of the star system (Tab now opens the crew screen).</summary>
-        Y
+        Y,
+        /// <summary>The science map window (orbital scanning results).</summary>
+        F2
     }
 
     /// <summary>

@@ -193,6 +193,7 @@ namespace SpaceSim.Runtime
             else if (shop != null && shop.IsOpen) shop.Toggle();
             else if (hangar != null && hangar.IsOpen) hangar.Toggle();
             else if (navigationUi != null && navigationUi.IsOpen) navigationUi.Toggle();
+            else if (scienceMap != null && scienceMap.IsOpen) scienceMap.Close();
             else if (manual != null && manual.IsOpen) manual.Toggle();
             else if (initialConditions != null && initialConditions.IsOpen) initialConditions.Toggle();
             else if (map != null && map.IsOpen) map.Close();
@@ -202,12 +203,18 @@ namespace SpaceSim.Runtime
             return true;
         }
 
+        ScienceMapUI scienceMap;
+
+        /// <summary>Connects the science map window (F2; it lives outside the flight stack).</summary>
+        public void SetScienceMap(ScienceMapUI window) => scienceMap = window;
+
         /// <summary>Opens or closes the Flight Manual (same as F1).</summary>
         public void ToggleManual() => manual?.Toggle();
 
         /// <summary>Any window or overlay that Esc would close first.</summary>
         public bool AnyWindowOpen => AnyModalOpen || (navigationUi != null && navigationUi.IsOpen) || (manual != null && manual.IsOpen) ||
-                                     (initialConditions != null && initialConditions.IsOpen) || (map != null && map.IsOpen) || showMap;
+                                     (initialConditions != null && initialConditions.IsOpen) || (map != null && map.IsOpen) || showMap ||
+                                     (scienceMap != null && scienceMap.IsOpen);
 
         /// <summary>Whether a window opened over the 3D map is under this point (HUD coordinates): the mouse then belongs to it.</summary>
         public bool WindowCovers(Vector2 point) => (manual != null && manual.IsOpen) || (navigationUi != null && navigationUi.Covers(point));

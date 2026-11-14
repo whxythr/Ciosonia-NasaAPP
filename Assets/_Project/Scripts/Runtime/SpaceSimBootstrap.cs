@@ -137,8 +137,19 @@ namespace SpaceSim.Runtime
             Crew = Create<SpaceSim.Runtime.Menu.CrewScreen>("CrewScreen");
             Crew.Initialize(this);
 
+            // Science instruments and the science map (outside the flight stack: maps survive body switches).
+            Science = Create<ScienceSession>("Science");
+            Science.Initialize(Session, System);
+            ScienceMap = Science.gameObject.AddComponent<ScienceMapUI>();
+            ScienceMap.Initialize(Science, System);
+
             BuildFlightStack();
         }
+
+        /// <summary>Orbital scanning and the saved science maps.</summary>
+        public ScienceSession Science { get; private set; }
+        /// <summary>The science map window (F2).</summary>
+        public ScienceMapUI ScienceMap { get; private set; }
 
         void Update()
         {
@@ -251,6 +262,7 @@ namespace SpaceSim.Runtime
             navigationUi.Initialize(Navigation, Session, FlightState, System);
             hud.SetNavigation(navigationUi, Navigation);
             hud.SetMap(Map);
+            hud.SetScienceMap(ScienceMap);
             hud.SetNewRocket(NewRocketAtHome);
             Hud = hud;
             if (EscMenu != null)

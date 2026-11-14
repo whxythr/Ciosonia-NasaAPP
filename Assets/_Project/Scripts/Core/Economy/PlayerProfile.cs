@@ -100,6 +100,8 @@ namespace SpaceSim.Economy
         public SpaceSim.Crew.CrewRosterData crew = new SpaceSim.Crew.CrewRosterData();
         /// <summary>Real time played in the flight scene [s] (shown in the load screen).</summary>
         public double playSeconds;
+        /// <summary>Orbital science maps (scanned cells and measured values per body). Additive: older saves simply lack it.</summary>
+        public SpaceSim.Science.ScienceArchive science = new SpaceSim.Science.ScienceArchive();
 
         public static PlayerProfile CreateNew(string homeBodyId)
         {

@@ -598,7 +598,8 @@ namespace SpaceSim.Runtime
                 x = ActionButton(x, by, h, Loc.T("АНГАР"), InputKey.B, () => hangar.Toggle());
             if (shop != null && !AnyModalOpen) x = ActionButton(x, by, h, Loc.T("МАГАЗИН"), InputKey.K, () => shop.Toggle());
             if (navigationUi != null && !AnyModalOpen) x = ActionButton(x, by, h, Loc.T("НАВИГАЦИЯ"), InputKey.G, () => navigationUi.Toggle());
-            if (academy != null && !AnyModalOpen) ActionButton(x, by, h, Loc.T("АКАДЕМИЯ"), InputKey.L, () => academy.Toggle());
+            if (academy != null && !AnyModalOpen) x = ActionButton(x, by, h, Loc.T("АКАДЕМИЯ"), InputKey.L, () => academy.Toggle());
+            if (scienceMap != null && !AnyModalOpen) ActionButton(x, by, h, Loc.T("НАУКА"), InputKey.F2, () => scienceMap.Toggle());
 
             if (!AnyModalOpen) DrawWarpScale(new Rect(screen.x - M - 440f, y, 440f, 46f), simulation, WarpZoneName(simulation.WarpZone));
         }

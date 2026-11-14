@@ -295,6 +295,19 @@ namespace SpaceSim.Vehicles
         /// <summary>Multiplier on the research value of samples analysed with this instrument (1 = none).</summary>
         public double researchMultiplier = 1.0;
 
+        // Remote sensing (orbital mapping instruments, see SpaceSim.Science.OrbitalScanner)
+        /// <summary>Map layer the scanner measures (used only when <see cref="scanHalfAngle"/> &gt; 0).</summary>
+        public SpaceSim.Science.ScienceLayer scanLayer;
+        /// <summary>Half-angle of the nadir field of view / swath [deg]; 0 = not a scanner.</summary>
+        public double scanHalfAngle;
+        /// <summary>Lowest / highest working altitude above the reference radius [m].</summary>
+        public double scanMinAltitude, scanMaxAltitude;
+        /// <summary>Angular resolution (instantaneous field of view of one detector element) [rad].</summary>
+        public double scanIfov;
+
+        /// <summary>An orbital mapping instrument.</summary>
+        public bool IsScanner => scanHalfAngle > 0.0;
+
         public bool IsCabin => category == ModuleCategory.Cabin;
         public bool IsEngine => category == ModuleCategory.Engine;
         public bool IsTank => category == ModuleCategory.FuelTank;

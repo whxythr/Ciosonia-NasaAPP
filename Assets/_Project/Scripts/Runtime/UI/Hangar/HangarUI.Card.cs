@@ -302,6 +302,12 @@ namespace SpaceSim.Runtime
             if (m.cargoVolume > 0.0) Add(Loc.T("Объём"), N(m.cargoVolume, 0) + Loc.T(" м³"));
             if (m.pressurized) Add(Loc.T("Герметичный"), Loc.T("да"));
             if (m.measurements != ScienceMeasurement.None) Add(Loc.T("Измеряет"), MeasurementList(m.measurements));
+            if (m.IsScanner)
+            {
+                Add(Loc.T("Поле обзора"), "±" + N(m.scanHalfAngle, 0) + "°");
+                Add(Loc.T("Высота съёмки"), N(m.scanMinAltitude / 1000.0, 0) + "–" + N(m.scanMaxAltitude / 1000.0, 0) + Loc.T(" км"));
+                Add(Loc.T("Разрешение"), N(m.scanIfov * 1000.0, 1) + Loc.T(" мрад"));
+            }
             if (m.capabilities != ModuleCapability.None) Add(Loc.T("Возможности"), CapabilityList(m.capabilities));
             if (m.researchMultiplier != 1.0) Add(Loc.T("Научная ценность"), "×" + N(m.researchMultiplier, 1));
             if (m.length > 0.0) Add(Loc.T("Длина"), Metres(m.length));

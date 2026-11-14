@@ -2597,3 +2597,54 @@ C — робот перегреется (предел	C — the robot will overh
 Моти-Моти и Дотта	Mochi-Mochi and Dotta
 Золин	Tholin
 открытый космос	deep space
+Альбедо	Albedo
+В обработке	Processing
+в.д	E
+вакуум (0 Па	vacuum (0 Pa
+все 3 слоя	all 3 layers
+Высота орбиты	Orbit altitude
+Высота съёмки	Scan altitude
+глубоководье	deep ocean
+з.д	W
+Зондирует столб атмосферы: давление у поверхности по всей полосе обзора. Обзор ±20°, высота 20–2000 км	Sounds the atmospheric column: surface pressure across the whole swath. Field of view ±20°, altitude 20–2000 km
+ИДЁТ СЪЁМКА	SCANNING
+Координаты	Coordinates
+Лазерный альтиметр и многоспектральная камера: высоты, альбедо и тип поверхности. Обзор ±12°, высота 10–1500 км	Laser altimeter and multispectral camera: elevation, albedo and surface type. Field of view ±12°, altitude 10–1500 km
+лес	forest
+логарифмическая шкала	logarithmic scale
+луга	grassland
+мелководье	shallow water
+Микроволновый радиометр: с орбиты картирует температуру поверхности под собой. Обзор ±30°, высота 20–3000 км	Microwave radiometer: maps the surface temperature below from orbit. Field of view ±30°, altitude 20–3000 km
+морской лёд	sea ice
+МПа	MPa
+мрад	mrad
+Научная карта	Science map
+не исследовано	not surveyed
+Нет данных: поставьте на аппарат научные сканеры (Ангар → Наука) и выйдите на орбиту этого тела	No data: fit science scanners to your vehicle (Hangar → Science) and orbit this body
+Нет электропитания — приборы стоят	No electric power — instruments idle
+побережье	coast
+Под аппаратом	Below vehicle
+Покрытие	Coverage
+Поле обзора	Field of view
+ПРИБОРЫ АППАРАТА	VEHICLE INSTRUMENTS
+равнина / пустыня	plain / desert
+Радар давления РД-1	Pressure Radar RD-1
+Радиус пятна	Footprint radius
+разрешение хуже ячейки карты	resolution coarser than a map cell
+Рельеф	Terrain
+с.ш	N
+скалы	rock
+Сканер рельефа СР-1	Terrain Scanner SR-1
+Сканеров на борту нет (или приборы отключены повреждением	No scanners on board (or instruments disabled by damage
+слишком высоко (макс	too high (max
+слишком низко (мин	too low (min
+Слишком сильное ускорение: между кадрами возможны пропуски трассы	Time warp too high: the ground track may have gaps between frames
+слой	layer
+слоя	layers
+снег и лёд	snow and ice
+Температурный радар ТР-1	Temperature Radar TR-1
+тундра	tundra
+Щёлкните по карте, чтобы увидеть значения	Click the map to see the values
+ю.ш	S
+яч	cells
+ЯЧЕЙКА	CELL
