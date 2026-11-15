@@ -226,7 +226,6 @@ namespace UnityEngine
         public static float Clamp(float v, float a, float b) => v;
         public static int Clamp(int v, int a, int b) => v;
         public static float Clamp01(float v) => v;
-        public static float PerlinNoise(float x, float y) => 0f;
         public static float Max(float a, float b) => a;
         public static int Max(int a, int b) => a;
         public static float Min(float a, float b) => a;
@@ -425,7 +424,6 @@ namespace UnityEngine
         public static int targetFrameRate { get; set; }
         public static RuntimePlatform platform => RuntimePlatform.WindowsPlayer;
         public static string persistentDataPath => "";
-        public static string dataPath => "";
         public static string streamingAssetsPath => "";
         public static void OpenURL(string url) { }
         public static bool CanStreamedLevelBeLoaded(string levelName) => false;
