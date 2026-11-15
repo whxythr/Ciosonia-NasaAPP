@@ -213,8 +213,8 @@ namespace SpaceSim.Runtime
 
             Vector3 forward = CoordinateSystem.ToUnityVector((target - camPos).Normalized);
             Vector3 upHint = CoordinateSystem.ToUnityVector(up);
-            Quaternion rotation = Quaternion.LookRotation(forward, upHint) * Buffet(dt);
-            transform.SetPositionAndRotation(origin.ToUnityPosition(camPos), rotation);
+            Quaternion camRotation = Quaternion.LookRotation(forward, upHint) * Buffet(dt);
+            transform.SetPositionAndRotation(origin.ToUnityPosition(camPos), camRotation);
             UpdateClipPlanes(camPos, alt, (target - camPos).Magnitude);
         }
 

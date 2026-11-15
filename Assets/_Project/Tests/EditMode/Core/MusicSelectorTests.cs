@@ -32,8 +32,8 @@ namespace SpaceSim.Tests
             bodies.Add(P("quoris", 0, 0.13 * AU, 1.2e6, 6e6));
             bodies.Add(P("hermeous-mora", -0.43 * AU, 0, 8e6, 4e8));
             bodies.Add(M("hermeous-mora-i", "hermeous-mora", 3e7, 1.2e5, 4e5));
-            bodies.Add(P("home", 0.67 * AU, 0.1 * AU, 6.4e6, 9e8));
-            bodies.Add(M("kolimpri", "home", 4e8, 4e5, 3e7));
+            bodies.Add(P("plain", 0.67 * AU, 0.1 * AU, 6.4e6, 9e8));
+            bodies.Add(M("plain-moon", "plain", 4e8, 4e5, 3e7));
             bodies.Add(P("tholin", 0, -0.87 * AU, 7e6, 1.2e9));
             bodies.Add(P("ciozonia", 1.2 * AU, 0, 6e6, 1e9));
             bodies.Add(M("ciozonia-a", "ciozonia", 2e8, 5e5, 2e7));
@@ -134,9 +134,34 @@ namespace SpaceSim.Tests
         [Test]
         public void BodyWithoutRuleUsesTheUnassignedTrack()
         {
-            Assert.AreEqual(MusicLibrary.DeepSpaceTrack, Track(Near("home", 1e7)));
+            Assert.AreEqual(MusicLibrary.DeepSpaceTrack, Track(Near("plain", 1e7)));
             lib.UnassignedSoiTrackId = "aero-orion";
-            Assert.AreEqual("aero-orion", Track(Near("kolimpri", 1e6)), "moon of the start planet → the configured fallback");
+            Assert.AreEqual("aero-orion", Track(Near("plain-moon", 1e6)), "moon of a planet without a rule → the configured fallback");
+        }
+
+        [Test]
+        public void RulesMatchTheStarSystemAssetIds()
+        {
+            // Ids used by Assets/_Project/ScriptableObjects/StarSystems/Home: Ciozonia = "home", Colossus = "coloss",
+            // Mochi-Mochi = "mocha-mocha" (Dotta = "dott" orbits it).
+            var ids = new Dictionary<string, string>
+            {
+                { "ciozonia", "home" }, { "ciozonia-a", "kolimpri" }, { "ciozonia-b", "tromos" },
+                { "colossus", "coloss" }, { "mochi-mochi", "mocha-mocha" }, { "dotta", "dott" },
+            };
+            var w = new MusicWorld { StarRegionRadius = world.StarRegionRadius };
+            foreach (Body b in bodies)
+                w.Bodies.Add(new MusicBody { Id = ids.TryGetValue(b.Id, out string real) ? real : b.Id, Radius = b.Radius, SoiRadius = b.Soi, NearSurfaceRadius = b.Radius + 120000.0, SemiMajorAxis = b.A });
+            for (int i = 0; i < bodies.Count; i++) w.Bodies[i].ParentIndex = world.Bodies[i].ParentIndex;
+            w.ResolveRules(lib);
+            string T(MusicContext ctx) => MusicSelector.Step(lib, w, ctx, null, 0.0).TrackId;
+
+            Assert.AreEqual("aero-flying-through-the", T(Near("ciozonia", 6e6 + 50000.0)), "home = Ciozonia atmosphere");
+            Assert.AreEqual("adrian-chifu-eternal-traveler", T(Beside("ciozonia-a", 1e7)), "kolimpri");
+            Assert.AreEqual("adrian-chifu-eternal-traveler", T(Beside("ciozonia-b", 1e7)), "tromos");
+            Assert.AreEqual("water-drips-auroras", T(Near("colossus", 1e9)), "coloss");
+            Assert.AreEqual("fadg-1", T(Beside("mochi-mochi", 5e6)), "mocha-mocha");
+            Assert.AreEqual("fadg-1", T(Beside("dotta", 5e6)), "dott");
         }
 
         [Test]
@@ -285,10 +310,16 @@ namespace SpaceSim.Tests
             Assert.Greater(w.StarRegionRadius, 3.0 * starR);
             Assert.Less(w.StarRegionRadius, teonan.Orbit.SemiMajorAxis * (1.0 - teonan.Orbit.Eccentricity) - teonan.SoiRadius, "star region never overlaps a planet's SOI");
             NavBody eremus = sys[sys.IndexOf("eremus")];
-            Assert.AreEqual(6.0 * eremus.Radius, w.ProximityRadius["near-eremus"], 1.0, "Ori is not in the catalog yet: fallback radius");
+            int ori = sys.IndexOf("ori");
+            double expectedNear = ori >= 0 ? sys[ori].Orbit.SemiMajorAxis : 6.0 * eremus.Radius;
+            Assert.AreEqual(expectedNear, w.ProximityRadius["near-eremus"], 1.0, "Cosmic Soup reaches out to Ori's orbit (fallback 6 radii without Ori)");
             Assert.Less(w.ProximityRadius["near-eremus"], eremus.SoiRadius);
-            foreach (string missing in new[] { "ciozonia-surface", "ciozonia-moons", "colossus", "mochi-dotta" })
-                Assert.IsTrue(w.Notes.Exists(n => n.StartsWith(missing + ":")), missing);
+            foreach (string rule in new[] { "ciozonia-surface", "ciozonia-moons", "colossus", "mochi-dotta" })
+            {
+                bool bodyExists = rule.StartsWith("ciozonia") ? sys.IndexOf("home") >= 0
+                    : rule == "colossus" ? sys.IndexOf("coloss") >= 0 : sys.IndexOf("mocha-mocha") >= 0 || sys.IndexOf("dott") >= 0;
+                Assert.AreEqual(!bodyExists, w.Notes.Exists(n => n.StartsWith(rule + ":")), rule + " is reported as waiting only while its body is missing");
+            }
 
             string At(string id, double offset)
             {
@@ -308,7 +339,10 @@ namespace SpaceSim.Tests
             Assert.AreEqual("lombus-amino", At("tholin", 2e7));
             Assert.AreEqual("lombus-cosmic-soup", At("eremus", 2e8));
             Assert.AreEqual("vortex-mechanics-saturn-rings", At("eremus", 2e9));
-            Assert.AreEqual(MusicLibrary.DeepSpaceTrack, At("home", 1e7), "start planet has no rule");
+            Assert.AreEqual(MusicLibrary.DeepSpaceTrack, At("home", 1e7), "Ciozonia (home) above its atmosphere has no SOI rule");
+            Assert.AreEqual("aero-flying-through-the", At("home", 6.37e6 + 5e4), "Ciozonia (home) atmosphere");
+            Assert.AreEqual("adrian-chifu-eternal-traveler", At("kolimpri", 1e5), "moon of Ciozonia (home)");
+            Assert.AreEqual("adrian-chifu-eternal-traveler", At("tromos", 1e5), "moon of Ciozonia (home)");
             Assert.AreEqual(MusicLibrary.DeepSpaceTrack, At("eremus", 1.05 * eremus.SoiRadius));
         }
     }
