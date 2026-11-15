@@ -156,8 +156,8 @@ namespace SpaceSim.Audio
 
         /// <summary>
         /// The designer's assignment. Body ids follow HomeSystemCatalog ("teonan", "quoris", "hermeous-mora", "tholin", "eremus")
-        /// with the spellings of the brief as aliases. Ciozonia, its moons, Colossus, Mochi-Mochi, Dotta and Ori are not in the
-        /// system yet: their rules wait for bodies with these ids (or for their aliases to be added here).
+        /// with the spellings of the brief as aliases. Ciozonia is "home" (moons: kolimpri, tromos), Colossus is "coloss", Mochi-Mochi is "mocha-mocha", Dotta is "dott";
+        /// the brief's spellings stay as aliases.
         /// </summary>
         public static MusicLibrary CreateDefault()
         {
@@ -181,16 +181,16 @@ namespace SpaceSim.Audio
             lib.Rules.Add(R("mora", MusicZoneKind.BodySoi, "lokijar-black-hole", "Гермеус Мора и Мора I",
                 new[] { "hermeous-mora", "hermeus-mora", "hermeous-mora-i", "mora-i" }, new[] { "hermeous-mora", "hermeus-mora" }));
             lib.Rules.Add(R("ciozonia-surface", MusicZoneKind.NearSurface, "aero-flying-through-the", "Циозония: поверхность и атмосфера",
-                new[] { "ciozonia" }, note: "below radius + space-boundary altitude"));
-            lib.Rules.Add(R("ciozonia-moons", MusicZoneKind.BodySoi, "adrian-chifu-eternal-traveler", "спутники Циозонии", null, new[] { "ciozonia" }));
-            lib.Rules.Add(R("colossus", MusicZoneKind.BodySoi, "water-drips-auroras", "Колосс", new[] { "colossus" }));
+                new[] { "ciozonia", "ciosonia", "home" }, note: "below radius + space-boundary altitude"));
+            lib.Rules.Add(R("ciozonia-moons", MusicZoneKind.BodySoi, "adrian-chifu-eternal-traveler", "спутники Циозонии", null, new[] { "ciozonia", "ciosonia", "home" }));
+            lib.Rules.Add(R("colossus", MusicZoneKind.BodySoi, "water-drips-auroras", "Колосс", new[] { "colossus", "coloss" }));
             MusicRule near = R("near-eremus", MusicZoneKind.Proximity, "lombus-cosmic-soup", "у Еремуса (внутри орбиты Ори)", new[] { "eremus", "yeremus" },
                 note: "within Ori's semi-major axis around Eremus (6 Eremus radii until Ori exists)");
             near.RadiusFromOrbitOf = "ori";
             near.FallbackRadiusInBodyRadii = 6.0;
             lib.Rules.Add(near);
             lib.Rules.Add(R("eremus", MusicZoneKind.BodySoi, "vortex-mechanics-saturn-rings", "Еремус", new[] { "eremus", "yeremus" }));
-            lib.Rules.Add(R("mochi-dotta", MusicZoneKind.BodySoi, "fadg-1", "Моти-Моти и Дотта", new[] { "mochi-mochi", "mochimochi", "dotta" }));
+            lib.Rules.Add(R("mochi-dotta", MusicZoneKind.BodySoi, "fadg-1", "Моти-Моти и Дотта", new[] { "mochi-mochi", "mochimochi", "mocha-mocha", "dotta", "dott" }));
             lib.Rules.Add(R("tholin", MusicZoneKind.BodySoi, "lombus-amino", "Золин", new[] { "tholin", "tolin" }));
             lib.Rules.Add(R("deep-space", MusicZoneKind.DeepSpace, DeepSpaceTrack, "открытый космос"));
             return lib;
