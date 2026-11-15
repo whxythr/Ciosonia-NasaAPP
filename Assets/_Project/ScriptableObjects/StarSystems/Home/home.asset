@@ -13,16 +13,15 @@ MonoBehaviour:
   m_Name: home
   m_EditorClassIdentifier: 
   planetId: home
-  displayName: "\u0427\u0435\u0442\u0432\u0451\u0440\u0442\u0430\u044F \u043F\u043B\u0430\u043D\u0435\u0442\u0430
-    (\u0441\u0442\u0430\u0440\u0442)"
+  displayName: "\u0426\u0438\u043E\u0441\u043E\u043D\u0438\u044F (Ciosonia)"
   physical:
     meanRadius: 6370332
     mass: 5.03e+24
     gravitySource: 0
     measuredGravitationalParameter: 335717290000000
     siderealRotationPeriod: 72921.59999999999
-    axialTiltDegrees: 22.5
-    rotationPhaseAtEpochDegrees: 234.5
+    axialTiltDegrees: 25.67
+    rotationPhaseAtEpochDegrees: 200.15826180960647
     atmosphere:
       hasAtmosphere: 1
       profile: 0
@@ -117,8 +116,8 @@ MonoBehaviour:
       g: 1
       b: 1
     flattenZones:
-    - latitudeDegrees: 28
-      longitudeDegrees: -52
+    - latitudeDegrees: 19
+      longitudeDegrees: -50.5
       radius: 600
       minHeightAboveSeaLevel: 15
     equatorialAridity: 0.45
@@ -145,9 +144,10 @@ MonoBehaviour:
     bandCount: 7
     bandTurbulence: 1.2
     bandStretch: 8
-    albedoMap: 
-    albedoMapDetail: 0.35
+    albedoMap: ciosonia
+    albedoMapDetail: 0.3
     albedoMapRelief: 0
+    albedoMapCoastline: 0.12
   lod:
     chunkResolution: 32
     maxLevel: 17
@@ -176,6 +176,7 @@ MonoBehaviour:
       z: 0
     hazeAltitude: 70000
     hazeThickness: 8000
+    visible: 1
     autoShellHeight: 1
     shellDensityRatio: 0.000001
     shellHeight: 120000
@@ -197,18 +198,18 @@ MonoBehaviour:
       evolveSpeed: 4
       weatherWidth: 2048
   launchSite:
-    name: "\u041F\u043B\u043E\u0449\u0430\u0434\u043A\u0430 \xB7 \u0427\u0435\u0442\u0432\u0451\u0440\u0442\u0430\u044F
-      \u043F\u043B\u0430\u043D\u0435\u0442\u0430 (\u0441\u0442\u0430\u0440\u0442)"
-    latitudeDegrees: 28
-    longitudeDegrees: -52
+    name: "\u041F\u043B\u043E\u0449\u0430\u0434\u043A\u0430 \xB7 \u0426\u0438\u043E\u0441\u043E\u043D\u0438\u044F
+      (Ciosonia)"
+    latitudeDegrees: 19
+    longitudeDegrees: -50.5
     padRadius: 40
     flattenRadius: 600
     minHeightAboveSeaLevel: 15
   parentBodyId: 
   orbit:
     semiMajorAxis: 100230573369
-    eccentricity: 0
-    inclinationDegrees: 0
+    eccentricity: 0.05970149253731341
+    inclinationDegrees: 3.17
     longitudeOfAscendingNodeDegrees: 0
     argumentOfPeriapsisDegrees: 0
     meanAnomalyAtEpochDegrees: 40

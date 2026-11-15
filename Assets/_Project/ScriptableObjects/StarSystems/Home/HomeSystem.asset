@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   systemName: "\u0414\u043E\u043C\u0430\u0448\u043D\u044F\u044F \u0441\u0438\u0441\u0442\u0435\u043C\u0430"
   star:
-    name: "\u0417\u0432\u0435\u0437\u0434\u0430"
+    name: "\u041B\u044E\u043C\u0438\u043D\u0438 A (Lumini A)"
     mass: 5.187136430476908e+30
     radius: 1200000000
     surfaceTemperature: 4900
@@ -23,14 +23,26 @@ MonoBehaviour:
       g: 0.88
       b: 0.7
   bodies:
-  - {fileID: 11400000, guid: 2e42138600ad2004494941cd14a35fa3, type: 2}
-  - {fileID: 11400000, guid: 42ed53b47fdf63645a5cb32265b765ac, type: 2}
-  - {fileID: 11400000, guid: 8d792124157f4f74e921fd7a64756c98, type: 2}
-  - {fileID: 11400000, guid: 0e8cc2660f80eba4295f2de876318c28, type: 2}
-  - {fileID: 11400000, guid: be16776b9c0b47e4a9a2f076add282d5, type: 2}
-  - {fileID: 11400000, guid: 921745240d69fc442ac73d13ec8a8d9a, type: 2}
-  - {fileID: 11400000, guid: 5c1cad17fd32c5d4f902a3da36eae1b5, type: 2}
-  - {fileID: 11400000, guid: 8c130d7c031c6c348b88c6282d5f45bb, type: 2}
-  - {fileID: 11400000, guid: bfc8ebcc6455e604d95fe5a1ad1abbda, type: 2}
+  - {fileID: 11400000, guid: 050b9017b76519a47bd53213546c6754, type: 2}
+  - {fileID: 11400000, guid: 2be1675647bd6cb4b9ab0ef580522512, type: 2}
+  - {fileID: 11400000, guid: b3ed956846466e04e9242f96f8a30307, type: 2}
+  - {fileID: 11400000, guid: 9ecf29cc2cdeb414a947febbe4f0eea7, type: 2}
+  - {fileID: 11400000, guid: d3334a31e01607d419f5ba94ed28aa01, type: 2}
+  - {fileID: 11400000, guid: 4b8400345e9ad354693eb738ce5f6737, type: 2}
+  - {fileID: 11400000, guid: 4380eb5253c291f43894d7519f225209, type: 2}
+  - {fileID: 11400000, guid: f4881178f9835034d91e8ac1a122192e, type: 2}
+  - {fileID: 11400000, guid: 4f2ac6c25289da5458d8afdad8c0ad2d, type: 2}
+  - {fileID: 11400000, guid: 287dba75d76210f49b5f304e21989386, type: 2}
+  - {fileID: 11400000, guid: 1f90a7ea804f8ff40a8c175e9872ec17, type: 2}
+  - {fileID: 11400000, guid: beae3abb9a5c0bf44a77278e285cfd58, type: 2}
+  - {fileID: 11400000, guid: ebfaf1361394aad4cb92e6047234baaf, type: 2}
+  - {fileID: 11400000, guid: e86ff1daa9a8f3d4ea1dac33927d7c2d, type: 2}
+  - {fileID: 11400000, guid: 61a17cd6bc6fba54381bf1f93b3987fb, type: 2}
+  - {fileID: 11400000, guid: 3ea611bb5534a554bbde281669f24ac6, type: 2}
+  - {fileID: 11400000, guid: 224eeebebe561204ca727ec6fe2b8456, type: 2}
+  - {fileID: 11400000, guid: 147b3843d5481f24c9bcdfee161a1b6e, type: 2}
+  - {fileID: 11400000, guid: 0c8562bbcac8a0d4bae6c354d7fe6ffd, type: 2}
+  - {fileID: 11400000, guid: 80702e74e6b0392418516f146608bf94, type: 2}
+  - {fileID: 11400000, guid: 1e1019fb4e29ebf4e9ec5f80d64589bb, type: 2}
   startBodyId: home
-  catalogVersion: 2
+  catalogVersion: 6

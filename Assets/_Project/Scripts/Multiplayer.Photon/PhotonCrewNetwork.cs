@@ -23,9 +23,11 @@ namespace SpaceSim.Networking
     /// is used when the settings leave it to «best region», otherwise two players could land in different regions and miss
     /// each other's room).
     /// </summary>
-    public sealed class PhotonCrewNetwork : MonoBehaviourPunCallbacks, ICrewNetwork
+    public sealed class PhotonCrewNetwork : MonoBehaviourPunCallbacks, ICrewNetwork, IOnEventCallback
     {
         const string KeyCrew = "crew", KeyMission = "mission", KeyStart = "start";
+        /// <summary>Photon event code of a crew chat line (content: the text; sent only to the one recipient).</summary>
+        const byte ChatEvent = 41;
         public const string DefaultRegion = "eu";
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -56,6 +58,7 @@ namespace SpaceSim.Networking
 
         public event Action Changed;
         public event Action<string> MissionStarted;
+        public event Action<int, string> ChatReceived;
 
         // ─────────────────────────────── connection ───────────────────────────────
 
@@ -267,6 +270,24 @@ namespace SpaceSim.Networking
             PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable { { KeyCrew, after } }, new Hashtable { { KeyCrew, before } });
         }
 
+        // ─────────────────────────────── chat ───────────────────────────────
+
+        public void SendChat(int toMemberId, string text)
+        {
+            if (!PhotonNetwork.InRoom || string.IsNullOrEmpty(text) || toMemberId == LocalMemberId) return;
+            // Addressed to one actor only, so the other players never receive the line at all.
+            var options = new RaiseEventOptions { TargetActors = new[] { toMemberId } };
+            PhotonNetwork.RaiseEvent(ChatEvent, text, options, SendOptions.SendReliable);
+        }
+
+        /// <summary>Photon events (registered by MonoBehaviourPunCallbacks.OnEnable). The sender is Photon's own, not trusted from the content.</summary>
+        public void OnEvent(EventData photonEvent)
+        {
+            if (photonEvent.Code != ChatEvent || disposed) return;
+            if (photonEvent.CustomData is string text && photonEvent.Sender > 0)
+                ChatReceived?.Invoke(photonEvent.Sender, text);
+        }
+
         // ─────────────────────────────── state ───────────────────────────────
 
         /// <summary>Re-reads the lobby from the room: players in actor order, master client as host, roles from «crew».</summary>
@@ -302,6 +323,7 @@ namespace SpaceSim.Networking
             disposed = true;
             Changed = null;
             MissionStarted = null;
+            ChatReceived = null;
             if (PhotonNetwork.IsConnected) PhotonNetwork.Disconnect();
             if (this != null) Destroy(gameObject);
         }

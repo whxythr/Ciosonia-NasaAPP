@@ -178,6 +178,7 @@ namespace UnityEngine
         public float height { get; set; }
         public float yMax => y + height;
         public float xMax => x + width;
+        public static Rect zero => new Rect(0f, 0f, 0f, 0f);
         public Vector2 center => default;
         public bool Contains(Vector2 point) => false;
     }
@@ -594,16 +595,21 @@ namespace UnityEngine
         public static void SetNextControlName(string name) { }
         public static string GetNameOfFocusedControl() => "";
         public static void Label(Rect r, string text, GUIStyle s) { }
+        public static void Label(Rect r, GUIContent content, GUIStyle s) { }
         public static void Box(Rect r, GUIContent c, GUIStyle s) { }
         public static float HorizontalSlider(Rect r, float value, float leftValue, float rightValue) => value;
         public static void DrawTexture(Rect r, Texture t) { }
         public static void DragWindow() { }
         public static bool Button(Rect r, string text, GUIStyle s) => false;
+        public static bool Button(Rect r, GUIContent content, GUIStyle s) => false;
         public static bool Toggle(Rect r, bool value, string text, GUIStyle s) => value;
         public static string TextField(Rect r, string text, GUIStyle s) => text;
+        public static string TextField(Rect r, string text, int maxLength, GUIStyle s) => text;
         public static void DrawTexture(Rect r, Texture t, ScaleMode mode, bool alphaBlend) { }
         public static void FocusControl(string name) { }
         public static Vector2 BeginScrollView(Rect position, Vector2 scroll, Rect view) => scroll;
+        public static Vector2 BeginScrollView(Rect position, Vector2 scroll, Rect view, bool alwaysH, bool alwaysV,
+            GUIStyle horizontal, GUIStyle vertical) => scroll;
         public static void EndScrollView() { }
     }
 

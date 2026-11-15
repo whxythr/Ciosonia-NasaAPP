@@ -71,7 +71,6 @@ namespace SpaceSim.Runtime.Menu
             // Back in the menu after a team mission: that room and crew are over.
             CrewNetwork.Close();
             CrewSession.End();
-            teamLink = CrewNetwork.OnlineAvailable ? CrewLink.Online : CrewLink.SameScreen;
         }
 
         void OnEnable()
@@ -915,18 +914,16 @@ namespace SpaceSim.Runtime.Menu
 
         // ─────────────────────────────── team lobby ───────────────────────────────
         //
-        // The crew lobby: pick how to play (one screen or a Photon room), create a room or join one by code, choose the mission,
+        // The crew lobby (Photon, one player per computer): create a room or join one by code, choose the mission,
         // take roles. 2–4 players; all four roles must be held before the host can start, so with fewer than four players
         // somebody takes several. The lobby itself lives in CrewNetwork.Current (opened when the screen opens, closed when the
         // player leaves it); this code only draws it and forwards clicks.
 
         const string CrewNickKey = "horizon.crew.nick";
 
-        CrewLink teamLink = CrewLink.SameScreen;
         int teamScenario;
         bool teamLaunching;
         ICrewNetwork teamHooked;
-        readonly List<(CrewLink link, Button button)> teamLinkButtons = new List<(CrewLink, Button)>();
         TextField teamNameField, teamCodeField;
         VisualElement teamRoomRow, teamRoles, teamCrew, teamFoot;
         Label teamStatus, teamMissionTitle, teamMissionMeta;
@@ -936,7 +933,6 @@ namespace SpaceSim.Runtime.Menu
 
         void BuildTeam()
         {
-            teamLinkButtons.Clear();
             var screen = AddScreen(TeamScreen);
             ScreenHeader(screen, "КОМАНДНАЯ МИССИЯ", "СОБЕРИТЕ ЭКИПАЖ",
                 "От 2 до 4 игроков, одна ракета. Если игроков меньше четырёх, кто-то берёт несколько ролей.");
@@ -944,14 +940,8 @@ namespace SpaceSim.Runtime.Menu
             var body = Add(screen, El("screen-body", "team-body"));
             body.style.top = 262;
 
-            // Row 1: how to play · name · connection status.
+            // Row 1: name · connection status.
             var bar = Add(body, El("team-bar"));
-            var link = Add(bar, El("team-bar__group"));
-            link.Add(Text("ИГРА", "team-bar__label", "t-strong"));
-            var seg = Add(link, El("segmented"));
-            TeamLinkButton(seg, CrewLink.SameScreen, "НА ОДНОМ ЭКРАНЕ");
-            TeamLinkButton(seg, CrewLink.Online, "ОНЛАЙН · PHOTON");
-
             var name = Add(bar, El("team-bar__group"));
             name.Add(Text("ВАШЕ ИМЯ", "team-bar__label", "t-strong"));
             teamNameField = new TextField { value = CrewNickname(), maxLength = 16 };
@@ -982,15 +972,6 @@ namespace SpaceSim.Runtime.Menu
             RefreshTeam();
         }
 
-        void TeamLinkButton(VisualElement seg, CrewLink link, string label)
-        {
-            var b = new Button(() => SwitchTeamLink(link)) { text = Loc.T(label) };
-            b.AddToClassList("segmented__item");
-            b.AddToClassList("t-strong");
-            seg.Add(b);
-            teamLinkButtons.Add((link, b));
-        }
-
         Button TeamArrow(string glyph, Action onClick)
         {
             var b = new Button(onClick) { text = glyph };
@@ -1014,13 +995,14 @@ namespace SpaceSim.Runtime.Menu
             return nick;
         }
 
-        /// <summary>The team screen opened: open the lobby in the last used mode (online when Photon is installed).</summary>
+        const string PhotonMissingText = "Photon PUN 2 не установлен: импортируйте его из Asset Store и задайте App ID.";
+
+        /// <summary>The team screen opened: open the Photon lobby.</summary>
         void OpenTeamLobby()
         {
             teamLaunching = false;
             teamScenario = Mathf.Clamp(scenarioIndex, 0, MenuCatalog.Scenarios.Length - 1);
-            if (!CrewNetwork.OnlineAvailable) teamLink = CrewLink.SameScreen;
-            if (CrewNetwork.Current == null || CrewNetwork.Current.Link != teamLink) OpenCrew(teamLink);
+            if (CrewNetwork.Current == null) OpenCrew();
             else RefreshTeam();
         }
 
@@ -1032,26 +1014,17 @@ namespace SpaceSim.Runtime.Menu
             CrewNetwork.Close();
         }
 
-        void SwitchTeamLink(CrewLink link)
-        {
-            if (link == CrewLink.Online && !CrewNetwork.OnlineAvailable)
-            {
-                teamLink = CrewLink.SameScreen;
-                RefreshTeam(Loc.T("Photon PUN 2 не установлен: импортируйте его из Asset Store и задайте App ID."));
-                return;
-            }
-            if (link == teamLink && CrewNetwork.Current != null) return;
-            teamLink = link;
-            OpenCrew(link);
-        }
-
-        void OpenCrew(CrewLink link)
+        void OpenCrew()
         {
             UnhookCrew();
-            ICrewNetwork net = CrewNetwork.Open(link);
+            ICrewNetwork net = CrewNetwork.Open();
+            if (net == null)
+            {
+                RefreshTeam(Loc.T(PhotonMissingText));
+                return;
+            }
             HookCrew(net);
             net.Connect(TeamNickname());
-            if (link == CrewLink.SameScreen) net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id);
             RefreshTeam();
         }
 
@@ -1097,6 +1070,7 @@ namespace SpaceSim.Runtime.Menu
         void CreateTeamRoom()
         {
             ICrewNetwork net = Crew;
+            if (net == null) { OpenCrew(); net = Crew; }
             if (net == null) return;
             net.Connect(TeamNickname());
             net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id);
@@ -1132,14 +1106,11 @@ namespace SpaceSim.Runtime.Menu
         {
             if (teamRoles == null) return;
             ICrewNetwork net = Crew;
-            bool online = teamLink == CrewLink.Online;
+            bool online = net != null;
             bool inRoom = net != null && net.Status == CrewNetStatus.InRoom;
             CrewLobbyState lobby = net?.State;
 
-            foreach (var (l, b) in teamLinkButtons) b.EnableInClassList("segmented__item--on", l == teamLink);
-            teamNameField.parent.style.display = online ? DisplayStyle.Flex : DisplayStyle.None;
-
-            teamStatus.text = message ?? (net == null ? "" : net.StatusText);
+            teamStatus.text = message ?? (net == null ? Loc.T(PhotonMissingText) : net.StatusText);
             teamStatus.EnableInClassList("team-status--bad", net != null && net.Status == CrewNetStatus.Failed || message != null);
 
             MenuCatalog.Scenario scenario = MenuCatalog.Scenarios[teamScenario];
@@ -1156,11 +1127,7 @@ namespace SpaceSim.Runtime.Menu
         void BuildTeamRoomRow(ICrewNetwork net, bool online, bool inRoom)
         {
             teamRoomRow.Clear();
-            if (!online)
-            {
-                teamRoomRow.Add(Text("ВСЕ ИГРОКИ ЗА ОДНИМ КОМПЬЮТЕРОМ: ВЫБЕРИТЕ ИГРОКА НИЖЕ И НАЖМИТЕ НА РОЛЬ", "team-bar__label", "t-strong"));
-                return;
-            }
+            if (!online) return;
             if (inRoom)
             {
                 teamRoomRow.Add(Text("КОД КОМНАТЫ", "team-bar__label", "t-strong"));
@@ -1260,16 +1227,15 @@ namespace SpaceSim.Runtime.Menu
             var crewTitle = Add(teamCrew, new Label(Loc.T("ЭКИПАЖ") + "  " + lobby.Count + "/" + CrewLobbyState.MaxPlayers));
             crewTitle.AddToClassList("team-bar__label");
             crewTitle.AddToClassList("t-strong");
-            var local = net as LocalCrewNetwork;
             foreach (CrewMember m in lobby.Members)
             {
                 int id = m.Id;
                 bool active = id == net.LocalMemberId;
-                var seat = new Button(() => local?.SelectSeat(id));
+                var seat = new Button();
                 seat.AddToClassList("crew-seat");
                 if (active) seat.AddToClassList("crew-seat--active");
                 teamCrew.Add(seat);
-                var label = Add(seat, new Label((m.IsHost && local == null ? "★ " : "") + m.Name));
+                var label = Add(seat, new Label((m.IsHost ? "★ " : "") + m.Name));
                 label.AddToClassList("crew-seat__name");
                 label.AddToClassList("t-strong");
                 var initials = new List<string>();
@@ -1277,26 +1243,9 @@ namespace SpaceSim.Runtime.Menu
                 var roles = Add(seat, new Label(initials.Count == 0 ? Loc.T("без роли") : string.Join(" ", initials)));
                 roles.AddToClassList("crew-seat__roles");
                 roles.AddToClassList("t-mono");
-                if (local == null)
-                {
-                    var ready = Add(seat, new Label(m.Ready ? Loc.T("ГОТОВ") : Loc.T("НЕ ГОТОВ")));
-                    ready.AddToClassList("crew-seat__state");
-                    ready.AddToClassList(m.Ready ? "crew-seat__state--yes" : "crew-seat__state--no");
-                }
-                else if (lobby.Count > 1)
-                {
-                    var remove = new Button(() => local.RemoveSeat(id)) { text = "×" };
-                    remove.AddToClassList("crew-seat__remove");
-                    seat.Add(remove);
-                }
-            }
-            if (local != null && !lobby.IsFull)
-            {
-                var add = new Button(() => local.AddSeat()) { text = Loc.T("+ ИГРОК") };
-                add.AddToClassList("crew-seat");
-                add.AddToClassList("crew-seat--add");
-                add.AddToClassList("t-strong");
-                teamCrew.Add(add);
+                var ready = Add(seat, new Label(m.Ready ? Loc.T("ГОТОВ") : Loc.T("НЕ ГОТОВ")));
+                ready.AddToClassList("crew-seat__state");
+                ready.AddToClassList(m.Ready ? "crew-seat__state--yes" : "crew-seat__state--no");
             }
         }
 
@@ -1335,9 +1284,7 @@ namespace SpaceSim.Runtime.Menu
             switch (lobby.Check())
             {
                 case CrewLobbyIssue.NotEnoughPlayers:
-                    return online
-                        ? Loc.T("Нужно минимум 2 игрока, сейчас в комнате: ") + lobby.Count + "."
-                        : Loc.T("Нужно минимум 2 игрока: добавьте второго кнопкой «+ ИГРОК».");
+                    return Loc.T("Нужно минимум 2 игрока, сейчас в комнате: ") + lobby.Count + ".";
                 case CrewLobbyIssue.RolesUncovered:
                     var free = new List<string>();
                     foreach (CrewRole r in lobby.UncoveredRoles()) free.Add(CrewRoles.Info(r).Title);

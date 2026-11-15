@@ -20,7 +20,7 @@ MonoBehaviour:
     gravitySource: 0
     measuredGravitationalParameter: 1882152599999.9998
     siderealRotationPeriod: 898560
-    axialTiltDegrees: 0
+    axialTiltDegrees: 3.17
     rotationPhaseAtEpochDegrees: 310
     atmosphere:
       hasAtmosphere: 1
@@ -155,9 +155,10 @@ MonoBehaviour:
     bandCount: 7
     bandTurbulence: 1.2
     bandStretch: 8
-    albedoMap: 
+    albedoMap: quoris
     albedoMapDetail: 0.35
     albedoMapRelief: 0
+    albedoMapCoastline: 0
   lod:
     chunkResolution: 32
     maxLevel: 17
@@ -186,6 +187,7 @@ MonoBehaviour:
       z: 0
     hazeAltitude: 70000
     hazeThickness: 8000
+    visible: 1
     autoShellHeight: 0
     shellDensityRatio: 0.000001
     shellHeight: 345133.4882883438
@@ -217,8 +219,8 @@ MonoBehaviour:
   parentBodyId: 
   orbit:
     semiMajorAxis: 19148527449.600002
-    eccentricity: 0
-    inclinationDegrees: 0
+    eccentricity: 0.03125000000000003
+    inclinationDegrees: 3.17
     longitudeOfAscendingNodeDegrees: 0
     argumentOfPeriapsisDegrees: 0
     meanAnomalyAtEpochDegrees: 130

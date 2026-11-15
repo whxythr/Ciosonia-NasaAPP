@@ -1,0 +1,229 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67f3db8e82744378f4cdddb7a7408f0, type: 3}
+  m_Name: bifur
+  m_EditorClassIdentifier: 
+  planetId: bifur
+  displayName: "\u0411\u0438\u0444\u0443\u0440 (Bifur)"
+  physical:
+    meanRadius: 271926
+    mass: 3.68e+20
+    gravitySource: 0
+    measuredGravitationalParameter: 24561423999.999996
+    siderealRotationPeriod: 82129.86401097964
+    axialTiltDegrees: 4.17
+    rotationPhaseAtEpochDegrees: 450
+    atmosphere:
+      hasAtmosphere: 0
+      profile: 0
+      surfaceDensity: 0
+      scaleHeight: 8500
+      surfacePressure: 0
+      surfaceTemperature: 125.14999999999998
+      meanMolarMass: 0.0289644
+      coRotationFactor: 1
+      table: []
+      composition: "\u043D\u0435\u0442 \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u044B"
+    spaceBoundaryAltitude: 6000
+  physicalGeneratorVersion: 0
+  physicalSeed: 0
+  surfaceSource: 0
+  generation:
+    seed: 93157
+    algorithmVersion: 1
+    continentFrequency: 1.1
+    continentOctaves: 6
+    lacunarity: 2
+    persistence: 0.5
+    continentBias: -0.04
+    continentAmplitude: 900
+    oceanDepthAmplitude: 900
+    warpFrequency: 1.6
+    warpStrength: 0.2
+    mountainFrequency: 3.5
+    mountainOctaves: 7
+    mountainAmplitude: 700
+    detailFrequency: 160
+    detailOctaves: 9
+    detailAmplitude: 80
+    hasOcean: 0
+    seaLevel: 0
+    craterCount: 560
+    craterMinRadius: 300
+    craterMaxRadius: 8000
+    craterDepthRatio: 0.14
+    craterRimWidth: 0.45
+    elevationCooling: 0.00008
+    moistureFrequency: 2.5
+    deepOcean:
+      r: 0.015
+      g: 0.05
+      b: 0.16
+    shallowOcean:
+      r: 0.04
+      g: 0.17
+      b: 0.3
+    seaIce:
+      r: 0.8
+      g: 0.85
+      b: 0.9
+    beach:
+      r: 0.72
+      g: 0.66
+      b: 0.48
+    desert:
+      r: 0.76
+      g: 0.63
+      b: 0.42
+    grassland:
+      r: 0.28
+      g: 0.4
+      b: 0.16
+    forest:
+      r: 0.11
+      g: 0.24
+      b: 0.09
+    tundra:
+      r: 0.42
+      g: 0.41
+      b: 0.35
+    rock:
+      r: 0.36
+      g: 0.33
+      b: 0.3
+    snow:
+      r: 0.9
+      g: 0.92
+      b: 0.95
+    atmosphereTint:
+      r: 1
+      g: 1
+      b: 1
+    cloudCoverage: 0
+    cloudTint:
+      r: 1
+      g: 1
+      b: 1
+    flattenZones:
+    - latitudeDegrees: 4
+      longitudeDegrees: 0
+      radius: 600
+      minHeightAboveSeaLevel: 15
+    equatorialAridity: 0
+    coastalMountainBoost: 0
+    surfaceStyle: 1
+    lowland:
+      r: 0.77
+      g: 0.63
+      b: 0.48
+    highland:
+      r: 0.7
+      g: 0.56
+      b: 0.42
+    stain:
+      r: 0.45
+      g: 0.2
+      b: 0.12
+    stainCoverage: 0
+    stainFrequency: 6
+    craterFloorDarkening: 0.1
+    featureCraters: []
+    featureCanyons: []
+    canyonDarkening: 0.25
+    bandCount: 7
+    bandTurbulence: 1.2
+    bandStretch: 8
+    albedoMap: bifur
+    albedoMapDetail: 0.35
+    albedoMapRelief: 0
+    albedoMapCoastline: 0
+  lod:
+    chunkResolution: 32
+    maxLevel: 17
+    splitDistanceFactor: 2.2
+    useWorkerThreads: 1
+    maxConcurrentJobs: 6
+    maxMeshUploadsPerFrame: 8
+    cacheBudgetMegabytes: 256
+    skirtFraction: 0.015
+  importedModel:
+    modelPrefab: {fileID: 0}
+    modelRadius: 1
+    rotationOffsetEuler: {x: 0, y: 0, z: 0}
+  optics:
+    rayleighScattering:
+      x: 0.000005802
+      y: 0.000013558
+      z: 0.0000331
+    mieScattering: 0.000003996
+    mieExtinctionRatio: 1.11
+    mieScaleHeight: 1200
+    mieAnisotropy: 0.8
+    hazeScattering:
+      x: 0
+      y: 0
+      z: 0
+    hazeAltitude: 70000
+    hazeThickness: 8000
+    visible: 1
+    autoShellHeight: 1
+    shellDensityRatio: 0.000001
+    shellHeight: 120000
+  atmosphereRendering:
+    enabled: 1
+    sunIntensity: 22
+    exposure: 0.4
+    viewSamples: 28
+    multipleScattering: 1
+    clouds:
+      enabled: 1
+      extinction: 0.012
+      primarySteps: 34
+      lightSteps: 4
+      ambient: 2.2
+      cirrus: 0.45
+      shadowStrength: 0.75
+      driftSpeed: 11
+      evolveSpeed: 4
+      weatherWidth: 2048
+  launchSite:
+    name: "\u041F\u043B\u043E\u0449\u0430\u0434\u043A\u0430 \xB7 \u0411\u0438\u0444\u0443\u0440
+      (Bifur)"
+    latitudeDegrees: 4
+    longitudeDegrees: 0
+    padRadius: 40
+    flattenRadius: 600
+    minHeightAboveSeaLevel: 15
+  parentBodyId: eremus
+  orbit:
+    semiMajorAxis: 388954463.82
+    eccentricity: 0.023076923076923037
+    inclinationDegrees: 4.17
+    longitudeOfAscendingNodeDegrees: 0
+    argumentOfPeriapsisDegrees: 0
+    meanAnomalyAtEpochDegrees: 270
+    period: 0
+    tidallyLocked: 1
+  description: "\u0422\u0440\u0435\u0442\u0438\u0439 \u0441\u043F\u0443\u0442\u043D\u0438\u043A
+    \u0415\u0440\u0435\u043C\u0443\u0441\u0430. \u0421\u0432\u0435\u0442\u043B\u043E-\u043A\u0440\u0435\u043C\u043E\u0432\u044B\u0439,
+    \u0432\u0435\u0441\u044C \u0438\u0437\u0440\u044B\u0442 \u043C\u0435\u043B\u043A\u0438\u043C\u0438
+    \u043A\u0440\u0430\u0442\u0435\u0440\u0430\u043C\u0438; \u0443 \u044D\u043A\u0432\u0430\u0442\u043E\u0440\u0430
+    \u2014 \u0431\u043E\u043B\u0435\u0435 \u0433\u043B\u0430\u0434\u043A\u0438\u0439
+    \u043F\u043E\u044F\u0441. \u041F\u0440\u0438\u043B\u0438\u0432\u043D\u043E \u0437\u0430\u0445\u0432\u0430\u0447\u0435\u043D,
+    \u0431\u0435\u0437 \u0430\u0442\u043C\u043E\u0441\u0444\u0435\u0440\u044B, \u0432
+    \u0440\u0430\u0434\u0438\u0430\u0446\u0438\u043E\u043D\u043D\u044B\u0445 \u043F\u043E\u044F\u0441\u0430\u0445.
+    \u2212148 \xB0C, g = 0.332 \u043C/\u0441\xB2, \u0441\u0443\u0442\u043A\u0438
+    = \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0435 = 0.95 \u0437\u0435\u043C\u043D\u044B\u0445."
+  hazards:
+    radiationLevel: 2
+    acidLevel: 0
+  flattenLaunchSite: 1

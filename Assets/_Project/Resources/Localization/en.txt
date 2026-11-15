@@ -3249,17 +3249,13 @@ Tab — экипаж	Tab — crew
 В комнате	In room
 Вы вышли из комнаты	You left the room
 НАБЛЮДАТЕЛЬ	OBSERVER
-Игроки за одним компьютером	Players at one computer
 Не подключено	Not connected
 Игра не сохраняется	The game is not saved
 СОБЕРИТЕ ЭКИПАЖ	ASSEMBLE YOUR CREW
 От 2 до 4 игроков, одна ракета. Если игроков меньше четырёх, кто-то берёт несколько ролей	2 to 4 players, one rocket. With fewer than four players, someone takes several roles
 ИГРА	PLAY
-НА ОДНОМ ЭКРАНЕ	SAME SCREEN
-ОНЛАЙН · PHOTON	ONLINE · PHOTON
 ВАШЕ ИМЯ	YOUR NAME
 МИССИЯ	MISSION
-ВСЕ ИГРОКИ ЗА ОДНИМ КОМПЬЮТЕРОМ: ВЫБЕРИТЕ ИГРОКА НИЖЕ И НАЖМИТЕ НА РОЛЬ	EVERYONE AT ONE COMPUTER: PICK A PLAYER BELOW, THEN CLICK A ROLE
 КОД КОМНАТЫ	ROOM CODE
 ВЫЙТИ ИЗ КОМНАТЫ	LEAVE ROOM
 СОЗДАТЬ КОМНАТУ	CREATE ROOM
@@ -3300,3 +3296,8 @@ Photon: не удалось начать подключение	Photon: could no
 Photon: не удалось создать комнату	Photon: could not create the room
 Photon: не удалось войти в комнату	Photon: could not join the room
 ВЫ	YOU
+ЧАТЫ ЭКИПАЖА	CREW CHATS
+СВЯЗЬ С КАПИТАНОМ	LINK TO CAPTAIN
+вышел	left
+Напишите игроку: что ему нужно для миссии.	Message the player: tell them what they need for the mission.
+Здесь сообщения капитана. Ответить можно только ему.	The captain's messages appear here. You can reply only to the captain.

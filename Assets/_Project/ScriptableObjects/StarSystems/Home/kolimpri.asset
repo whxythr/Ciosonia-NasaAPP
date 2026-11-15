@@ -19,8 +19,8 @@ MonoBehaviour:
     mass: 1.43e+21
     gravitySource: 0
     measuredGravitationalParameter: 95442489999.99998
-    siderealRotationPeriod: 147169.12377430135
-    axialTiltDegrees: 0
+    siderealRotationPeriod: 147139.61390342188
+    axialTiltDegrees: 6.51
     rotationPhaseAtEpochDegrees: 280
     atmosphere:
       hasAtmosphere: 0
@@ -145,6 +145,7 @@ MonoBehaviour:
     albedoMap: kolimpri
     albedoMapDetail: 0.35
     albedoMapRelief: 4000
+    albedoMapCoastline: 0
   lod:
     chunkResolution: 32
     maxLevel: 17
@@ -173,6 +174,7 @@ MonoBehaviour:
       z: 0
     hazeAltitude: 70000
     hazeThickness: 8000
+    visible: 1
     autoShellHeight: 1
     shellDensityRatio: 0.000001
     shellHeight: 120000
@@ -203,9 +205,9 @@ MonoBehaviour:
     minHeightAboveSeaLevel: 15
   parentBodyId: home
   orbit:
-    semiMajorAxis: 56896095
-    eccentricity: 0
-    inclinationDegrees: 0
+    semiMajorAxis: 56888489
+    eccentricity: 0.038740636290585814
+    inclinationDegrees: 6.51
     longitudeOfAscendingNodeDegrees: 0
     argumentOfPeriapsisDegrees: 0
     meanAnomalyAtEpochDegrees: 100

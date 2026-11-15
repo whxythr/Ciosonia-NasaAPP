@@ -20,7 +20,7 @@ MonoBehaviour:
     gravitySource: 0
     measuredGravitationalParameter: 3.443925985344e+17
     siderealRotationPeriod: 28425.600000000002
-    axialTiltDegrees: 3
+    axialTiltDegrees: 4.15
     rotationPhaseAtEpochDegrees: 472.5
     atmosphere:
       hasAtmosphere: 1
@@ -144,9 +144,10 @@ MonoBehaviour:
     bandCount: 8
     bandTurbulence: 1.4
     bandStretch: 10
-    albedoMap: 
+    albedoMap: eremus
     albedoMapDetail: 0.35
     albedoMapRelief: 0
+    albedoMapCoastline: 0
   lod:
     chunkResolution: 32
     maxLevel: 17
@@ -162,19 +163,20 @@ MonoBehaviour:
     rotationOffsetEuler: {x: 0, y: 0, z: 0}
   optics:
     rayleighScattering:
-      x: 0.0000017322666791003453
-      y: 0.000004047926858883572
-      z: 0.00000988245899314399
+      x: 0.0000035284802776949157
+      y: 0.0000021713724785814864
+      z: 0.000000746409289512386
     mieScattering: 0.000002
     mieExtinctionRatio: 1.2
     mieScaleHeight: 20000
     mieAnisotropy: 0.7
     hazeScattering:
-      x: 0.000003
-      y: 0.0000018
-      z: 0.0000008
+      x: 0.0000055
+      y: 0.000003
+      z: 0.000001
     hazeAltitude: 60000
     hazeThickness: 20000
+    visible: 1
     autoShellHeight: 1
     shellDensityRatio: 0.000001
     shellHeight: 120000
@@ -207,7 +209,7 @@ MonoBehaviour:
   orbit:
     semiMajorAxis: 306675634935
     eccentricity: 0.034146341463414664
-    inclinationDegrees: 0
+    inclinationDegrees: 3.17
     longitudeOfAscendingNodeDegrees: 0
     argumentOfPeriapsisDegrees: 0
     meanAnomalyAtEpochDegrees: 300
@@ -225,12 +227,13 @@ MonoBehaviour:
     \u0443\u0440\u043E\u0432\u043D\u0435 1 \u0431\u0430\u0440, \u0441\u0443\u0442\u043A\u0438
     0.329 \u0437\u0435\u043C\u043D\u044B\u0445, \u0433\u043E\u0434 664 \u0434\u043D\u044F,
     \u043F\u043E\u043B\u044F\u0440\u043D\u043E\u0435 \u0441\u0436\u0430\u0442\u0438\u0435
-    3.98 %. 17 \u0441\u043F\u0443\u0442\u043D\u0438\u043A\u043E\u0432, \u0438\u0437
-    \u043D\u0438\u0445 7 \u043A\u0440\u0443\u043F\u043D\u044B\u0445 (\u043F\u043E\u043A\u0430
-    \u043D\u0435 \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D\u044B). \u0422\u0432\u0451\u0440\u0434\u043E\u0439
-    \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438 \u043D\u0435\u0442:
-    \xAB\u043F\u043B\u043E\u0449\u0430\u0434\u043A\u0430\xBB \u2014 \u043D\u0430
-    \u0443\u0440\u043E\u0432\u043D\u0435 \u043E\u0431\u043B\u0430\u043A\u043E\u0432."
+    3.98 %. 17 \u0441\u043F\u0443\u0442\u043D\u0438\u043A\u043E\u0432, \u043A\u0440\u0443\u043F\u043D\u044B\u0435
+    \u0438\u0437 \u043D\u0438\u0445: \u041E\u0440\u0438, \u041E\u0438\u043D, \u0411\u0438\u0444\u0443\u0440,
+    \u041D\u0435\u0432\u0435\u0440\u043C\u043E\u0440, \u0414\u0432\u0430\u043B\u0438\u043D,
+    \u0411\u0430\u043B\u0438\u043D, \u041A\u043E\u043B\u043E\u0441\u0441 \u0438 \u0413\u0430\u043D\u0434\u0430\u043B\u044C\u0444.
+    \u0422\u0432\u0451\u0440\u0434\u043E\u0439 \u043F\u043E\u0432\u0435\u0440\u0445\u043D\u043E\u0441\u0442\u0438
+    \u043D\u0435\u0442: \xAB\u043F\u043B\u043E\u0449\u0430\u0434\u043A\u0430\xBB
+    \u2014 \u043D\u0430 \u0443\u0440\u043E\u0432\u043D\u0435 \u043E\u0431\u043B\u0430\u043A\u043E\u0432."
   hazards:
     radiationLevel: 2
     acidLevel: 0

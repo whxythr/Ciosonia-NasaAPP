@@ -21,7 +21,7 @@ MonoBehaviour:
     measuredGravitationalParameter: 22091932999.999996
     siderealRotationPeriod: 220319.99999999997
     axialTiltDegrees: 0
-    rotationPhaseAtEpochDegrees: 150
+    rotationPhaseAtEpochDegrees: 154.65826180960647
     atmosphere:
       hasAtmosphere: 1
       profile: 0
@@ -153,6 +153,7 @@ MonoBehaviour:
     albedoMap: tromos
     albedoMapDetail: 0.3
     albedoMapRelief: 0
+    albedoMapCoastline: 0
   lod:
     chunkResolution: 32
     maxLevel: 17
@@ -181,6 +182,7 @@ MonoBehaviour:
       z: 0
     hazeAltitude: 70000
     hazeThickness: 8000
+    visible: 0
     autoShellHeight: 0
     shellDensityRatio: 0.000001
     shellHeight: 495565.1270511368
@@ -211,9 +213,9 @@ MonoBehaviour:
     minHeightAboveSeaLevel: 15
   parentBodyId: home
   orbit:
-    semiMajorAxis: 97059000
-    eccentricity: 0
-    inclinationDegrees: 0
+    semiMajorAxis: 96890115
+    eccentricity: 0.1255880900883945
+    inclinationDegrees: 3.58
     longitudeOfAscendingNodeDegrees: 0
     argumentOfPeriapsisDegrees: 0
     meanAnomalyAtEpochDegrees: 75

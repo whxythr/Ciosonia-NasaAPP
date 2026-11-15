@@ -103,7 +103,7 @@ namespace SpaceSim.Runtime.Menu
         void Update()
         {
             if (open && inSettings) settings?.Tick();
-            if (FlightInput.EscapePressed && !CrewScreen.OwnsEscape && !LoadingScreen.IsShowing) HandleEscape(); // no pause menu under the loading screen
+            if (FlightInput.EscapePressed && !CrewScreen.OwnsEscape && !Multiplayer.CrewChatPanel.Typing && !LoadingScreen.IsShowing) HandleEscape(); // no pause menu under the loading screen
         }
 
         /// <summary>

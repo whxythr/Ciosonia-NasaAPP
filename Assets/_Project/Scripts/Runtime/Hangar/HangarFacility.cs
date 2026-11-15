@@ -47,7 +47,12 @@ namespace SpaceSim.Runtime
         public RocketModel.Part Hovered => hovered;
         public RocketModel.Part Selected => selected;
         /// <summary>Set by the hangar window every frame: the pointer is over a panel (no orbiting, zooming or picking then).</summary>
-        public bool PointerOverUi { get; set; }
+        public bool PointerOverUi
+        {
+            get => pointerOverUi || Multiplayer.CrewChatPanel.MouseOver; // the team-mission chat sits over the hall too
+            set => pointerOverUi = value;
+        }
+        bool pointerOverUi;
         /// <summary>
         /// Set by the hangar window while a part is dragged from the catalog: every part of this stage is lit (−1 = the head section,
         /// null = none), so the player sees where the part will go.

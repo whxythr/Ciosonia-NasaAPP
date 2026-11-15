@@ -256,7 +256,7 @@ namespace SpaceSim.Runtime
                 targetYaw += d.x * mouseSensitivity;
                 targetPitch = Mathf.Clamp(targetPitch - d.y * mouseSensitivity, -89f, 89f);
             }
-            float notches = FlightInput.ScrollNotches;
+            float notches = Multiplayer.CrewChatPanel.MouseOver ? 0f : FlightInput.ScrollNotches; // scrolling the crew chat
             if (FlightInput.GetKey(InputKey.Equals)) notches += 2f * Time.unscaledDeltaTime * 10f;
             if (FlightInput.GetKey(InputKey.Minus)) notches -= 2f * Time.unscaledDeltaTime * 10f;
             if (Mathf.Abs(notches) > 0f)

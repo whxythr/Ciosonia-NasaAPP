@@ -6,8 +6,6 @@ namespace SpaceSim.Runtime.Multiplayer
     /// <summary>How the crew plays together.</summary>
     public enum CrewLink
     {
-        /// <summary>Everybody at one computer: seats are added by hand, no network.</summary>
-        SameScreen,
         /// <summary>Photon room, one player per computer, joined by a room code.</summary>
         Online
     }
@@ -24,7 +22,7 @@ namespace SpaceSim.Runtime.Multiplayer
     }
 
     /// <summary>
-    /// The team-mission lobby as the menu sees it, whatever carries it (Photon or one shared screen).
+    /// The team-mission lobby as the menu sees it, carried by Photon.
     /// Every change arrives through <see cref="Changed"/> (on the main thread); <see cref="MissionStarted"/> fires on every
     /// computer of the room when the host starts the mission.
     /// </summary>
@@ -37,13 +35,15 @@ namespace SpaceSim.Runtime.Multiplayer
         string RoomCode { get; }
         /// <summary>The research mission the team chose (<see cref="Menu.MenuCatalog.Scenario.Id"/>).</summary>
         string ScenarioId { get; }
-        /// <summary>The player whose clicks this computer makes (the active seat on a shared screen).</summary>
+        /// <summary>The player of this computer.</summary>
         int LocalMemberId { get; }
         bool IsHost { get; }
         CrewLobbyState State { get; }
 
         event Action Changed;
         event Action<string> MissionStarted;
+        /// <summary>A chat line arrived from another player: (sender id, text). Raised only for lines addressed to this computer.</summary>
+        event Action<int, string> ChatReceived;
 
         void Connect(string nickname);
         void CreateRoom(string scenarioId);
@@ -59,11 +59,13 @@ namespace SpaceSim.Runtime.Multiplayer
         void SetScenario(string scenarioId);
         /// <summary>Host: start when <see cref="CrewLobbyState.CanStart"/>.</summary>
         void StartMission();
+        /// <summary>Sends a chat line to one player (the rule «only with the captain» is checked by <see cref="CrewChat"/>).</summary>
+        void SendChat(int toMemberId, string text);
     }
 
     /// <summary>
     /// Owns the one lobby connection of the game. The Photon layer (assembly SpaceSim.Multiplayer.Photon, compiled only when
-    /// PUN 2 is imported) registers itself here at start-up; without it only <see cref="CrewLink.SameScreen"/> is offered.
+    /// PUN 2 is imported) registers itself here at start-up; without it the team mission is unavailable.
     /// </summary>
     public static class CrewNetwork
     {
@@ -77,10 +79,11 @@ namespace SpaceSim.Runtime.Multiplayer
         /// <summary>The open lobby, or null. Survives scene loads (the Photon room stays open during the mission).</summary>
         public static ICrewNetwork Current { get; private set; }
 
-        public static ICrewNetwork Open(CrewLink link)
+        /// <summary>Opens the Photon lobby; null when Photon PUN 2 is not installed.</summary>
+        public static ICrewNetwork Open()
         {
             Close();
-            Current = link == CrewLink.Online && onlineFactory != null ? onlineFactory() : new LocalCrewNetwork();
+            Current = onlineFactory?.Invoke();
             return Current;
         }
 

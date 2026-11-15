@@ -786,7 +786,7 @@ namespace SpaceSim.Runtime
             Vector2 mouse = FlightInput.MousePosition;
             float s = HudStyle.Scale;
             var point = new Vector2(mouse.x / s, (Screen.height - mouse.y) / s);
-            return OverUi(point) || (boot.Hud != null && boot.Hud.WindowCovers(point));
+            return OverUi(point) || Multiplayer.CrewChatPanel.MouseOver || (boot.Hud != null && boot.Hud.WindowCovers(point));
         }
 
         /// <summary>Map-space position of a point; <paramref name="shrink"/> &lt; 1 when it had to be pulled inside the far plane.</summary>
