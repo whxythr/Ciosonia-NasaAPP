@@ -376,6 +376,18 @@ namespace SpaceSim.Flight
             UpdatePrimary();
         }
 
+        /// <summary>
+        /// Stage separation in flight: the vehicle's reference point (the bottom of the stack) moves by <paramref name="positionShift"/>
+        /// to the bottom of what is left, and the separation push adds <paramref name="deltaV"/>. Unlike
+        /// <see cref="SetInertialState"/> this keeps the flight record and the interpolation; does nothing on the ground.
+        /// </summary>
+        public void ApplySeparation(Vector3d positionShift, Vector3d deltaV)
+        {
+            if (IsLanded) return;
+            State = new BodyState(State.Position + positionShift, State.Velocity + deltaV, State.Time);
+            PreviousState = new BodyState(PreviousState.Position + positionShift, PreviousState.Velocity + deltaV, PreviousState.Time);
+        }
+
         // ---- Stepping -------------------------------------------------------------------------
 
         /// <summary>Advances by exactly <paramref name="dt"/> seconds (fixed step from the simulation clock).</summary>

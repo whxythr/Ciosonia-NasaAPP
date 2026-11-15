@@ -163,7 +163,7 @@ namespace SpaceSim.Runtime
 
             var def = planet.Definition;
             var model = planet.Model;
-            hasAir = def.atmosphereRendering.enabled && model.Atmosphere.ReferenceDensity > 0.0 && planet.VisualShellHeight > 0.0;
+            hasAir = def.atmosphereRendering.enabled && def.optics.visible && model.Atmosphere.ReferenceDensity > 0.0 && planet.VisualShellHeight > 0.0;
 
             AtmosphereOpticalProperties optics = def.optics;
             var tint = def.generation.atmosphereTint;

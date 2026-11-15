@@ -481,6 +481,7 @@ namespace SpaceSim.Runtime
                 case TimeWarpZone.LowOrbit: return Loc.T("низкая орбита");
                 case TimeWarpZone.HighOrbit: return Loc.T("высокая орбита");
                 case TimeWarpZone.LowThrustFlight: return Loc.T("малая тяга на безопасной траектории");
+                case TimeWarpZone.PreLaunch: return Loc.T("на стартовой площадке");
                 default: return Loc.T("межпланетный полёт");
             }
         }

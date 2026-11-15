@@ -27,6 +27,19 @@ namespace SpaceSim.Tests
         }
 
         [Test]
+        public void OnThePadBeforeLaunch_AnyWarp()
+        {
+            var waiting = new TimeWarpSituation { Landed = true, AwaitingLaunch = true };
+            TimeWarpLimit limit = TimeWarpPolicy.Evaluate(waiting);
+            Assert.AreEqual(TimeWarpZone.PreLaunch, limit.Zone);
+            Assert.AreEqual(TimeWarpPolicy.InterplanetaryWarp, limit.MaxWarp, "as high as anywhere in the game");
+
+            waiting.EngineBurning = true; // engines lit on the pad: take-off rules again
+            Assert.AreEqual(TimeWarpPolicy.SurfaceWarp, TimeWarpPolicy.Evaluate(waiting).MaxWarp);
+            Assert.AreEqual(TimeWarpPolicy.SurfaceWarp, Max(0.0, landed: true), "landed elsewhere (or back on the pad after a flight)");
+        }
+
+        [Test]
         public void GrowsWithHeightOnTheWayToOrbit()
         {
             Assert.AreEqual(16.0, Max(100000.0, burning: true));

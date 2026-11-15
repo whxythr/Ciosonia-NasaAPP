@@ -132,6 +132,7 @@ namespace SpaceSim.Runtime
                 Condition.Reset();
                 sim.SetInertialState(carry.Position, carry.Velocity, carry.Time);
                 UsedTestTool = carry.UsedTestTool;
+                hasFlown = true;
                 RebuildVisual();
             }
         }
@@ -155,12 +156,25 @@ namespace SpaceSim.Runtime
 
         public double RailsHorizon(double maxDt) => sim.RailsHorizon(maxDt);
 
-        public SpaceSim.Flight.TimeWarpLimit WarpLimit() => SpaceSim.Flight.TimeWarpPolicy.Evaluate(sim.WarpSituation());
+        public SpaceSim.Flight.TimeWarpLimit WarpLimit()
+        {
+            SpaceSim.Flight.TimeWarpSituation s = sim.WarpSituation();
+            s.AwaitingLaunch = AwaitingLaunch;
+            return SpaceSim.Flight.TimeWarpPolicy.Evaluate(s);
+        }
+
+        /// <summary>
+        /// The rocket stands on the pad and has not lifted off since it was placed there: nothing moves, so any time warp is
+        /// allowed (waiting for a launch window). Cleared for good at the first lift-off.
+        /// </summary>
+        public bool AwaitingLaunch => !hasFlown && !Destroyed && IsOnLaunchPad;
+        bool hasFlown;
 
         public void RailsStep(double time, double dt, double renderLag)
         {
             UpdateSolarFlux();
             sim.RailsStep(dt, renderLag);
+            if (!sim.IsLanded) hasFlown = true;
             ApplyHazards(dt);
             CheckTouchdown();
         }
@@ -188,6 +202,7 @@ namespace SpaceSim.Runtime
             if (controller != null) controller.Unregister(this);
             if (Current == this) Current = null;
             if (planet != null) planet.ModelChanged -= OnModelChanged;
+            ClearDebris();
             model?.Destroy();
             palette?.Dispose();
         }
@@ -223,6 +238,7 @@ namespace SpaceSim.Runtime
         {
             UpdateSolarFlux();
             sim.Step(dt);
+            if (!sim.IsLanded) hasFlown = true;
             ApplyHazards(dt);
             CheckTouchdown();
         }
@@ -371,6 +387,7 @@ namespace SpaceSim.Runtime
             Condition.Reset();
             UsedTestTool = false;
             Destroyed = false;
+            hasFlown = false;
             LastLanding = null;
             sim.PlaceOnSurface(planet.LaunchSiteDirection(), controller.SimulationTime);
             RebuildVisual();
@@ -393,20 +410,87 @@ namespace SpaceSim.Runtime
         {
             var r = sim.Rocket;
             if (r == null || !r.CanBurn || Destroyed) return false;
+            // Ignition on the ground ends the pre-launch wait: drop a high warp at once, not a frame later (that frame would burn
+            // seconds of propellant on rails-sized steps).
+            if (sim.IsLanded && controller != null && controller.TimeWarp > SpaceSim.Flight.TimeWarpPolicy.SurfaceWarp) controller.ResetWarp();
             r.Throttle = r.Throttle > 0.0 ? r.Throttle : 1.0;
             r.EngineOn = true;
             return true;
         }
 
-        /// <summary>Drops the current (usually empty) stage; the next one must be ignited again.</summary>
+        /// <summary>Relative speed the separation system gives the two parts [m/s] (split between them by mass).</summary>
+        public const double SeparationSpeed = 3.0;
+        /// <summary>Spent stages still flying (or lying where they fell).</summary>
+        readonly System.Collections.Generic.List<StageDebris> debris = new System.Collections.Generic.List<StageDebris>();
+        const int MaxDebris = 8;
+
+        /// <summary>How many stages were dropped in flight (the camera watches it to keep its aim continuous).</summary>
+        public int SeparationCount { get; private set; }
+        /// <summary>How far the reference point moved up the axis at the last separation in flight [m].</summary>
+        public double LastSeparationShift { get; private set; }
+
+        /// <summary>
+        /// Drops the current (usually empty) stage; the next one must be ignited again. In flight the stage is pushed away by the
+        /// separation system and keeps flying on its own trajectory (<see cref="StageDebris"/>); the rest of the stack stays exactly
+        /// where it was drawn — the reference point moves up to its new bottom — and gets the opposite push (momentum is conserved).
+        /// </summary>
         public bool SeparateStage()
         {
             var r = sim.Rocket;
             if (r == null || !r.HasStages) return false;
             bool wasOn = r.EngineOn;
+            int dropped = r.StageIndex;
+            bool inFlight = !sim.IsLanded && !Destroyed;
+            double massBefore = r.Mass;
+            double droppedMass = r.Configuration.stages[dropped].dryMass + r.Propellant[dropped];
             r.Separate();
             r.EngineOn = wasOn && r.CanBurn;
+            if (inFlight) SeparateInFlight(dropped, droppedMass, massBefore);
             return true;
+        }
+
+        void SeparateInFlight(int dropped, double droppedMass, double massBefore)
+        {
+            Vector3d p = sim.State.Position;
+            Vector3d axis = sim.ThrustDirection(p);
+            double share = massBefore > 0.0 ? droppedMass / massBefore : 0.0;
+            Vector3d pushRest = axis * (SeparationSpeed * share);
+            Vector3d pushStage = -axis * (SeparationSpeed * (1.0 - share));
+
+            if (model != null && dropped < model.Stages.Length && model.Stages[dropped] != null && model.Stages[dropped].activeSelf)
+            {
+                debris.RemoveAll(d => d == null);
+                if (debris.Count >= MaxDebris)
+                {
+                    Destroy(debris[0].gameObject);
+                    debris.RemoveAt(0);
+                }
+                Vector3d v = sim.State.Velocity + pushStage;
+                debris.Add(StageDebris.Spawn(model.Stages[dropped], this, sim, controller, origin, v, controller.RenderTime,
+                    droppedMass, rocket.radius, SeparationCount * 7919 + dropped));
+            }
+
+            // The reference point is the bottom of the stack: move it to the bottom of what is left, so nothing jumps on screen.
+            double shift = 0.0;
+            if (model != null)
+            {
+                RocketLayout layout = model.Layout;
+                int next = dropped + 1;
+                double oldBottom = dropped < layout.StageCount ? layout.StageBottom[dropped] : layout.PayloadBottom;
+                double newBottom = next < layout.StageCount ? layout.StageBottom[next] : layout.PayloadBottom;
+                shift = System.Math.Max(0.0, newBottom - oldBottom);
+            }
+            sim.ApplySeparation(axis * shift, pushRest);
+            LastSeparationShift = shift;
+            SeparationCount++;
+            LayoutStack(); // the new middle of the stack is known this frame (the camera reads it before our LateUpdate)
+        }
+
+        void ClearDebris()
+        {
+            foreach (StageDebris d in debris)
+                if (d != null) Destroy(d.gameObject);
+            debris.Clear();
         }
 
         /// <summary>
@@ -468,6 +552,7 @@ namespace SpaceSim.Runtime
         /// </summary>
         void RebuildVisual()
         {
+            ClearDebris(); // their copies share the meshes of the model that is about to go
             model?.Destroy();
             model = null;
             foreach (Transform child in visual) Destroy(child.gameObject);

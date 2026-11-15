@@ -2866,3 +2866,4 @@ Z радиально	Z radial
 Орбитальное картирование	Orbital mapping
 Наука: картирование	Science: mapping
 Карьера: мгновенный манёвр недоступен — выполните его двигателем	Career: the instant manoeuvre is not available — perform it with the engine
+на стартовой площадке	on the launch pad

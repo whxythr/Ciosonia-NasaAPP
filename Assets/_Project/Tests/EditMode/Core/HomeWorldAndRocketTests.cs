@@ -122,6 +122,25 @@ namespace SpaceSim.Tests
         }
 
         [Test]
+        public void Separation_MovesTheReferencePointAndKeepsTheFlightRecord()
+        {
+            var props = TestPlanets.EarthProperties(rotating: false, atmosphere: false);
+            var planet = new PlanetModel("vac", props, null, Vector3d.Zero);
+            var sim = new FreeFlightSimulation(planet, new GravityField());
+            sim.SetInertialState(new Vector3d(5.0e10, 0, 0), new Vector3d(0, 100, 0), 0.0);
+            sim.Step(0.1);
+            Vector3d p = sim.State.Position, prev = sim.PreviousState.Position, v = sim.State.Velocity;
+
+            sim.ApplySeparation(new Vector3d(0, 0, 12.0), new Vector3d(0, 0, 0.5));
+            Assert.AreEqual(12.0, (sim.State.Position - p).z, 1e-9);
+            Assert.AreEqual(12.0, (sim.PreviousState.Position - prev).z, 1e-9, "interpolation stays continuous");
+            Assert.AreEqual(0.5, (sim.State.Velocity - v).z, 1e-12);
+            Assert.AreEqual(0.1, sim.State.Time, 1e-12, "time is not touched");
+
+            RocketOnPad(out _, 0.5).ApplySeparation(new Vector3d(0, 0, 12.0), Vector3d.Zero); // on the ground: no effect, no throw
+        }
+
+        [Test]
         public void Rocket_MassFlowAndIspFollowEngineModel()
         {
             var r = new RocketState(new RocketConfiguration()) { EngineOn = true };

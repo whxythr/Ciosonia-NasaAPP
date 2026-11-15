@@ -242,7 +242,8 @@ namespace SpaceSim.Runtime
         /// <summary>Colour of the air glow: the planet's Rayleigh scattering (blue for thin clean air, its own tint elsewhere).</summary>
         static Color AtmosphereRim(PlanetRuntime runtime)
         {
-            if (runtime.Model == null || runtime.Model.Atmosphere.ReferenceDensity <= 0.0) return new Color(0f, 0f, 0f, 0f);
+            if (runtime.Model == null || runtime.Model.Atmosphere.ReferenceDensity <= 0.0 || !runtime.Definition.optics.visible)
+                return new Color(0f, 0f, 0f, 0f);
             Vector3d beta = runtime.Definition.optics.rayleighScattering;
             var tint = runtime.Definition.generation.atmosphereTint;
             double r = beta.x * tint.r, g = beta.y * tint.g, b = beta.z * tint.b;

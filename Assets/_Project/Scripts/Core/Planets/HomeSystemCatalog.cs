@@ -158,8 +158,9 @@ namespace SpaceSim.Planets
             a.surfaceDensity = AtmosphericModel.IdealGasDensity(a.surfacePressure, a.meanMolarMass, a.surfaceTemperature);
             var optics = new AtmosphereOpticalProperties
             {
-                // Thick CO₂ scatters more than Earth's air, and suspended tholin dust (Mie) yellows the disk.
-                rayleighScattering = new Vector3d(5.802e-6, 13.558e-6, 33.1e-6) * 2.5,
+                // A dense CO₂ sky is not Earth-blue: fine dust and CO₂ ice haze scatter almost grey, with only a faint dull-blue
+                // Rayleigh share left (visual tuning: nearly flat coefficients, blue only ≈ 30 % above red).
+                rayleighScattering = new Vector3d(1.6e-5, 1.75e-5, 2.1e-5),
                 mieScattering = 1.2e-5, mieExtinctionRatio = 1.3, mieScaleHeight = 3000.0, mieAnisotropy = 0.75
             };
             var g = new PlanetGenerationSettings
@@ -242,10 +243,12 @@ namespace SpaceSim.Planets
             double numberRatio = (a.surfacePressure / a.surfaceTemperature) / (101325.0 / 288.15);
             var optics = new AtmosphereOpticalProperties
             {
-                rayleighScattering = new Vector3d(5.802e-6, 13.558e-6, 33.1e-6) * (0.22 * numberRatio),
+                // Pure H₂ would scatter blue ((0.22 · numberRatio) × Earth), but like Jupiter's the upper air is laced with
+                // chromophores that absorb blue: the limb glows orange (visual tuning, red > green > blue).
+                rayleighScattering = new Vector3d(2.6e-6, 1.6e-6, 0.55e-6) * numberRatio,
                 mieScattering = 2.0e-6, mieExtinctionRatio = 1.2, mieScaleHeight = 20000.0, mieAnisotropy = 0.7,
                 // Orange photochemical haze above the clouds.
-                hazeScattering = new Vector3d(3.0e-6, 1.8e-6, 0.8e-6), hazeAltitude = 60000.0, hazeThickness = 20000.0
+                hazeScattering = new Vector3d(5.5e-6, 3.0e-6, 1.0e-6), hazeAltitude = 60000.0, hazeThickness = 20000.0
             };
             var g = new PlanetGenerationSettings
             {
@@ -382,6 +385,8 @@ namespace SpaceSim.Planets
             {
                 rayleighScattering = new Vector3d(5.802e-6, 13.558e-6, 33.1e-6) * (0.92 * numberRatio),
                 mieScattering = 0.0,
+                // 100 Pa of O₂ is invisible from orbit and from the ground (Mars has 6× more): no sky shell or limb at all.
+                visible = false,
                 autoShellHeight = false,
                 shellHeight = 3.0 * a.scaleHeight
             };

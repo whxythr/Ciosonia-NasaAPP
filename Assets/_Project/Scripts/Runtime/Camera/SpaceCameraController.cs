@@ -39,6 +39,8 @@ namespace SpaceSim.Runtime
         [SerializeField] float rotationSmoothing = 14f;
         [Tooltip("Zoom smoothing rate [1/s].")]
         [SerializeField] float zoomSmoothing = 8f;
+        [Tooltip("How fast the aim glides to the middle of the stack after staging [1/s] (≈ 1.5 s to settle at 2).")]
+        [SerializeField] float centerSmoothing = 2f;
         [Tooltip("Logarithmic zoom per scroll notch.")]
         [SerializeField] float zoomPerNotch = 0.18f;
 
@@ -60,6 +62,8 @@ namespace SpaceSim.Runtime
         float yaw = 200f, pitch = 8f, targetYaw = 200f, targetPitch = 8f;
         double distance = 28.0, targetDistance = 28.0;
         double centerHeight; // smoothed FlightBody.VisualCenterHeight [m]
+        FlightBody centerBody;
+        int seenSeparations;
 
         public Camera Camera => cam;
         public ReferenceFrame Frame => frame;
@@ -148,8 +152,21 @@ namespace SpaceSim.Runtime
             var model = planet.Model;
             double renderTime = simulation.RenderTime;
             // The rocket is orbited and zoomed about the middle of its visible stack; after staging the aim glides to the new middle.
+            // Staging in flight moves the vehicle's reference point up to the new bottom of the stack: take that out of the smoothed
+            // height first, so the aim starts exactly where it was and then glides to the middle of what is left.
+            if (centerBody != body)
+            {
+                centerBody = body;
+                seenSeparations = body.SeparationCount;
+            }
+            else if (body.SeparationCount != seenSeparations)
+            {
+                seenSeparations = body.SeparationCount;
+                centerHeight -= body.LastSeparationShift;
+            }
             double wantCenter = body.VisualCenterHeight;
-            centerHeight = Math.Abs(wantCenter - centerHeight) > 500.0 ? wantCenter : MathD.Lerp(centerHeight, wantCenter, kz);
+            float kc = 1f - Mathf.Exp(-centerSmoothing * dt);
+            centerHeight = Math.Abs(wantCenter - centerHeight) > 500.0 ? wantCenter : MathD.Lerp(centerHeight, wantCenter, kc);
             Vector3d target = focus == FocusTarget.Planet ? model.Position : body.RenderCenter(simulation.InterpolationAlpha, renderTime, centerHeight);
 
             BuildBasis(target, model, out Vector3d up, out Vector3d north, out Vector3d east);

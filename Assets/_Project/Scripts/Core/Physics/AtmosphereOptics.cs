@@ -32,6 +32,12 @@ namespace SpaceSim.Physics
 
         public bool HasHaze => hazeThickness > 0.0 && (hazeScattering.x > 0.0 || hazeScattering.y > 0.0 || hazeScattering.z > 0.0);
 
+        /// <summary>
+        /// Whether the air is drawn at all (sky shell, limb glow, clouds). False for a trace atmosphere that is physically present
+        /// (drag, pressure) but far too thin to be seen — Quoris' 100 Pa of O₂.
+        /// </summary>
+        public bool visible = true;
+
         /// <summary>When true the visual shell height is derived from the density profile.</summary>
         public bool autoShellHeight = true;
         /// <summary>Density ratio ρ/ρ₀ at which the visual shell ends (auto mode). Beyond it scattering is invisible.</summary>

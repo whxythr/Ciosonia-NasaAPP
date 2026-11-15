@@ -22,13 +22,17 @@ namespace SpaceSim.Flight
         /// <summary>Coasting around the star, outside every sphere of influence.</summary>
         Interplanetary,
         /// <summary>A low-thrust engine (electric) runs on a safe trajectory: the orbit changes slowly, warp up to <see cref="TimeWarpPolicy.LowThrustWarp"/>.</summary>
-        LowThrustFlight
+        LowThrustFlight,
+        /// <summary>Standing on the launch pad before lift-off, engines off: nothing moves, any warp is allowed (waiting for a launch window).</summary>
+        PreLaunch
     }
 
     /// <summary>The flight state the time-warp limit depends on, measured from the body the vehicle currently orbits.</summary>
     public struct TimeWarpSituation
     {
         public bool Landed;
+        /// <summary>Resting on the launch pad and the flight has not begun yet (set by the vehicle, not by the simulation).</summary>
+        public bool AwaitingLaunch;
         public bool EngineBurning;
         /// <summary>The primary is the star: the distances below are not used.</summary>
         public bool Interplanetary;
@@ -70,6 +74,8 @@ namespace SpaceSim.Flight
         public const double LowOrbitWarp = 100000.0;
         public const double HighOrbitWarp = 1000000.0;
         public const double InterplanetaryWarp = 1000000.0;
+        /// <summary>On the pad before lift-off: the full range, as high as the warp goes anywhere.</summary>
+        public const double PreLaunchWarp = 1000000.0;
         /// <summary>Warp for a low-thrust burn on a safe trajectory or around the star (the integrator keeps sub-steps on the orbit's time scale).</summary>
         public const double LowThrustWarp = 10000.0;
         /// <summary>An engine at or below this acceleration counts as low thrust [m/s²] (≈ 1 mg₀: electric thrusters).</summary>
@@ -84,7 +90,12 @@ namespace SpaceSim.Flight
 
         public static TimeWarpLimit Evaluate(in TimeWarpSituation s)
         {
-            if (s.Landed) return new TimeWarpLimit(TimeWarpZone.Surface, SurfaceWarp);
+            if (s.Landed)
+            {
+                return s.AwaitingLaunch && !s.EngineBurning
+                    ? new TimeWarpLimit(TimeWarpZone.PreLaunch, PreLaunchWarp)
+                    : new TimeWarpLimit(TimeWarpZone.Surface, SurfaceWarp);
+            }
             if (s.Interplanetary)
             {
                 if (IsLowThrust(s)) return new TimeWarpLimit(TimeWarpZone.LowThrustFlight, LowThrustWarp);
