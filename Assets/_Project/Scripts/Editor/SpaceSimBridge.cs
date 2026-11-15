@@ -202,6 +202,42 @@ namespace SpaceSim.Editor
         static SpaceSim.Localization.Language Lang(string s) =>
             s == "kk" ? SpaceSim.Localization.Language.Kazakh : s == "en" ? SpaceSim.Localization.Language.English : SpaceSim.Localization.Language.Russian;
 
+        /// <summary>
+        /// build [windows] — builds the game with the scenes of the Build Settings into Builds/Windows/&lt;product&gt;.exe
+        /// (Windows 64-bit, release). Blocks the Editor until the build is done; refused in Play mode.
+        /// </summary>
+        static string BuildGame()
+        {
+            if (EditorApplication.isPlaying) return "ERROR stop Play mode first";
+            if (EditorApplication.isCompiling) return "ERROR scripts are compiling, try again";
+            var scenes = new System.Collections.Generic.List<string>();
+            foreach (var s in EditorBuildSettings.scenes)
+                if (s.enabled) scenes.Add(s.path);
+            if (scenes.Count == 0) return "ERROR no enabled scenes in Build Settings";
+            string product = string.IsNullOrWhiteSpace(PlayerSettings.productName) ? "Game" : PlayerSettings.productName;
+            string path = System.IO.Path.Combine("Builds", "Windows", product + ".exe");
+            var options = new BuildPlayerOptions
+            {
+                scenes = scenes.ToArray(),
+                locationPathName = path,
+                target = BuildTarget.StandaloneWindows64,
+                targetGroup = BuildTargetGroup.Standalone,
+                options = BuildOptions.None,
+            };
+            UnityEditor.Build.Reporting.BuildReport report = BuildPipeline.BuildPlayer(options);
+            var r = report.summary;
+            var sb = new StringBuilder();
+            sb.Append(r.result).Append(" path=").Append(System.IO.Path.GetFullPath(path))
+              .Append(" size=").Append((r.totalSize / (1024.0 * 1024.0)).ToString("0.0", CultureInfo.InvariantCulture)).Append("MB")
+              .Append(" errors=").Append(r.totalErrors).Append(" warnings=").Append(r.totalWarnings)
+              .Append(" time=").Append(r.totalTime.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)).Append("s scenes=").Append(scenes.Count);
+            if (r.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+                foreach (var step in report.steps)
+                    foreach (var m in step.messages)
+                        if (m.type == LogType.Error || m.type == LogType.Exception) sb.Append(" | ").Append(m.content);
+            return sb.ToString();
+        }
+
         static string BuildScenes()
         {
             var sb = new StringBuilder();
@@ -336,6 +372,7 @@ namespace SpaceSim.Editor
                     return "main menu scene created; build scenes: " + BuildScenes();
                 }
                 case "buildscenes": return BuildScenes();
+                case "build": return BuildGame();
                 case "modellib":
                     if (EditorApplication.isPlaying) return "ERROR stop Play mode first";
                     return SpaceSimProjectSetup.CreateModuleLibrary();

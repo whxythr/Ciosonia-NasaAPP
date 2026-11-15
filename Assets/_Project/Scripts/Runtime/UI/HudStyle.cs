@@ -514,7 +514,10 @@ namespace SpaceSim.Runtime
         static void SetState(GUIStyleState state, Texture2D background, Color text)
         {
             state.background = background;
-            state.scaledBackgrounds = new Texture2D[0]; // the default skin's @2x images would win over ours on HiDPI
+#if UNITY_EDITOR
+            // Editor only (the property does not exist in a player build): the default skin's @2x images would win over ours on HiDPI.
+            state.scaledBackgrounds = new Texture2D[0];
+#endif
             state.textColor = text;
         }
 
