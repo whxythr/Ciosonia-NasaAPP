@@ -1,239 +1,444 @@
-# NasaAPP — реалистичный космический симулятор (Unity), Фаза 1
+# NasaAPP — Realistic Space Simulator (Unity), Phase 1 - The ACTUAL GAME is in Builds
 
-Фундамент научно обоснованного симулятора: одна планета (Земля по умолчанию) с реальной гравитацией в СИ,
-численным интегрированием движения, физической моделью атмосферы, непрерывным визуальным переходом
-«поверхность → космос», детерминированной процедурной генерацией поверхности, приборной панелью и Flight Manual.
+The foundation of a scientifically accurate space simulator: one planet (Earth by default) with real SI-unit gravity, numerical motion integration, a physical atmospheric model, a seamless visual transition from surface to space, deterministic procedural surface generation, an instrument panel, and a Flight Manual.
 
-Ракет, двигателей, топлива и автоматического выхода на орбиту в этой фазе **нет** — тестовый зонд движется только
-под действием гравитации и сопротивления воздуха, получив начальные условия от игрока.
+Rockets, engines, fuel, and automatic orbital insertion are **not included in this phase**. The test probe moves only under the influence of gravity and atmospheric drag, using initial conditions provided by the player.
 
-## Требования
+## Requirements
 
-- **Unity 6 LTS (6000.0.x)**. Проект создан вне редактора; `ProjectVersion.txt` указывает 6000.0.40f1 — любая 6000.0.x подойдёт.
-- Пакеты (`Packages/manifest.json`): URP 17.0.x, Input System 1.11.x, Test Framework 1.4.x, uGUI 2.0.
-  Если Package Manager предложит другую версию URP для вашей сборки редактора — согласитесь (URP привязан к версии редактора).
+- **Unity 6 LTS (6000.0.x)**. The project was created outside the Unity Editor; `ProjectVersion.txt` specifies 6000.0.40f1. Any 6000.0.x version will work.
+- Packages (`Packages/manifest.json`): URP 17.0.x, Input System 1.11.x, Test Framework 1.4.x, uGUI 2.0.
+  If Package Manager suggests a different URP version for your Editor build, accept it (URP is tied to the Editor version).
 
-## Первый запуск
+## First Launch
 
-1. Unity Hub → **Add project from disk** → папка `NasaAPP`.
-2. Если Unity спросит про новый Input System backend — можно согласиться или отказаться: код работает с обоими.
-3. Меню **SpaceSim ▸ Setup Project (URP + Phase 1 scene)**. Это:
-   - включает Linear color space;
-   - создаёт URP-ассет с **Depth Texture** (нужна атмосфере) и тенями, назначает его в Graphics/Quality;
-   - создаёт/находит `Assets/_Project/ScriptableObjects/Planets/Earth.asset`;
-   - пересоздаёт сцену `Assets/_Project/Scenes/Phase1_Planet.unity` и добавляет её в Build Settings.
-   (Сцена уже лежит в репозитории, но шаг Setup настраивает URP — без него используются упрощённые шейдеры Built-in.)
-4. Откройте `Phase1_Planet.unity` → **Play** (Setup запускайте только вне Play mode). Двухступенчатая ракета стоит на площадке Четвёртой планеты, утро по местному времени. Нажмите **ЗАПУСК**. Звёздная система (карта, метки, перелёты) открывается, когда ракета пересечёт границу космоса (100 км).
-5. Главное меню HORIZON: **SpaceSim ▸ Create Main Menu Scene** (входит и в Setup) создаёт `Assets/_Project/Scenes/MainMenu.unity`
-   и ставит её первой в Build Settings (игра — второй). Откройте `MainMenu.unity` → **Play**: CONTINUE / NEW MISSION ведут на
-   стартовую площадку, SETTINGS — те же настройки, что и в игре по Esc. Сцена игры по-прежнему запускается и напрямую.
+1. Unity Hub → **Add project from disk** → select the `NasaAPP` folder.
+2. If Unity asks about the new Input System backend, you can either accept or decline. The code supports both.
+3. Open **SpaceSim ▸ Setup Project (URP + Phase 1 scene)**. This will:
+   - Enable Linear color space.
+   - Create a URP asset with **Depth Texture** (required for the atmosphere) and shadows, and assign it in Graphics/Quality settings.
+   - Create or locate `Assets/_Project/ScriptableObjects/Planets/Earth.asset`.
+   - Recreate the `Assets/_Project/Scenes/Phase1_Planet.unity` scene and add it to Build Settings.
 
-**Важно:** в режиме редактирования сцена содержит только пустой объект `SpaceSim` — весь мир (звезда, планеты, атмосферы,
-зонд, приборы) строится кодом **при нажатии Play**. Если после Play ничего не видно — пришлите вывод Console.
+   (The scene is already included in the repository, but the Setup step configures URP. Without it, simplified Built-in shaders will be used.)
+4. Open `Phase1_Planet.unity` → **Play**. Run Setup only outside Play mode. A two-stage rocket is positioned on the launch pad of the Fourth Planet, during local morning. Press **LAUNCH**. The star system (map, markers, and interplanetary travel) becomes available once the rocket crosses the space boundary (100 km).
+5. Main menu HORIZON: **SpaceSim ▸ Create Main Menu Scene** (also included in Setup) creates `Assets/_Project/Scenes/MainMenu.unity` and sets it as the first scene in Build Settings (the game scene is second). Open `MainMenu.unity` → **Play**: CONTINUE / NEW MISSION take you to the launch pad, while SETTINGS opens the same settings available in-game through Esc. The game scene can still be launched directly.
 
-`SpaceSimBootstrap` можно положить на пустой объект в любой сцене — он строит весь мир сам.
+**Important:** In Edit mode, the scene contains only an empty `SpaceSim` GameObject. The entire world (star, planets, atmospheres, probe, and instruments) is generated by code **when Play is pressed**. If nothing appears after pressing Play, send the Console output.
 
-## Звёздная система
+`SpaceSimBootstrap` can be attached to an empty GameObject in any scene. It will build the entire world automatically.
 
-| Тело | M | R | g | Орбита | Сутки | Особенности |
+## Star System
+
+| Celestial Body | Mass (M) | Radius (R) | Gravity (g) | Orbit | Day Length | Features |
 |---|---|---|---|---|---|---|
-| Теонан | 1.24·10²³ кг | 1 896 325 м | 2.31 м/с² | 0.0883 а.е., 5.94 сут | 54.1 сут | без атмосферы, серо-коричневые силикаты, кратеры и «моря» |
-| Кварис | 2.82·10²² кг | 1 175 730 м | 1.36 м/с² | 0.128 а.е., 10.4 сут | = орбите (приливный захват) | тонкий O₂ (100 Па), ржавые пятна, глубокие кратеры, «сердечко» |
-| Гермеус Мора | 1.46·10²⁵ кг | 8 209 166 м | 14.5 м/с² | 0.427 а.е., 63.1 сут | 4.65 сут | 75 бар, 300 °C, SO₂/CO₂, кремовая дымка, голубая органическая дымка, бело-голубые закаты |
-| Мора I | ≈1.5·10¹⁹ кг (оценка) | ≈120 км | ≈0.07 м/с² | 30 000 км от Гермеус Моры | = орбите | несферическая (рельеф ±15 % радиуса) |
-| **Четвёртая планета (старт)** | 5.03·10²⁴ кг | 6 370 332 м | 8.27 м/с² | 0.67 а.е., 124 сут | 0.844 сут | копия Земли: фиолетовые моря, экваториальные пустыни, горы на побережьях, наклон 22.5°, полюса до −49 °C |
-| Золин (Tholin) | 9.36·10²⁴ кг | 7 244 420 м | 11.9 м/с² | 0.865 а.е. (0.799…0.931), 182 сут | 1.75 сут | аналог для марсианских миссий: озёра жидкого CO₂ (≈ половина поверхности), красная пыль-золин на севере, лёд на юге (карта `PlanetMaps/tholin`); 37.8 °C, CO₂ 60 бар (оценка) |
-| Еремус (Eremus) | 5.16·10²⁷ кг (864 M⊕) | 82 185 900 м (12.9 R⊕) | 51.0 м/с² | 2.05 а.е. (1.98…2.12), 664 сут | 0.329 сут | газовый гигант-мегаюпитер, оранжевые полосы, H₂/He, −63.6 °C на уровне 1 бар; твёрдой поверхности нет |
-| ↳ Ори (Ori) | 1.37·10²⁰ кг | 188 335 м | 0.258 м/с² | 2.44·10⁸ м от Еремуса, 0.472 сут | = орбите | бледно-персиковый, бугристые нагорья и гладкие равнины, −135 °C |
-| ↳ Оин (Oin) | 7.81·10²⁰ кг | 344 640 м | 0.439 м/с² | 0.00214 а.е., 0.710 сут | = орбите | ржаво-красный, гряды и тёмные ямы, −139 °C |
-| ↳ Бифур (Bifur) | 3.68·10²⁰ кг | 271 926 м | 0.332 м/с² | 0.0026 а.е., 0.951 сут | = орбите | кремовый, изрыт мелкими кратерами, −148 °C |
-| ↳ Невермор (Nevermour) | 1.86·10²¹ кг | 461 554 м | 0.582 м/с² | 0.00329 а.е., 1.353 сут | = орбите | оранжевый, тёмное гладкое «море», −155 °C |
-| ↳ Двалин (Dwalin) | 2.99·10²² кг | 1 210 924 м | 1.36 м/с² | 0.00482 а.е., 2.399 сут | = орбите | гладкий, почти без кратеров, −152 °C |
-| ↳ Балин (Balin) | 3.72·10²² кг | 1 266 677 м | 1.55 м/с² | 0.00646 а.е., 3.723 сут | = орбите | персиковый, светлые пятна инея, чёрное лавовое поле, −102 °C |
-| ↳ Колосс (Coloss) | 1.42·10²⁴ кг | 4 282 711 м | 5.16 м/с² | 0.012 а.е., 9.425 сут | = орбите | аналог Титана: N₂ 1.5 бар (оценка), бирюзовые моря жидкого метана/этана, облака, −179 °C |
-| ↳ Гандальф (Gandalf) | 2.75·10²¹ кг (выведено) | 479 950 м | 0.798 м/с² | 0.0144 а.е., 12.39 сут, i = 8.14° | 0.481 сут | жёлто-зелёный, светлые круглые пятна, −189 °C |
+| Theonan | 1.24·10²³ kg | 1,896,325 m | 2.31 m/s² | 0.0883 AU, 5.94 days | 54.1 days | No atmosphere, gray-brown silicates, craters and seas |
+| Quaris | 2.82·10²² kg | 1,175,730 m | 1.36 m/s² | 0.128 AU, 10.4 days | Synchronous rotation (equal to orbital period) | Thin O₂ atmosphere (100 Pa), rusty patches, deep craters, heart-shaped feature |
+| Hermeus Mora | 1.46·10²⁵ kg | 8,209,166 m | 14.5 m/s² | 0.427 AU, 63.1 days | 4.65 days | 75 bar, 300 °C, SO₂/CO₂, creamy haze, blue organic haze, white-blue sunsets |
+| Mora I | ≈1.5·10¹⁹ kg (estimate) | ≈120 km | ≈0.07 m/s² | 30,000 km from Hermeus Mora | Synchronous rotation | Non-spherical (terrain variation ±15% of radius) |
+| **Fourth Planet (Starting Planet)** | 5.03·10²⁴ kg | 6,370,332 m | 8.27 m/s² | 0.67 AU, 124 days | 0.844 days | Earth-like planet: purple oceans, equatorial deserts, coastal mountain ranges, 22.5° axial tilt, polar temperatures down to −49 °C |
+| Zolin (Tholin) | 9.36·10²⁴ kg | 7,244,420 m | 11.9 m/s² | 0.865 AU (0.799–0.931), 182 days | 1.75 days | Mars-mission analogue: liquid CO₂ lakes (≈ half the surface), red tholin dust in the north, ice in the south (map `PlanetMaps/tholin`); 37.8 °C, CO₂ at 60 bar (estimate) |
+| Eremus | 5.16·10²⁷ kg (864 M⊕) | 82,185,900 m (12.9 R⊕) | 51.0 m/s² | 2.05 AU (1.98–2.12), 664 days | 0.329 days | Gas giant / super-Jupiter, orange bands, H₂/He, −63.6 °C at the 1-bar level; no solid surface |
+| ↳ Ori | 1.37·10²⁰ kg | 188,335 m | 0.258 m/s² | 2.44·10⁸ m from Eremus, 0.472 days | Synchronous rotation | Pale peach color, rugged highlands and smooth plains, −135 °C |
+| ↳ Oin | 7.81·10²⁰ kg | 344,640 m | 0.439 m/s² | 0.00214 AU, 0.710 days | Synchronous rotation | Rust-red, ridges and dark pits, −139 °C |
+| ↳ Bifur | 3.68·10²⁰ kg | 271,926 m | 0.332 m/s² | 0.0026 AU, 0.951 days | Synchronous rotation | Cream-colored, covered with small craters, −148 °C |
+| ↳ Nevermour | 1.86·10²¹ kg | 461,554 m | 0.582 m/s² | 0.00329 AU, 1.353 days | Synchronous rotation | Orange, dark smooth sea, −155 °C |
+| ↳ Dwalin | 2.99·10²² kg | 1,210,924 m | 1.36 m/s² | 0.00482 AU, 2.399 days | Synchronous rotation | Smooth surface, almost no craters, −152 °C |
+| ↳ Balin | 3.72·10²² kg | 1,266,677 m | 1.55 m/s² | 0.00646 AU, 3.723 days | Synchronous rotation | Peach-colored, bright frost patches, black lava field, −102 °C |
+| ↳ Coloss | 1.42·10²⁴ kg | 4,282,711 m | 5.16 m/s² | 0.012 AU, 9.425 days | Synchronous rotation | Titan analogue: N₂ at 1.5 bar (estimate), turquoise liquid methane/ethane seas, clouds, −179 °C |
+| ↳ Gandalf | 2.75·10²¹ kg (derived) | 479,950 m | 0.798 m/s² | 0.0144 AU, 12.39 days, i = 8.14° | 0.481 days | Yellow-green, bright circular spots, −189 °C |
 
-Данные — в `HomeSystemCatalog` (код) или, после *SpaceSim ▸ Create Home System Assets*, в ассетах
-`Assets/_Project/ScriptableObjects/StarSystems/Home/` (редактируются в Inspector).
+The data is stored in `HomeSystemCatalog` (code), or, after running *SpaceSim ▸ Create Home System Assets*, in the assets located at `Assets/_Project/ScriptableObjects/StarSystems/Home/` (editable in the Inspector).
 
-Как интерпретированы данные (можно поменять):
-- **Масса звезды не задана** — выведена из 3-го закона Кеплера по вашим a и T: M = 4π²a³/(GT²) ≈ 5.19·10³⁰ кг (≈2.6 M☉);
-  все три планеты дают одно и то же значение с точностью 1 %. Радиус (1.2·10⁹ м) и тёплый цвет звезды выбраны по вашим изображениям.
-- **Prot** — сидерический период вращения. Орбиты в одной плоскости (i не задано); круговые, кроме Золина и Еремуса — у них e выведено из перицентра и апоцентра. У Еремуса заданные a = 2.03 а.е. и T = 664 сут расходятся на 1.5 % по Кеплеру, а среднее апсид (2.05 а.е.) согласуется с T — взято оно. Сплюснутость Еремуса (3.98 %) не моделируется.
-- **Спутники Еремуса** (8 крупных из 17): входные данные — M, R, a, e (из перицентра и апоцентра), i, сутки; период обращения
-  выводится по Кеплеру из массы Еремуса и совпадает с заданным с точностью 0.4 % (больше всего у Ори: 0.472 против 0.474 сут).
-  Наклоны (≈ 4.15°) считаются от эклиптики; наклон оси Еремуса (не задан) взят 4.15°, чтобы семь регулярных лун лежали в его
-  экваторе. Масса Гандальфа в данных (4.59·10⁻⁴ кг) — опечатка: из g и ρ получается 2.75·10²¹ кг. У Невермора перицентр/апоцентр
-  в данных переставлены. Сплюснутость Невермора и Гандальфа не моделируется. Колосс — аналог Титана (давление и состав воздуха —
-  оценка). Подробности — в `HomeSystemCatalog.EremusMoons.cs`, фото-референсы — `Documentation/References/EremusMoons/`.
-- Давление Гермеус Моры (7.5 МПа), состав (M = 52 г/моль), давление O₂ на Кварисе (100 Па), размер и плотность спутника — мои оценки.
+### Interpretation of the Data
 
-Ограничение: зонд чувствует гравитацию только **активного** тела (система отсчёта — с центром в нём); остальные тела
-и звезда движутся по орбитам «по рельсам» и видны в правильных направлениях и размерах. Межпланетные перелёты — следующая фаза.
+The following assumptions were used and can be changed:
 
-## Управление
+- **Star mass is not specified.** It was derived from your semi-major axis (a) and orbital period (T) values using Kepler's Third Law:
 
-| Клавиша | Действие |
+  M = 4π²a³/(GT²) ≈ 5.19·10³⁰ kg (≈2.6 M☉).
+
+  All three planets produce approximately the same value, within 1% accuracy. The star's radius (1.2·10⁹ m) and warm color were selected based on your reference images.
+
+- **Prot** represents the sidereal rotation period. All orbits are assumed to lie in the same plane (inclination i is not specified). Orbits are circular, except for Zolin and Eremus, whose eccentricities (e) were derived from their periapsis and apoapsis distances. Eremus's specified a = 2.03 AU and T = 664 days differ by 1.5% according to Kepler's Law. The average apsidal distance (2.05 AU) is consistent with T, so that value was used. Eremus's oblateness (3.98%) is not modeled.
+
+- **Eremus's moons** (8 major moons out of 17): the input data consists of M, R, a, e (derived from periapsis and apoapsis), i, and day length. Orbital periods are calculated using Kepler's Law based on Eremus's mass and match the specified values within 0.4% (the largest difference is for Ori: 0.472 versus 0.474 days).
+
+  Inclinations (≈4.15°) are measured relative to the ecliptic. Eremus's axial tilt (not specified) was set to 4.15° so that its seven regular moons lie in its equatorial plane. Gandalf's mass in the original data (4.59·10⁻⁴ kg) is a typo: based on g and ρ, it should be 2.75·10²¹ kg. Nevermour's periapsis and apoapsis values were reversed in the source data. The oblateness of Nevermour and Gandalf is not modeled. Coloss is a Titan analogue (its atmospheric pressure and composition are estimates).
+
+  Details: `HomeSystemCatalog.EremusMoons.cs`. Photo references: `Documentation/References/EremusMoons/`.
+
+- Hermeus Mora's atmospheric pressure (7.5 MPa), composition (M = 52 g/mol), Quaris's O₂ pressure (100 Pa), and the moon's size and density are my estimates.
+
+**Limitation:** The probe experiences gravity only from the **currently active celestial body** (the reference frame is centered on that body). Other celestial bodies and the star move along predefined orbital paths and are displayed at their correct directions and apparent sizes. Interplanetary travel will be implemented in a later phase.
+
+## Controls
+
+| Key | Action |
 |---|---|
-| ПКМ (или СКМ) + мышь | обзор вокруг аппарата |
-| Колесо, `=` / `-` | приближение/удаление (от 4 м до 1.5·10⁸ м) |
-| `C` | камера: местный горизонт ↔ инерциальная (неподвижна относительно звёзд) |
-| `F` | фокус камеры: аппарат ↔ планета целиком |
-| `.` / `,` | ускорение времени ×1…×10⁶ / замедление (выше ×1000 — точные кеплеровы дуги, только с выключенным двигателем и вне атмосферы) |
-| `P` | пауза |
-| `I` | **начальные условия** — задать положение и скорость (единственный «двигатель» фазы 1) |
-| `R` | вернуть зонд на площадку |
-| `Tab` | (после выхода в космос) карта звёздной системы |
-| ЗАПУСК / `Enter` | зажигание текущей ступени |
-| `W` / `S` | тангаж: наклон к горизонту / обратно к вертикали |
-| `A` / `D` | курс (90° = восток) |
-| `Shift` / `Ctrl`, `Z`, `X` | тяга больше / меньше, полная, отсечка двигателя |
-| `Пробел` | отделить ступень |
-| АНГАР / `B` | (на площадке) собрать ракету из модулей: двигатели, баки, навигация, защита, наука, пробоотборники |
-| МАГАЗИН / `K` | улучшения за кредиты, рынок образцов, исследования и опасности планет |
-| `E` | после посадки: выйти на поверхность / взять образец (до 4 м) / вернуться в ракету; где скафандр не выдержит — манипулятор (до 25 м) |
-| WASD, Shift, Пробел, ПКМ (снаружи) | идти, бежать, прыгать, осмотреться — шаг и прыжок зависят от гравитации планеты |
-| НАВИГАЦИЯ / `G` | планеты системы, план межпланетного перелёта (окно, Δv, манёвр, проверка «ПЛАН ПОЛЁТА»), карта с прогнозом траектории |
-| АКАДЕМИЯ / `L` | Лётная академия: 13 тем, калькуляторы, задачи, подсказки по ходу полёта (в полёте — пауза, пока окно открыто) |
-| `N` | метки тел и звезды с расстоянием |
-| `M` | 3D-карта системы на весь экран: планеты-шары, орбиты, траектория, перицентр и апоцентр; колесо — приближение, ПКМ — вращение, клик по телу — в центр |
-| `F1` | Flight Manual (формулы, объяснения, живые примеры) |
-| НАУКА / `F2` | научная карта: покрытие, температура, давление, рельеф по данным орбитальных сканеров (ТР-1, РД-1, СР-1); клик по ячейке — значения |
-| `O` | анализ орбиты (e, a, перицентр, апоцентр, T) — по умолчанию скрыт, чтобы считать самостоятельно |
-| `U` | единицы: м, м/с ↔ км, км/с |
-| `H` | скрыть приборы |
-| `Esc` | закрыть верхнее окно (ангар, магазин, академия, навигация, Manual, карта); если окон нет — **меню паузы с настройками** |
+| RMB (or MMB) + mouse | Look around the spacecraft |
+| Mouse wheel, `=` / `-` | Zoom in / out (from 4 m to 1.5·10⁸ m) |
+| `C` | Camera mode: local horizon ↔ inertial (fixed relative to the stars) |
+| `F` | Camera focus: spacecraft ↔ entire planet |
+| `.` / `,` | Increase / decrease time acceleration ×1…×10⁶ (above ×1000: accurate Keplerian arcs, only with the engine off and outside the atmosphere) |
+| `P` | Pause |
+| `I` | **Initial Conditions** — set position and velocity (the only "engine" in Phase 1) |
+| `R` | Return the probe to the launch pad |
+| `Tab` | (After entering space) Star system map |
+| LAUNCH / `Enter` | Ignite the current stage |
+| `W` / `S` | Pitch: tilt toward the horizon / return toward vertical |
+| `A` / `D` | Heading (90° = east) |
+| `Shift` / `Ctrl`, `Z`, `X` | Increase / decrease thrust, full thrust, engine cutoff |
+| `Space` | Separate stage |
+| HANGAR / `B` | (On the launch pad) Assemble a rocket from modules: engines, tanks, navigation, protection, science, samplers |
+| STORE / `K` | Upgrades purchased with credits, sample market, planetary research and hazards |
+| `E` | After landing: exit onto the surface / collect a sample (up to 4 m) / return to the rocket. Where the spacesuit cannot withstand the conditions, use the robotic arm (up to 25 m) |
+| WASD, Shift, Space, RMB (outside) | Walk, run, jump, and look around. Walking and jumping depend on the planet's gravity |
+| NAVIGATION / `G` | System planets, interplanetary flight planning (launch window, Δv, maneuver, "FLIGHT PLAN" validation), map with trajectory prediction |
+| ACADEMY / `L` | Flight Academy: 13 topics, calculators, exercises, and in-flight hints (simulation pauses while the window is open) |
+| `N` | Markers for celestial bodies and the star, including distances |
+| `M` | Full-screen 3D system map: spherical planets, orbits, trajectory, periapsis and apoapsis. Mouse wheel — zoom, RMB — rotate, click a body to center it |
+| `F1` | Flight Manual (formulas, explanations, live examples) |
+| SCIENCE / `F2` | Scientific map: coverage, temperature, pressure, and terrain data from orbital scanners (TR-1, RD-1, SR-1). Click a grid cell to see its values |
+| `O` | Orbit analysis (e, a, periapsis, apoapsis, T). Hidden by default so players can perform calculations themselves |
+| `U` | Units: m, m/s ↔ km, km/s |
+| `H` | Hide instruments |
+| `Esc` | Close the active window (hangar, store, academy, navigation, manual, map). If no window is open, display the **pause menu with settings** |
 
-Все клавиши выше — по умолчанию: их можно переназначить в **Esc ▸ Настройки ▸ Управление** (нажмите на команду, затем
-клавишу; занятая клавиша меняется местами с прежней командой). Там же — **яркость** (экспозиция 25–400 %, только изображение,
-физика и освещённость в симуляции не меняются), **разрешение экрана**, **язык** (русский, English, қазақша) и **мышь** (чувствительность ×0.2–×3, инверсия оси Y). Настройки сохраняются
-сразу (PlayerPrefs) и общие для главного меню и игры. Пока открыто меню паузы, симуляция стоит, а подсказки в HUD и на
-кнопках показывают уже назначенные клавиши.
+All keys listed above are the default bindings. They can be remapped in **Esc ▸ Settings ▸ Controls** (select an action, then press a key; if the key is already assigned, the two actions exchange bindings).
 
-### Попробуйте
+The same menu also includes:
 
-1. `I` → высота `150000`, все скорости `0` → «Применить». Аппарат выше 100 км, ε < 0, но это **не орбита** — он падает.
-2. Посчитайте v = √(μ/r) для h = 200 км (Flight Manual, раздел 6). `I` → высота `200000`, переключите на «инерциальная»,
-   v восток = ваше значение → «Применить». Фаза станет «Орбитальный полёт», ε ≈ −μ/(2r), v_r ≈ 0. `F` — посмотреть на планету.
-3. Та же орбита со скоростью на 5 % меньше → эллипс с перицентром в атмосфере.
-4. Вертикально вверх 3000 м/с относительно поверхности → подъём и возврат; сравните максимум высоты с расчётом из ε.
-5. Поднимайтесь (`I`, высоты 10, 30, 60, 100, 300 км, затем 5000 км) — небо темнеет непрерывно, появляются звёзды и тонкая оболочка атмосферы.
+- **Brightness** (exposure 25–400%; visual output only; simulation physics and lighting remain unchanged).
+- **Screen resolution**.
+- **Language** (Russian, English, Kazakh).
+- **Mouse settings** (sensitivity ×0.2–×3, Y-axis inversion).
 
-## Настройка планеты
+Settings are saved immediately using PlayerPrefs and are shared between the main menu and the game. While the pause menu is open, the simulation is paused, and HUD hints and button labels display the currently assigned keys.
 
-Выделите `Earth.asset` (или любой `PlanetDefinition`, меню *Assets ▸ Create ▸ SpaceSim ▸ Planet Definition*):
+### Try It Yourself
 
-- **Physics** — радиус, масса, источник μ (`FromMass` = G·M, либо `Measured`), период вращения, наклон оси,
-  атмосфера (ρ₀, H, p₀, T, молярная масса, экспоненциальная или табличная модель), условная граница космоса.
-  Изменения применяются **сразу**, в том числе в Play mode (гравитация пересчитывается на следующем шаге).
-- **Surface** — `Procedural` / `ImportedModel` (FBX из Blender: префаб + радиус модели в её единицах; модель
-  масштабируется под физический радиус) / `ReferenceSphere`.
-- **Generation** — seed и параметры рельефа/биомов (см. `PROCEDURAL_GENERATION.md`).
-- **Atmosphere optics** — коэффициенты рассеяния Рэлея/Ми, высота визуальной оболочки (по умолчанию выводится из профиля плотности).
-- **Launch site** — широта/долгота площадки; рельеф вокруг неё выравнивается детерминированно.
+1. Press `I` → set altitude to `150000`, set all velocities to `0` → select "Apply". The spacecraft is now above 100 km, with ε < 0, but this is **not an orbit**. It will fall back down.
 
-Инспектор показывает производные величины: μ, g(R), средняя плотность, расхождение G·M и μ, v_круг(200 км),
-v_уход, высота визуальной оболочки, отпечаток поверхности.
+2. Calculate v = √(μ/r) for h = 200 km (Flight Manual, Section 6).
 
-**Другие планеты:** *SpaceSim ▸ Create Random Planet Definition* — новый ассет со случайными (сохранёнными) seed:
-физика генерируется самосогласованно (ρ₀ = pM/RT, H = RT/Mg), поверхность — по визуальному seed. Назначьте ассет
-в поле `Planet Definition` у `SpaceSimBootstrap`.
+   Press `I` → set altitude to `200000`, switch to "Inertial" mode, set eastward velocity to your calculated value → select "Apply". The flight phase should change to "Orbital Flight", with ε ≈ −μ/(2r) and v_r ≈ 0. Press `F` to view the planet.
 
-**Сохранение:** контекстное меню компонента `PlanetRuntime` (объект *SpaceSim/Planet* в Play mode) →
-*Save planet* / *Load planet from save*. Файлы: `Application.persistentDataPath/Planets/<id>.json`
-(*SpaceSim ▸ Reveal Planet Save Folder*).
+3. Repeat the same orbit with a velocity 5% lower. The result will be an elliptical orbit with its periapsis inside the atmosphere.
 
-## Проверка
+4. Set a vertically upward velocity of 3000 m/s relative to the surface. Observe the ascent and return, then compare the maximum altitude with the value calculated using ε.
 
-- **В Unity:** *Window ▸ General ▸ Test Runner* → EditMode (физика, генерация, сохранения, конвертация координат) и
-  PlayMode (сборка мира, зонд на площадке, подъём под действием гравитации).
-- **Без Unity** (нужен .NET 8 SDK) — те же исходники физического ядра и тесты NUnit:
+5. Increase altitude (`I`) through 10, 30, 60, 100, and 300 km, followed by 5000 km. Observe how the sky gradually darkens, stars appear, and the atmosphere becomes a thin visible shell.
+
+## Planet Configuration
+
+Select `Earth.asset` (or any `PlanetDefinition`, available through *Assets ▸ Create ▸ SpaceSim ▸ Planet Definition*).
+
+- **Physics** — radius, mass, μ source (`FromMass` = G·M, or `Measured`), rotation period, axial tilt, atmosphere (ρ₀, H, p₀, T, molar mass, exponential or tabulated model), and the defined boundary of space.
+
+  Changes are applied **immediately**, including during Play mode (gravity is recalculated on the next physics step).
+
+- **Surface** — `Procedural` / `ImportedModel` (FBX from Blender: prefab + model radius in its own units; the model is scaled to match the physical radius) / `ReferenceSphere`.
+
+- **Generation** — seed and terrain/biome parameters (see `PROCEDURAL_GENERATION.md`).
+
+- **Atmosphere Optics** — Rayleigh/Mie scattering coefficients and visual atmosphere height (derived from the density profile by default).
+
+- **Launch Site** — latitude and longitude of the launch pad. The terrain around it is flattened deterministically.
+
+The Inspector displays derived values: μ, g(R), average density, discrepancy between G·M and μ, circular orbital velocity at 200 km, escape velocity, visual atmosphere height, and surface fingerprint.
+
+### Other Planets
+
+*SpaceSim ▸ Create Random Planet Definition* creates a new asset with randomly generated (and saved) seeds.
+
+Physics is generated consistently:
+
+- ρ₀ = pM/RT
+- H = RT/Mg
+
+The surface is generated using a separate visual seed.
+
+Assign the new asset to the `Planet Definition` field of `SpaceSimBootstrap`.
+
+### Saving
+
+Use the `PlanetRuntime` component's context menu (the `SpaceSim/Planet` object in Play mode):
+
+- *Save planet*
+- *Load planet from save*
+
+Files are stored at:
+
+`Application.persistentDataPath/Planets/<id>.json`
+
+Use *SpaceSim ▸ Reveal Planet Save Folder* to open the save directory.
+
+## Testing
+
+- **In Unity:** *Window ▸ General ▸ Test Runner* → EditMode (physics, generation, saves, coordinate conversion) and PlayMode (world construction, probe on the launch pad, ascent under gravity).
+
+- **Without Unity:** .NET 8 SDK is required. The same physical core source code and NUnit tests can be executed using:
 
 ```bash
 dotnet test Tools/CoreTests/SpaceSim.Core.Tests
 ```
 
-- Проверка типов Unity-слоя против заглушек API (страховка, не замена компиляции в Unity):
+- **Unity layer type verification against API stubs** (a safety check, not a replacement for compilation in Unity):
 
 ```bash
 dotnet build Tools/UnityStubCheck
 ```
 
-## Структура
+## Project Structure
 
-```
+```text
 Assets/_Project/
-  Scripts/Core/      чистый C# без UnityEngine (asmdef noEngineReferences): математика double, СИ, часы,
-                     гравитация, интеграторы, атмосфера, орбиты, полёт, процедурная генерация, сохранения
-  Scripts/Runtime/   Unity-слой: координаты и floating origin, планета и LOD, атмосфера/солнце/звёзды,
-                     камера, зонд, HUD, Flight Manual, сохранение, bootstrap
-  Scripts/Editor/    меню SpaceSim, инспектор PlanetDefinition
-  Shaders/           PlanetSurface (URP + Built-in), Atmosphere, Starfield, SunDisk
-  Tests/EditMode/    Core/ (общие с dotnet) и Unity/
+  Scripts/Core/       Pure C# without UnityEngine (asmdef noEngineReferences):
+                      double-precision mathematics, SI units, clocks,
+                      gravity, integrators, atmosphere, orbits, flight,
+                      procedural generation, saving
+
+  Scripts/Runtime/    Unity layer: coordinates and floating origin,
+                      planet and LOD, atmosphere/sun/stars,
+                      camera, probe, HUD, Flight Manual,
+                      saving, bootstrap
+
+  Scripts/Editor/     SpaceSim menu, PlanetDefinition Inspector
+
+  Shaders/            PlanetSurface (URP + Built-in), Atmosphere,
+                      Starfield, SunDisk
+
+  Tests/EditMode/     Core/ (shared with dotnet) and Unity/
+
   Tests/PlayMode/
-  Documentation/     PHYSICS.md, PROCEDURAL_GENERATION.md, ROADMAP.md
-Tools/CoreTests/     сборка ядра и тестов под .NET
-Tools/UnityStubCheck/ проверка типов Unity-слоя
+
+  Documentation/      PHYSICS.md, PROCEDURAL_GENERATION.md, ROADMAP.md
+
+Tools/CoreTests/      Core and test assembly for .NET
+
+Tools/UnityStubCheck/ Unity layer type verification
 ```
 
-Документация: [PHYSICS.md](Assets/_Project/Documentation/PHYSICS.md) ·
-[PROCEDURAL_GENERATION.md](Assets/_Project/Documentation/PROCEDURAL_GENERATION.md) ·
-[ROADMAP.md](Assets/_Project/Documentation/ROADMAP.md)
+Documentation:
 
-## Лётная академия
+- `PHYSICS.md`
+- `PROCEDURAL_GENERATION.md`
+- `ROADMAP.md`
 
-Окно `L` (или кнопка АКАДЕМИЯ) — обучение на механике самой игры:
+Located in `Assets/_Project/Documentation/`.
 
-- **Темы** (13): масса и тяга, гравитация, ускорение, расход топлива, формула Циолковского, бюджет Δv, орбитальная и
-  вторая космическая скорости, сопротивление атмосферы, выход на орбиту, гомановский переход, окна запуска, орбитальная встреча.
-  У каждой формулы — переменные и единицы, пример **с числами вашей планеты и вашей ракеты**, применение в игре и ограничения.
-- **Калькуляторы** (13): Δv, топливо для Δv, время работы, ускорение, тяга/вес, орбитальная и вторая космическая скорости,
-  сопротивление, скругление орбиты, гомановский переход, оценка межпланетного перелёта. Они вызывают **те же функции ядра**, что
-  считают полёт (`RocketEquations`, `OrbitalMechanics`, `TransferCalculator`, …) — второй реализации нет. Пресеты: «моя ракета»,
-  планеты системы, стандартные миссии.
-- **Задачи**: по одной в теме; ответ проверяется с допуском 1 %, типичные ошибки (км ↔ м, забытый g₀, √2) распознаются.
-  Подсказки открываются по одной, решение по шагам — только после всех подсказок.
-- **Подсказки в полёте**: Академия реагирует на полёт — тяга/вес < 1, пустая ступень, вертикальный подъём, плотный воздух
-  на большой скорости, «это ещё не орбита», топливо кончилось до орбиты, орбита, уход. Короткая строка под статус-панелью;
-  `L` — подробнее (с числами этого полёта).
+## Flight Academy
 
-## Экономика и сохранения
+The `L` key (or the ACADEMY button) opens a learning environment based on the actual mechanics of the game.
 
-### Режимы игры (Песочница / Карьера)
+### Topics (13)
 
-Режим выбирается **только при создании новой игры** (главное меню → «Новая миссия» / «Песочница» → блок «РЕЖИМ ИГРЫ» →
-«НАЧАТЬ НОВУЮ ИГРУ») и хранится в профиле (`PlayerProfile.gameMode`). Текущая игра перед этим копируется в ручной слот
-«До новой игры · <режим>», так что карьеру нельзя случайно потерять или превратить в песочницу. Режим виден в главном меню,
-в списке сохранений, в HUD (строка «КАРЬЕРА · КРЕДИТЫ …»), в меню паузы, в магазине и в подвале ангара.
+1. Mass and thrust
+2. Gravity
+3. Acceleration
+4. Fuel consumption
+5. Tsiolkovsky rocket equation
+6. Δv budget
+7. Orbital and escape velocities
+8. Atmospheric drag
+9. Achieving orbit
+10. Hohmann transfer
+11. Launch windows
+12. Orbital rendezvous
 
-- **Песочница**: все модули доступны сразу, ничего не покупается, бюджет нигде не проверяется (найм экипажа бесплатен).
-- **Карьера**: стартовый бюджет 15 000 кр (`GameModeRules.CareerStartingCredits`) и стартовый набор деталей (детали стартовой
-  ракеты: зонд, Сокол-1, Вега-В, баки K-100/K-40). Каждая деталь каталога имеет цену и уровень техники (`ModuleDefinition.price`,
-  `techTier`; таблица и формула — `Core/Vehicles/ModuleCatalog.Career.cs`: явные значения в определении > таблица уровней >
-  вывод из данных; цена = база по категории + тяга/ёмкость/места/масса × множитель уровня 1/1.5/2/2.5/3, округление до 50).
-  Покупка **разовая** (как в прежнем магазине): деталь остаётся в профиле и ставится на любое число ракет.
-- Уровни техники (`TechTree`): 0 «Основы ракетостроения» открыт; 1 «Суборбитальные полёты» (достижение «Первый выход в космос»),
-  2 «Орбитальная техника» («Первая орбита»), 3 «Межпланетные полёты» («Уход от планеты»), 4 «Дальний космос» («Первый
-  межпланетный перелёт»). Уровни открываются по порядку за очки исследований: 10/30/50/100 после достижения (ровно его награда)
-  или 40/120/200/400 без него. Магазин (K) показывает уровни вкладками: цена, «куплено / доступно / не хватает / заблокировано»
-  с требованием, кнопки «Купить» и «Исследовать».
-- Ангар не вывозит на старт ракету с некупленными деталями (сообщение с их списком и суммой, открывается магазин);
-  компилятор такие детали всё равно не устанавливает.
-- Доход: достижения (кредиты + очки), продажа образцов на рынке. Журнал операций — вкладка «Исследования» → «Финансы».
-- API для других систем (наука, контракты): `PlayerProfile.AwardFunds(int, reason)`, `AwardScience(double, reason)`,
-  `Award(int, double, reason)`; в рантайме с сохранением — `PlayerSession.AwardFunds/AwardScience`.
-- Старые сохранения (формат v1, без поля режима) загружаются как **Песочница**: в старой экономике почти все детали были
-  бесплатными, и перевод в карьеру отнял бы детали, на которых игрок летал. Кредиты, покупки и достижения сохраняются.
-  Профиль теперь версии 2: старая сборка откроет его только для чтения.
+Each formula includes its variables and units, an example **using the values of your planet and your rocket**, an explanation of how it applies in the game, and its limitations.
 
-### Прежние правила
+### Calculators (13)
 
-- Кредиты дают **исследовательские достижения** реального полёта (не после инструмента начальных условий):
-  «Первый выход в космос» +8 000, «Первая орбита» +20 000, «Уход от планеты» +30 000; позже — продажа образцов (рынок).
-- Бывшие товары магазина (бак K-140, Сокол-1М, Р-1/Р-2, К-1, ПБ-2) сохранили цены; их прежние условия открытия стали уровнями техники.
-- Опасности: у Теонана радиация 2, у Квариса и Моры I — 1, в атмосфере Гермеус Моры — кислота 1 (радиация 1 над ней).
-  Без защиты оборудование деградирует (≈1 %/мин на каждый незащищённый уровень), ниже 50 % приборы отключаются.
-- Прогресс Академии (открытые темы, решённые задачи) тоже хранится в профиле.
-- Профиль сохраняется автоматически после каждой покупки, продажи, достижения и применения проекта ракеты:
-  `Application.persistentDataPath/Player/profile.json` (атомарная запись; повреждённый файл сохраняется как `.corrupt-*`;
-  сохранение от более новой версии игры не перезаписывается).
+- Δv
+- Fuel required for a given Δv
+- Engine burn time
+- Acceleration
+- Thrust-to-weight ratio
+- Orbital velocity
+- Escape velocity
+- Atmospheric drag
+- Orbit circularization
+- Hohmann transfer
+- Interplanetary transfer estimation
+
+These calculators call **the same core functions** used to calculate the actual flight (`RocketEquations`, `OrbitalMechanics`, `TransferCalculator`, etc.). There is no second implementation of the physics.
+
+Presets include:
+
+- "My Rocket"
+- System planets
+- Standard missions
+
+### Exercises
+
+Each topic contains one exercise. Answers are checked with a 1% tolerance, and common mistakes (km ↔ m, forgetting g₀, √2) are automatically recognized.
+
+Hints are revealed one at a time. The step-by-step solution becomes available only after all hints have been opened.
+
+### In-Flight Hints
+
+The Academy reacts to the spacecraft's current flight conditions:
+
+- Thrust-to-weight ratio below 1.
+- Empty rocket stage.
+- Vertical ascent.
+- Dense atmosphere at high speed.
+- "This is not an orbit yet."
+- Fuel exhausted before reaching orbit.
+- Stable orbit.
+- Escape trajectory.
+
+A short hint appears below the status panel. Press `L` for a detailed explanation using the actual values from the current flight.
+
+## Economy and Saves
+
+### Game Modes (Sandbox / Career)
+
+The game mode can be selected **only when creating a new game**:
+
+Main Menu → "New Mission" / "Sandbox" → "GAME MODE" section → "START NEW GAME".
+
+The selected mode is stored in the profile (`PlayerProfile.gameMode`).
+
+Before starting a new game, the current game is copied into a manual save slot named "Before New Game · <mode>". This prevents players from accidentally losing their Career progress or converting it into a Sandbox game.
+
+The selected mode is displayed in:
+
+- Main menu.
+- Save list.
+- HUD (the "CAREER · CREDITS ..." line).
+- Pause menu.
+- Store.
+- Hangar footer.
+
+### Sandbox Mode
+
+- All modules are available immediately.
+- Nothing needs to be purchased.
+- The budget is never checked.
+- Hiring crew members is free.
+
+### Career Mode
+
+- Starting budget: 15,000 credits (`GameModeRules.CareerStartingCredits`).
+- Starting equipment includes the components of the initial rocket: probe, Falcon-1, Vega-B, K-100/K-40 tanks.
+
+Every catalog component has a price and a technology tier (`ModuleDefinition.price`, `techTier`).
+
+Pricing and tier selection follow this priority:
+
+1. Explicit values in the component definition.
+2. Technology-tier table.
+3. Values derived from component data.
+
+The price is calculated as the base price for the category plus thrust / capacity / seats / mass multiplied by the technology-tier multiplier:
+
+- Tier 1: ×1
+- Tier 2: ×1.5
+- Tier 3: ×2
+- Tier 4: ×2.5
+- Tier 5: ×3
+
+Prices are rounded to the nearest 50 credits.
+
+Purchases are **permanent and made only once**, as in the previous store system. Once purchased, a component remains in the player's profile and can be installed on any number of rockets.
+
+### Technology Levels (`TechTree`)
+
+| Level | Name | Unlock Requirement |
+|---|---|---|
+| 0 | Basic Rocket Engineering | Unlocked by default |
+| 1 | Suborbital Flight | Achievement: "First Spaceflight" |
+| 2 | Orbital Engineering | Achievement: "First Orbit" |
+| 3 | Interplanetary Flight | Achievement: "Escape from a Planet" |
+| 4 | Deep Space | Achievement: "First Interplanetary Transfer" |
+
+Technology levels unlock sequentially using Research Points.
+
+Required Research Points:
+
+| Level | With Achievement | Without Achievement |
+|---|---:|---:|
+| 1 | 10 | 40 |
+| 2 | 30 | 120 |
+| 3 | 50 | 200 |
+| 4 | 100 | 400 |
+
+The achievement reward is equal to the research requirement shown in the "With Achievement" column.
+
+The Store (`K`) displays technology levels in separate tabs, showing:
+
+- Price.
+- Purchased / Available / Insufficient funds / Locked status.
+- Unlock requirements.
+- "Purchase" and "Research" buttons.
+
+The Hangar will not allow a rocket containing unpurchased components to be launched. It displays a list of missing components and their total cost, with an option to open the Store.
+
+The rocket compiler also prevents these components from being installed.
+
+### Income
+
+Income comes from:
+
+- Achievements (credits and Research Points).
+- Selling collected samples on the market.
+
+The transaction history is available under the "Research" → "Finances" tab.
+
+### API for Other Systems
+
+For integration with other systems (science, contracts):
+
+```csharp
+PlayerProfile.AwardFunds(int, reason)
+PlayerProfile.AwardScience(double, reason)
+PlayerProfile.Award(int, double, reason)
+```
+
+Runtime methods with save support:
+
+```csharp
+PlayerSession.AwardFunds(...)
+PlayerSession.AwardScience(...)
+```
+
+### Legacy Save Compatibility
+
+Old saves (format v1, without a game mode field) are loaded as **Sandbox**.
+
+In the old economy, almost all components were free. Converting an old save to Career mode would remove components that the player had already used to fly, so Sandbox is the safer default.
+
+Credits, purchases, and achievements are preserved.
+
+The profile format is now version 2. Older game builds will only be able to open it in read-only mode.
+
+### Previous Rules
+
+- Credits are awarded for **research achievements earned through actual flight**, not through the Initial Conditions tool:
+  - "First Spaceflight" — +8,000 credits.
+  - "First Orbit" — +20,000 credits.
+  - "Escape from a Planet" — +30,000 credits.
+
+  Later, players can also earn money by selling samples on the market.
+
+- Former Store items (K-140 tank, Falcon-1M, R-1/R-2, K-1, PB-2) retain their original prices. Their previous unlock requirements have been converted into technology levels.
+
+- **Environmental hazards:**
+  - Theonan: radiation level 2.
+  - Quaris and Mora I: radiation level 1.
+  - Hermeus Mora's atmosphere: acid level 1, with radiation level 1 above it.
+
+  Without protective equipment, equipment durability decreases by approximately 1% per minute for each unprotected hazard level. Below 50% durability, instruments stop functioning.
+
+- Flight Academy progress (unlocked topics and completed exercises) is also stored in the player profile.
+
+- The profile is automatically saved after every purchase, sale, achievement, and rocket design application.
+
+  Save location:
+
+  `Application.persistentDataPath/Player/profile.json`
+
+  Saving uses atomic writes. Corrupted files are preserved with a `.corrupt-*` suffix. A save from a newer game version is never overwritten.
