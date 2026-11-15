@@ -51,7 +51,7 @@ namespace SpaceSim.Runtime
                          N(p.TwrAfter, 2) + Loc.T(" · масса ") + Mass(p.MassAfter);
             string hint = CardHint(m, locked, stage);
             string price = Loc.T("Цена: ") + Price(m.price) +
-                           (locked ? Loc.T(" · не куплено") : m.requiresPurchase ? Loc.T(" · куплено") : "");
+                           (locked ? LockNote(m) : IsCareer ? Loc.T(" · куплено") : "");
             int count = CountOnRocket(m.id);
             if (count > 0) price += Loc.T(" · на ракете: ") + count + Loc.T(" шт.");
 
@@ -135,7 +135,7 @@ namespace SpaceSim.Runtime
         {
             string click = HudStyle.KeyText(Loc.T("Клик"));
             string drag = HudStyle.KeyText(Loc.T("перетащите"));
-            if (locked) return click + Loc.T(" — открыть магазин (") + FlightInput.KeyLabel(InputKey.K) + Loc.T("): деталь ещё не куплена.");
+            if (locked) return click + Loc.T(" — открыть магазин (") + FlightInput.KeyLabel(InputKey.K) + "): " + LockHint(m);
             if (m.mount == ModuleMount.Payload)
                 return click + (m.IsWrap ? Loc.T(" — обернуть зонд защитным слоем") : Loc.T(" — установить в головной отсек")) +
                        Loc.T(", или ") + drag + Loc.T(" на ракету.");
@@ -302,6 +302,12 @@ namespace SpaceSim.Runtime
             if (m.cargoVolume > 0.0) Add(Loc.T("Объём"), N(m.cargoVolume, 0) + Loc.T(" м³"));
             if (m.pressurized) Add(Loc.T("Герметичный"), Loc.T("да"));
             if (m.measurements != ScienceMeasurement.None) Add(Loc.T("Измеряет"), MeasurementList(m.measurements));
+            if (m.IsScanner)
+            {
+                Add(Loc.T("Поле обзора"), "±" + N(m.scanHalfAngle, 0) + "°");
+                Add(Loc.T("Высота съёмки"), N(m.scanMinAltitude / 1000.0, 0) + "–" + N(m.scanMaxAltitude / 1000.0, 0) + Loc.T(" км"));
+                Add(Loc.T("Разрешение"), N(m.scanIfov * 1000.0, 1) + Loc.T(" мрад"));
+            }
             if (m.capabilities != ModuleCapability.None) Add(Loc.T("Возможности"), CapabilityList(m.capabilities));
             if (m.researchMultiplier != 1.0) Add(Loc.T("Научная ценность"), "×" + N(m.researchMultiplier, 1));
             if (m.length > 0.0) Add(Loc.T("Длина"), Metres(m.length));

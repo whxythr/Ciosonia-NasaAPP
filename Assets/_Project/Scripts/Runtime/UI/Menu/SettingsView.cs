@@ -15,11 +15,11 @@ namespace SpaceSim.Runtime.Menu
     /// puts back everything as it was when the screen opened. The host calls <see cref="Open"/> when it shows the screen,
     /// <see cref="Tick"/> from Update and <see cref="Detach"/> when it is destroyed.
     /// </summary>
-    public sealed class SettingsView
+    public sealed partial class SettingsView
     {
-        public enum Page { Graphics, Controls, Language }
+        public enum Page { Graphics, Controls, Language, Audio }
 
-        static readonly string[] PageNames = { "Графика", "Управление", "Язык" };
+        static readonly string[] PageNames = { "Графика", "Управление", "Язык", "Звук" };
         static readonly string[] LanguageNames = { "Русский", "English", "Қазақша" };
         const float BrightnessStepEv = 0.05f, SensitivityStep = 0.05f;
 
@@ -233,6 +233,7 @@ namespace SpaceSim.Runtime.Menu
             foreach (var (item, on) in segments) item.EnableInClassList("set-seg__item--on", on());
             if (resolutionLabel != null && page == Page.Graphics) resolutionLabel.text = ResolutionText();
             RefreshKeys();
+            RefreshAudio();
             RefreshInfo();
         }
 
@@ -264,6 +265,10 @@ namespace SpaceSim.Runtime.Menu
                 case Page.Language:
                     if (GameSettings.Language != SpaceSim.Localization.Language.Russian) SetLanguage(SpaceSim.Localization.Language.Russian);
                     break;
+                case Page.Audio:
+                    GameSettings.ResetAudio();
+                    status = Loc.T("Музыка по умолчанию.");
+                    break;
                 default:
                     GameSettings.ResetMouse();
                     GameSettings.ResetBindings();
@@ -280,6 +285,7 @@ namespace SpaceSim.Runtime.Menu
             ScreenResolution.ResetToDisplay();
             GameSettings.ResetMouse();
             GameSettings.ResetBindings();
+            GameSettings.ResetAudio();
             status = Loc.T("Все настройки — по умолчанию (язык не меняется).");
             Refresh();
         }
@@ -299,7 +305,7 @@ namespace SpaceSim.Runtime.Menu
             heading.text = Loc.T(PageNames[(int)page]);
 
             VisualElement rows = list;
-            if (page == Page.Controls) rows = BuildScroll();
+            if (page == Page.Controls || page == Page.Audio) rows = BuildScroll();
             switch (page)
             {
                 case Page.Graphics:
@@ -335,6 +341,9 @@ namespace SpaceSim.Runtime.Menu
                     Stepper(row, LanguageNames[(int)GameSettings.Language], StepLanguage);
                     break;
                 }
+                case Page.Audio:
+                    BuildAudio(rows);
+                    break;
                 default:
                     headingTag.text = Loc.T("МЫШЬ И КЛАВИШИ");
                     BuildControls(rows);
@@ -445,6 +454,9 @@ namespace SpaceSim.Runtime.Menu
                     infoTitle.style.display = DisplayStyle.Flex;
                     infoTitle.text = Loc.T("Язык");
                     infoText.text = Loc.T("Текст меню, приборов и окон меняется сразу.");
+                    break;
+                case Page.Audio:
+                    AudioInfo();
                     break;
                 default:
                     infoEyebrow.text = Loc.T("УПРАВЛЕНИЕ");

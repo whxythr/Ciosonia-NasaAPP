@@ -891,6 +891,19 @@ namespace SpaceSim.Runtime
                     Defer(() => service.SuggestAsync());
                 }
             }
+            // Lambert transfer with the bodies' real positions: the node at the window, editable on the map (M).
+            ManeuverController maneuvers = service.Maneuvers;
+            if (maneuvers != null && view.Target >= 0)
+            {
+                string label = maneuvers.TransferBusy ? Loc.T("Считаю…") : Loc.T("Узел в окне перелёта (Ламберт)");
+                if (Button(label, !maneuvers.TransferBusy, GUILayout.Width(306), GUILayout.Height(26)))
+                {
+                    GUIUtility.keyboardControl = 0;
+                    int target = view.Target;
+                    Defer(() => maneuvers.PlanTransfer(target, true));
+                }
+                if (!string.IsNullOrEmpty(maneuvers.TransferStatus)) GUILayout.Label(maneuvers.TransferStatus, HudStyle.Small);
+            }
             GUILayout.Space(2);
             DrawLines(view.Node, 210f, colW - 30f);
             GUILayout.EndVertical();

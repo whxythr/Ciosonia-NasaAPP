@@ -43,7 +43,7 @@ namespace SpaceSim.Runtime
     /// Changes take effect at once (<see cref="Changed"/>) and are saved immediately. Purely presentation/input — nothing
     /// here touches the physics.
     /// </summary>
-    public static class GameSettings
+    public static partial class GameSettings
     {
         public const float MinBrightness = 0.25f, MaxBrightness = 4f, DefaultBrightness = 1f;
         public const float MinMouseSensitivity = 0.2f, MaxMouseSensitivity = 3f, DefaultMouseSensitivity = 1f;
@@ -369,6 +369,8 @@ namespace SpaceSim.Runtime
             internal int Width, Height, FrameRate;
             internal WindowMode Mode;
             internal readonly Dictionary<InputKey, KeyCode> Bindings = new Dictionary<InputKey, KeyCode>();
+            internal float MusicVolume = DefaultMusicVolume, MusicCrossfade = DefaultMusicCrossfade;
+            internal bool MusicMuted;
         }
 
         public static Snapshot Capture()
@@ -380,6 +382,7 @@ namespace SpaceSim.Runtime
                 Width = resolutionWidth, Height = resolutionHeight, FrameRate = frameRateLimit, Mode = windowMode,
             };
             foreach (KeyValuePair<InputKey, KeyCode> p in bindings) s.Bindings[p.Key] = p.Value;
+            CaptureAudio(s);
             return s;
         }
 
@@ -398,6 +401,7 @@ namespace SpaceSim.Runtime
             language = s.Language;
             bindings.Clear();
             foreach (KeyValuePair<InputKey, KeyCode> p in s.Bindings) bindings[p.Key] = p.Value;
+            RestoreAudio(s);
             Store.Set(BrightnessKey, Format(brightness));
             Store.Set(MouseSensitivityKey, Format(mouseSensitivity));
             Store.Set(InvertMouseYKey, invertMouseY ? "1" : "0");
@@ -450,6 +454,7 @@ namespace SpaceSim.Runtime
             windowMode = s.TryGet(DisplayModeKey, out string wm) && Enum.TryParse(wm, out WindowMode parsedMode) && Enum.IsDefined(typeof(WindowMode), parsedMode) ? parsedMode : WindowMode.Borderless;
             frameRateLimit = s.TryGet(FrameRateKey, out string fr) && int.TryParse(fr, NumberStyles.Integer, CultureInfo.InvariantCulture, out int frv) && frv > 0 ? frv : 0;
             vSync = !s.TryGet(VSyncKey, out string vs) || vs != "0";
+            LoadAudio(s);
             LocalizationTables.Apply(language);
         }
 

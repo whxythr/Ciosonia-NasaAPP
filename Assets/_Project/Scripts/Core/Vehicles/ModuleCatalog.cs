@@ -8,7 +8,7 @@ namespace SpaceSim.Vehicles
     /// tank dry fractions 4–15 %; real power densities of panels and RTGs). Modules marked requiresPurchase are sold in the shop (M3).
     /// Ids are saved in player designs: never change one.
     /// </summary>
-    public static class ModuleCatalog
+    public static partial class ModuleCatalog
     {
         // Cabins
         public const string ProbeCore = "core-probe";
@@ -62,6 +62,10 @@ namespace SpaceSim.Vehicles
         public const string Dosimeter = "sci-dosi";
         public const string Magnetometer = "sci-magn";
         public const string Camera = "sci-cam";
+        // Orbital mapping instruments (science map, F2)
+        public const string TemperatureRadar = "sci-scan-temp";
+        public const string PressureRadar = "sci-scan-press";
+        public const string TerrainScanner = "sci-scan-terrain";
 
         // Auxiliary
         public const string RadiationShield = "prot-rad1";
@@ -132,6 +136,7 @@ namespace SpaceSim.Vehicles
                 if (all == null || allLanguage != Loc.Version)
                 {
                     all = Build(); // names and descriptions are translated when built
+                    ApplyCareerData(all); // career tier + price of every module (ModuleCatalog.Career.cs)
                     allLanguage = Loc.Version;
                 }
                 return all;
@@ -345,6 +350,18 @@ namespace SpaceSim.Vehicles
                 description = Loc.T("Магнитное поле тела. Датчик вынесен на штанге, подальше от электроники.") },
             new ModuleDefinition { id = Camera, name = Loc.T("Камера КМ-1"), category = ModuleCategory.Science, dryMass = 20, length = 0.4, powerDraw = 20, measurements = ScienceMeasurement.Imaging,
                 description = Loc.T("Съёмка поверхности и неба высокого разрешения.") },
+            new ModuleDefinition { id = TemperatureRadar, name = Loc.T("Температурный радар ТР-1"), category = ModuleCategory.Science, dryMass = 45, length = 0.5, powerDraw = 35,
+                measurements = ScienceMeasurement.Temperature, scanLayer = SpaceSim.Science.ScienceLayer.Temperature,
+                scanHalfAngle = 30, scanMinAltitude = 20000, scanMaxAltitude = 3000000, scanIfov = 0.004,
+                description = Loc.T("Микроволновый радиометр: с орбиты картирует температуру поверхности под собой. Обзор ±30°, высота 20–3000 км.") },
+            new ModuleDefinition { id = PressureRadar, name = Loc.T("Радар давления РД-1"), category = ModuleCategory.Science, dryMass = 60, length = 0.6, powerDraw = 50,
+                measurements = ScienceMeasurement.Pressure, scanLayer = SpaceSim.Science.ScienceLayer.Pressure,
+                scanHalfAngle = 20, scanMinAltitude = 20000, scanMaxAltitude = 2000000, scanIfov = 0.003,
+                description = Loc.T("Зондирует столб атмосферы: давление у поверхности по всей полосе обзора. Обзор ±20°, высота 20–2000 км.") },
+            new ModuleDefinition { id = TerrainScanner, name = Loc.T("Сканер рельефа СР-1"), category = ModuleCategory.Science, dryMass = 70, length = 0.5, powerDraw = 80,
+                measurements = ScienceMeasurement.Imaging, scanLayer = SpaceSim.Science.ScienceLayer.Terrain,
+                scanHalfAngle = 12, scanMinAltitude = 10000, scanMaxAltitude = 1500000, scanIfov = 0.001,
+                description = Loc.T("Лазерный альтиметр и многоспектральная камера: высоты, альбедо и тип поверхности. Обзор ±12°, высота 10–1500 км.") },
 
             // ---- Auxiliary: protection ----
             new ModuleDefinition { id = RadiationShield, name = Loc.T("Радиационная защита Р-1"), category = ModuleCategory.Auxiliary, auxiliaryKind = AuxiliaryKind.Shield, dryMass = 450, length = 0.4,

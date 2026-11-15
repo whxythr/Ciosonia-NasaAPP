@@ -26,6 +26,8 @@ namespace SpaceSim.Runtime
         public string bodyName = "";
         /// <summary>Goal of the saved game (<see cref="PlayerProfile.scenarioId"/>); "" in metas written before it existed = sandbox.</summary>
         public string scenarioId = "";
+        /// <summary>Game mode of the saved profile (metas written before game modes existed read as Sandbox — so were their saves).</summary>
+        public GameMode gameMode = GameMode.Sandbox;
 
         /// <summary>The live profile (profile.json), autosaved after every change: not a slot of its own.</summary>
         public bool IsAutosave => id == SaveSlots.AutosaveId;
@@ -61,6 +63,7 @@ namespace SpaceSim.Runtime
                 playSeconds = p.playSeconds,
                 bodyName = bodyName ?? "",
                 scenarioId = p.scenarioId ?? "",
+                gameMode = p.gameMode,
             };
             if (p.samples != null) m.samples = p.samples.Count;
             if (p.crew != null && p.crew.members != null)

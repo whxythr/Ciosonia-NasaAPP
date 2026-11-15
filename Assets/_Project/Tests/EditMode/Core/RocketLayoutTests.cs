@@ -140,7 +140,7 @@ namespace SpaceSim.Tests
             b.payloadModules.Add(ModuleCatalog.CollectorAdvanced); // shop module, not bought
             b.payloadModules.Add("no-such-module");
             b.stages[0].tanks.Add(new TankLoad { moduleId = ModuleCatalog.TankK140, propellantLoaded = 1 }); // not bought
-            Func<string, bool> owns = id => false;
+            Func<string, bool> owns = id => id != ModuleCatalog.CollectorAdvanced && id != ModuleCatalog.TankK140; // only the shop parts are missing
             var compiled = BlueprintCompiler.Compile(b, owns);
             var layout = RocketLayout.Build(b, RocketLayout.DefaultRadius, owns);
 

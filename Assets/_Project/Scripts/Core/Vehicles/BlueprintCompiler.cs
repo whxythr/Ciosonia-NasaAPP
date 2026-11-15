@@ -175,6 +175,8 @@ namespace SpaceSim.Vehicles
         /// <summary>Of that, the bays held at cabin pressure [m³].</summary>
         public double PressurizedVolume;
         public ScienceMeasurement Measurements;
+        /// <summary>Orbital mapping instruments on board (payload section: they stay to the end).</summary>
+        public readonly List<SpaceSim.Science.ScannerSpec> Scanners = new List<SpaceSim.Science.ScannerSpec>();
 
         public bool Has(ModuleCapability c) => (Flags & c) == c;
         public bool CanCollect(SampleKinds k) => (SampleKinds & k) == k;
@@ -393,6 +395,7 @@ namespace SpaceSim.Vehicles
         {
             caps.Flags |= m.capabilities;
             caps.Measurements |= m.measurements;
+            if (m.IsScanner) caps.Scanners.Add(SpaceSim.Science.ScannerSpec.From(m));
             caps.RadiationShielding = Math.Max(caps.RadiationShielding, m.radiationShielding);
             caps.AcidResistance = Math.Max(caps.AcidResistance, m.acidResistance);
             caps.SampleCapacity += m.sampleCapacity;
@@ -494,7 +497,7 @@ namespace SpaceSim.Vehicles
                 result.Issues.Add(new BlueprintIssue(BlueprintIssueCode.UnknownModule, stageIndex, Loc.T("Неизвестный модуль «") + id + Loc.T("» пропущен.")));
                 return null;
             }
-            if (m.requiresPurchase && isUnlocked != null && !isUnlocked(m.id))
+            if (isUnlocked != null && !isUnlocked(m.id))
             {
                 result.Issues.Add(new BlueprintIssue(BlueprintIssueCode.LockedModule, stageIndex, m.name + Loc.T(" не куплен — не установлен.")));
                 return null;

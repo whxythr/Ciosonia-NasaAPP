@@ -175,6 +175,7 @@ namespace SpaceSim.Runtime
                     SetStatus(Loc.T("Перестройка возможна только на стартовой площадке."), HudStyle.Warning);
                     return;
                 }
+                if (!CheckOwnedForLaunch()) return; // Career: every part must be bought (HangarUI.Mode.cs)
             }
             CancelDrag();
             StartFade(() =>

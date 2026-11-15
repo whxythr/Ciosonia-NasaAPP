@@ -183,9 +183,12 @@ namespace SpaceSim.Tests
             var ex = boot.Explorer;
             Assert.AreEqual("", ex.TryStartEva());
             Assert.IsInstanceOf<RobotBodyModel>(ex.Model);
-            ex.Drive(1.0, 0.0, 1.0f, false);
-            float end = Time.realtimeSinceStartup + 1.2f; // one real second of walking, whatever the frame rate
-            while (Time.realtimeSinceStartup < end) yield return null;
+            // Each frame advances the walker by at most 0.05 s, so on a slow batch-mode machine one real second may be far less
+            // walking: walk until ≈ 1 s of walking is done (or give up after 6 real seconds).
+            ex.Drive(1.0, 0.0, 6.0f, false);
+            float end = Time.realtimeSinceStartup + 6f;
+            while (ex.Walker.DistanceWalked <= 0.3 && Time.realtimeSinceStartup < end) yield return null;
+            ex.Drive(0.0, 0.0, 0f, false);
             Assert.Greater(ex.Walker.DistanceWalked, 0.3, "walked ≈ 1.36 m/s × 1 s minus the start-up");
             Assert.Less((ex.Model.Root.position - boot.CameraController.transform.position).magnitude, 2f, "the robot stands under the camera");
             ex.EndEva();

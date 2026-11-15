@@ -216,7 +216,7 @@ namespace SpaceSim.Vehicles
             if (string.IsNullOrEmpty(id)) return null;
             ModuleDefinition m = ModuleCatalog.Find(id);
             if (m == null) return null;
-            if (m.requiresPurchase && isUnlocked != null && !isUnlocked(m.id)) return null;
+            if (isUnlocked != null && !isUnlocked(m.id)) return null;
             return m;
         }
 

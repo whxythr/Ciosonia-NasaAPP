@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SpaceSim.Flight;
 using SpaceSim.Localization;
 using SpaceSim.Mathematics;
 using SpaceSim.Navigation;
@@ -100,7 +101,30 @@ namespace SpaceSim.Runtime
         double scale = 1.0;
         Vector3 cameraPosition;
         float unitsPerPixel = 0.001f;
-        TrajectoryPrediction shownPrediction;
+        TrajectoryPrediction shownPrediction, shownNodePrediction;
+        readonly List<MapLine> nodeTrajectory = new List<MapLine>();
+
+        /// <summary>The trajectory after the planned burn (dashed).</summary>
+        static readonly Color NodeColor = HudStyle.Violet;
+        /// <summary>Handle colours: X prograde, Y normal, Z radial.</summary>
+        static readonly Color[] AxisColors = { HudStyle.Green, HudStyle.Violet, HudStyle.Cyan };
+        const float HandlePixels = 64f, HandlePick = 12f, TrajectoryPick = 10f;
+
+        // Node marker and handles (screen points in GUI coordinates, computed in LateUpdate).
+        bool nodeShown, nodeOccluded;
+        Vector2 nodeGui;
+        readonly Vector2[] handleGui = new Vector2[6];
+        readonly bool[] handleShown = new bool[6];
+        bool selectedShown;
+        Vector2 selectedGui;
+        // Dragging a handle: axis 0..2, sign ±1, where the drag started (GUI) and the handle's screen direction.
+        int dragHandle = -1;
+        Vector2 dragStart, dragDir;
+        Vector2 panelScroll;
+        float panelContentHeight = 600f;
+        double editStep = 10.0;
+        readonly string[] fieldText = { "", "", "" };
+        int transferTarget = int.MinValue;
 
         VehicleOrbitInfo orbit;
         Vector3 vehicleScreen, periapsisScreen, apoapsisScreen;
@@ -331,19 +355,44 @@ namespace SpaceSim.Runtime
         }
 
         /// <summary>Vertices are normalised by the curve's size; the transform scales them back, so the mesh is independent of the zoom.</summary>
-        static void FillLine(MapLine line, IList<Vector3d> points)
+        static void FillLine(MapLine line, IList<Vector3d> points, bool dashed = false)
+        {
+            if (dashed)
+            {
+                // Short dashes: every chord split in four, every other piece drawn (a separate segment list).
+                var pieces = new List<Vector3d>();
+                for (int i = 0; i + 1 < points.Count; i++)
+                    for (int k = 0; k < 4; k += 2)
+                    {
+                        pieces.Add(Vector3d.Lerp(points[i], points[i + 1], k / 4.0));
+                        pieces.Add(Vector3d.Lerp(points[i], points[i + 1], (k + 1) / 4.0));
+                    }
+                FillSegments(line, pieces);
+                return;
+            }
+            var pairs = new List<Vector3d>(Math.Max(0, 2 * (points.Count - 1)));
+            for (int i = 0; i + 1 < points.Count; i++)
+            {
+                pairs.Add(points[i]);
+                pairs.Add(points[i + 1]);
+            }
+            FillSegments(line, pairs);
+        }
+
+        /// <summary>Independent segments: points 2k and 2k+1 are the ends of segment k.</summary>
+        static void FillSegments(MapLine line, IList<Vector3d> ends)
         {
             double norm = 1.0;
-            foreach (Vector3d p in points) norm = Math.Max(norm, p.Magnitude);
+            foreach (Vector3d p in ends) norm = Math.Max(norm, p.Magnitude);
             line.Norm = norm;
-            int segments = points.Count - 1;
+            int segments = ends.Count / 2;
             var vertices = new Vector3[segments * 4];
             var other = new Vector2[segments * 4];
             var extra = new Vector2[segments * 4];
             var triangles = new int[segments * 6];
             for (int s = 0; s < segments; s++)
             {
-                Vector3 a = CoordinateSystem.ToUnityVector(points[s] / norm), b = CoordinateSystem.ToUnityVector(points[s + 1] / norm);
+                Vector3 a = CoordinateSystem.ToUnityVector(ends[2 * s] / norm), b = CoordinateSystem.ToUnityVector(ends[2 * s + 1] / norm);
                 int v = s * 4;
                 vertices[v] = a; other[v] = new Vector2(b.x, b.y); extra[v] = new Vector2(b.z, 1f);
                 vertices[v + 1] = a; other[v + 1] = new Vector2(b.x, b.y); extra[v + 1] = new Vector2(b.z, -1f);
@@ -362,25 +411,43 @@ namespace SpaceSim.Runtime
             line.Mesh.bounds = new Bounds(Vector3.zero, Vector3.one * 2.2f);
         }
 
+        /// <summary>
+        /// The trajectory the vehicle is on (solid) and, with a node, the trajectory after the burn (dashed, <see cref="NodeColor"/>),
+        /// both straight from the patched-conic predictions of <see cref="NavigationService"/>.
+        /// </summary>
         void RefreshTrajectory()
         {
-            TrajectoryPrediction prediction = boot.Navigation.Prediction;
-            if (ReferenceEquals(prediction, shownPrediction)) return;
-            shownPrediction = prediction;
+            NavigationService nav = boot.Navigation;
+            TrajectoryPrediction basePrediction = nav.BasePrediction ?? nav.Prediction;
+            TrajectoryPrediction nodePrediction = nav.Plan.Departure != null && nav.Prediction != null && nav.Prediction.NodeApplied ? nav.Prediction : null;
+            if (!ReferenceEquals(basePrediction, shownPrediction))
+            {
+                shownPrediction = basePrediction;
+                FillPrediction(trajectory, basePrediction, "MapTrajectory", HudStyle.Accent, false);
+            }
+            if (!ReferenceEquals(nodePrediction, shownNodePrediction))
+            {
+                shownNodePrediction = nodePrediction;
+                FillPrediction(nodeTrajectory, nodePrediction, "MapManeuverTrajectory", NodeColor, true);
+            }
+        }
+
+        void FillPrediction(List<MapLine> lines, TrajectoryPrediction prediction, string lineName, Color color, bool dashed)
+        {
             int used = 0;
             if (prediction != null)
             {
                 foreach (PredictedPatch patch in prediction.Patches)
                 {
                     if (patch.RelativePoints.Count < 2) continue;
-                    if (used == trajectory.Count) trajectory.Add(NewLine("MapTrajectory", HudStyle.Accent, 1.25f));
-                    MapLine line = trajectory[used++];
+                    if (used == lines.Count) lines.Add(NewLine(lineName, color, dashed ? 1.5f : 1.25f));
+                    MapLine line = lines[used++];
                     line.Anchor = patch.Primary;
-                    FillLine(line, patch.RelativePoints);
+                    FillLine(line, patch.RelativePoints, dashed);
                     line.Go.SetActive(true);
                 }
             }
-            for (int i = used; i < trajectory.Count; i++) trajectory[i].Go.SetActive(false);
+            for (int i = used; i < lines.Count; i++) lines[i].Go.SetActive(false);
         }
 
         // ---- Opening and control -----------------------------------------------------------------------------------
@@ -417,6 +484,7 @@ namespace SpaceSim.Runtime
             flightCamera.enabled = true;
             root.SetActive(false);
             FlightInput.MapOpen = false;
+            dragHandle = -1;
         }
 
         /// <summary>Centres the map on a body (−1 = star, −2 = the vehicle) and frames it.</summary>
@@ -504,6 +572,183 @@ namespace SpaceSim.Runtime
             RefreshTrajectory();
             PlaceLines(sys, time);
             PlaceMarkers(sys, time);
+            PlaceNodeMarkers(sys, time);
+            ApplyDrag(dt);
+        }
+
+        // ---- Manoeuvre node: marker, 3D handles, dragging ----------------------------------------------------------------
+
+        /// <summary>
+        /// The node sits on the trajectory where it will be (relative to its primary, drawn at the primary's current position like
+        /// the trajectory itself). Its handles are the prograde (X), normal (Y) and radial (Z) directions of the pre-burn state,
+        /// each ±, about <see cref="HandlePixels"/> long on screen whatever the zoom.
+        /// </summary>
+        void PlaceNodeMarkers(PatchedConicSystem sys, double time)
+        {
+            ManeuverController m = boot.Navigation.Maneuvers;
+            nodeShown = selectedShown = false;
+            for (int i = 0; i < 6; i++) handleShown[i] = false;
+            if (m == null) return;
+            if (m.HasSelection && Project(m.Selected.State.Position + sys.Position(m.Selected.State.Primary, time), out Vector3 sel, out _))
+            {
+                selectedShown = true;
+                selectedGui = ToGui(sel);
+            }
+            if (m.Node == null || !m.Preview.Valid) return;
+            CoastState pre = m.Preview.PreBurn;
+            Vector3d at = pre.Position + sys.Position(pre.Primary, time);
+            if (!Project(at, out Vector3 screen, out nodeOccluded)) return;
+            nodeShown = true;
+            nodeGui = ToGui(screen);
+            if (m.NodeConfirmed) return;
+            Vector3 mapPoint = ToMap(at, out float shrink);
+            float toCamera = Vector3.Distance(mapPoint, cameraPosition);
+            double length = HandlePixels * HudStyle.Scale * unitsPerPixel * toCamera / (scale * Math.Max(shrink, 1e-6f));
+            ManeuverNode.Basis(pre.Position, pre.Velocity, out Vector3d p, out Vector3d n, out Vector3d r);
+            Vector3d[] axes = { p, n, r };
+            for (int i = 0; i < 6; i++)
+            {
+                Vector3d dir = axes[i / 2] * (i % 2 == 0 ? 1.0 : -1.0);
+                if (Project(at + dir * length, out Vector3 tip, out _))
+                {
+                    handleGui[i] = ToGui(tip);
+                    handleShown[i] = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// While a handle is held the component changes at a rate that grows with how far the mouse is pulled along the handle
+        /// (fine near the start, fast far away); pulling back the other way reduces it.
+        /// </summary>
+        void ApplyDrag(float dt)
+        {
+            ManeuverController m = boot.Navigation.Maneuvers;
+            if (dragHandle < 0 || m == null || m.Node == null || m.NodeConfirmed)
+            {
+                dragHandle = -1;
+                return;
+            }
+            Vector2 mouse = ToGui(FlightInput.MousePosition);
+            float along = Dot2(mouse - dragStart, dragDir);
+            float pixels = Mathf.Abs(along);
+            if (pixels < 3f) return;
+            double rate = Math.Pow(pixels / 40.0, 2.0) * 20.0; // m/s per real second
+            int axis = dragHandle / 2;
+            double sign = (dragHandle % 2 == 0 ? 1.0 : -1.0) * Math.Sign(along);
+            m.AddComponent(axis, sign * rate * dt);
+        }
+
+        bool HandleNodeMouse(Event e)
+        {
+            ManeuverController m = boot.Navigation.Maneuvers;
+            if (m == null) return false;
+            if (e.type == EventType.MouseUp && dragHandle >= 0)
+            {
+                dragHandle = -1;
+                e.Use();
+                return true;
+            }
+            if (e.type != EventType.MouseDown || e.button != 0 || !nodeShown || m.NodeConfirmed) return false;
+            for (int i = 0; i < 6; i++)
+            {
+                if (!handleShown[i] || Vector2.Distance(handleGui[i], e.mousePosition) > HandlePick) continue;
+                dragHandle = i;
+                dragStart = e.mousePosition;
+                Vector2 d = handleGui[i] - nodeGui;
+                float dl = Mathf.Sqrt(Dot2(d, d));
+                dragDir = dl > 1e-2f ? new Vector2(d.x / dl, d.y / dl) : new Vector2(1f, 0f);
+                GUIUtility.keyboardControl = 0;
+                e.Use();
+                return true;
+            }
+            return false;
+        }
+
+        void DrawNodeMarkers()
+        {
+            ManeuverController m = boot.Navigation.Maneuvers;
+            if (m == null) return;
+            if (selectedShown)
+                Marker(new Vector3(selectedGui.x * HudStyle.Scale, Screen.height - selectedGui.y * HudStyle.Scale, 1f), false, HudStyle.Warning, 8f,
+                    Loc.T("ТОЧКА"), Loc.T("через ") + SpaceSim.Units.UnitFormatter.Duration(m.Selected.Time - boot.Simulation.SimulationTime));
+            if (!nodeShown) return;
+            string[] names = { Loc.T("X ПРОГРЕЙД"), Loc.T("Y НОРМАЛЬ"), Loc.T("Z РАДИАЛЬНО") };
+            for (int i = 0; i < 6; i++)
+            {
+                if (!handleShown[i]) continue;
+                Color c = AxisColors[i / 2];
+                if (i % 2 == 1) c = new Color(c.r * 0.7f, c.g * 0.7f, c.b * 0.7f, 1f);
+                DottedLine(nodeGui, handleGui[i], c, dragHandle == i ? 3f : 2f);
+                HudStyle.Dot(handleGui[i], dragHandle == i ? 14f : 11f, c);
+                if (i % 2 == 0)
+                    GUI.Label(new Rect(handleGui[i].x + 8f, handleGui[i].y - 8f, 140f, 16f), names[i / 2], HudStyle.Style(HudStyle.Face.Mono, 10, c));
+                else
+                    GUI.Label(new Rect(handleGui[i].x + 8f, handleGui[i].y - 8f, 30f, 16f), "−", HudStyle.Style(HudStyle.Face.Mono, 12, c));
+            }
+            ManeuverNode n = m.Node;
+            Marker(new Vector3(nodeGui.x * HudStyle.Scale, Screen.height - nodeGui.y * HudStyle.Scale, 1f), nodeOccluded, NodeColor, 12f, Loc.T("МАНЁВР"),
+                "Δv " + SpaceSim.Units.UnitFormatter.Number(n.Magnitude, 1) + Loc.T(" м/с"), 22f);
+        }
+
+        static float Dot2(Vector2 a, Vector2 b) => a.x * b.x + a.y * b.y;
+
+        static void DottedLine(Vector2 a, Vector2 b, Color c, float width)
+        {
+            float length = Vector2.Distance(a, b);
+            int n = Mathf.Max(1, Mathf.CeilToInt(length / 2f));
+            for (int i = 0; i <= n; i++)
+            {
+                Vector2 p = Vector2.Lerp(a, b, (float)i / n);
+                HudStyle.Fill(new Rect(p.x - width * 0.5f, p.y - width * 0.5f, width, width), c);
+            }
+        }
+
+        /// <summary>Click on the trajectory (the one the vehicle is on): the nearest point of its polyline, snapped to the exact conic.</summary>
+        bool PickTrajectory(Vector2 mouse, out TrajectoryPoint point)
+        {
+            point = default;
+            NavigationService nav = boot.Navigation;
+            TrajectoryPrediction p = shownPrediction;
+            PatchedConicSystem sys = nav.System;
+            FreeFlightSimulation sim = boot.Body.Simulation;
+            if (p == null || sys == null || sim == null || sim.Navigation == null || sim.IsLanded) return false;
+            double time = boot.Simulation.RenderTime;
+            float best = TrajectoryPick;
+            int bestPatch = -1, bestSample = 0;
+            float bestFraction = 0f;
+            for (int pi = 0; pi < p.Patches.Count; pi++)
+            {
+                PredictedPatch patch = p.Patches[pi];
+                Vector3d anchor = sys.Position(patch.Primary, time);
+                Vector2 prev = default;
+                bool prevOk = false;
+                for (int i = 0; i < patch.RelativePoints.Count; i++)
+                {
+                    Vector3 s = mapCamera.WorldToScreenPoint(ToMap(patch.RelativePoints[i] + anchor, out _));
+                    bool ok = s.z > 0f;
+                    Vector2 g = ToGui(s);
+                    if (ok && prevOk)
+                    {
+                        Vector2 seg = g - prev;
+                        float len2 = Dot2(seg, seg);
+                        float f = len2 > 1e-6f ? Mathf.Clamp01(Dot2(mouse - prev, seg) / len2) : 0f;
+                        float d = Vector2.Distance(mouse, prev + seg * f);
+                        if (d < best)
+                        {
+                            best = d;
+                            bestPatch = pi;
+                            bestSample = i - 1;
+                            bestFraction = f;
+                        }
+                    }
+                    prev = g;
+                    prevOk = ok;
+                }
+            }
+            if (bestPatch < 0) return false;
+            point = TrajectoryPoints.PointOnPatch(sys, p, bestPatch, bestSample, bestFraction, sim.CoastStateNow());
+            return point.Valid;
         }
 
         void HandleInput(float dt)
@@ -584,6 +829,14 @@ namespace SpaceSim.Runtime
             {
                 if (!line.Go.activeSelf) continue;
                 Color c = HudStyle.Accent;
+                c.a = (shownNodePrediction != null ? 0.7f : 0.95f) * CurveFade(line.Norm);
+                line.Material.SetColor(ColorId, c);
+                Anchor(line, sys, time);
+            }
+            foreach (MapLine line in nodeTrajectory)
+            {
+                if (!line.Go.activeSelf) continue;
+                Color c = NodeColor;
                 c.a = 0.95f * CurveFade(line.Norm);
                 line.Material.SetColor(ColorId, c);
                 Anchor(line, sys, time);
@@ -659,6 +912,8 @@ namespace SpaceSim.Runtime
             if (showPeriapsis)
                 Marker(periapsisScreen, periapsisOccluded, orbit.PeriapsisBelowSurface ? HudStyle.Danger : HudStyle.Accent, 8f, Loc.T("ПЕРИЦЕНТР"), orbit.PeriapsisText);
             if (showApoapsis) Marker(apoapsisScreen, apoapsisOccluded, HudStyle.TextStrong, 8f, Loc.T("АПОЦЕНТР"), orbit.ApoapsisText);
+            if (Event.current.type == EventType.MouseUp || !OverUi(Event.current.mousePosition)) HandleNodeMouse(Event.current);
+            DrawNodeMarkers();
 
             DrawHeader(screen);
             DrawPanel(screen);
@@ -723,105 +978,318 @@ namespace SpaceSim.Runtime
         }
 
         /// <summary>
-        /// The right panel (mock-up "Trans-Tromos injection"): the planned manoeuvre with the time to ignition and its Δv in big type,
-        /// or — without a plan — the current orbit; then the bodies to centre the map on.
+        /// The right side panel (compact, scrolls): warp to a point, the selected point, the manoeuvre node editor with its preview and
+        /// execution, the current orbit, the transfer planner and the bodies to centre the map on.
         /// </summary>
         void DrawPanel(Vector2 screen)
         {
-            const float w = 420f;
-            var nav = boot.Navigation;
-            NodeGuidance g = nav.Guidance;
-            float x = screen.x - 36f - w, y = 120f;
-            float h = Mathf.Min(screen.y - 120f - 100f, 760f);
+            const float w = 350f;
+            float x = screen.x - 24f - w, y = 108f;
+            float h = Mathf.Min(screen.y - 108f - 96f, 820f);
             var r = Ui(new Rect(x, y, w, h));
             HudStyle.Card(r, 0.9f);
-            float ix = x + 22f, iw = w - 44f, cy = y + 20f;
-            GUIStyle k = HudStyle.Style(HudStyle.Face.Body, 13, HudStyle.TextPanel), v = HudStyle.Style(HudStyle.Face.Mono, 13, HudStyle.TextStrong, TextAnchor.MiddleRight);
-            int target = nav.Plan.Target;
-            string targetName = target >= 0 && nav.System != null ? Loc.T(nav.System.NameOf(target)) : "";
+            var view = new Rect(0f, 0f, w - 18f, Mathf.Max(h - 4f, panelContentHeight));
+            panelScroll = GUI.BeginScrollView(new Rect(x, y + 2f, w, h - 4f), panelScroll, view);
+            float ix = 14f, iw = w - 18f - 26f, cy = 12f;
+            GUIStyle k = HudStyle.Style(HudStyle.Face.Body, 12, HudStyle.TextPanel), v = HudStyle.Style(HudStyle.Face.Mono, 12, HudStyle.TextStrong, TextAnchor.MiddleRight);
+            ManeuverController m = boot.Navigation.Maneuvers;
 
-            if (g.Active)
+            if (m != null && m.Warping)
             {
-                GUI.Label(new Rect(ix, cy, iw, 14f), Loc.T("МАНЁВР 01") + "  ·  " + (g.Started ? Loc.T("ИДЁТ") : Loc.T("ЗАПЛАНИРОВАН")), HudStyle.Style(HudStyle.Face.Mono, 11, HudStyle.Blue));
-                cy += 20f;
-                string title = targetName.Length > 0 ? Loc.T("Перелёт к ") + targetName : Loc.T("Манёвр");
-                GUI.Label(new Rect(ix, cy, iw, 30f), title, HudStyle.Style(HudStyle.Face.Strong, 24, HudStyle.TextStrong));
-                cy += 44f;
-                GUI.Label(new Rect(ix, cy, 200f, 14f), Loc.T("ДО ЗАЖИГАНИЯ"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
-                GUI.Label(new Rect(ix + 220f, cy, 150f, 14f), Loc.T("Δv, М/С"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
-                string burnIn = g.Started ? Loc.T("ИДЁТ") : g.TimeToIgnition > 0 ? Short(g.TimeToIgnition) : Loc.T("СЕЙЧАС");
-                GUI.Label(new Rect(ix - 2f, cy + 12f, 220f, 66f), burnIn, HudStyle.Style(HudStyle.Face.DisplayStrong, 56, HudStyle.Blue));
-                GUI.Label(new Rect(ix + 218f, cy + 12f, 170f, 66f), SpaceSim.Units.UnitFormatter.Number(g.Remaining, 0), HudStyle.Style(HudStyle.Face.DisplayStrong, 56, HudStyle.TextStrong));
-                cy += 88f;
-                Row(ix, ref cy, iw, Loc.T("Работа двигателя"), SpaceSim.Units.UnitFormatter.Number(g.BurnTime, 0) + Loc.T(" с"), k, v);
-                Row(ix, ref cy, iw, Loc.T("Тангаж / курс"), SpaceSim.Units.UnitFormatter.Number(g.Pitch, 1) + "° / " + SpaceSim.Units.UnitFormatter.Number(g.Heading, 1) + "°", k, v);
-                SpaceSim.Navigation.TrajectoryPrediction p = nav.Prediction;
-                if (p != null && target >= 0)
-                    Row(ix, ref cy, iw, targetName, p.Encounter ? Loc.T("встреча через ") + SpaceSim.Units.UnitFormatter.Duration(p.EncounterTime - nav.Now)
-                        : Loc.T("промах ") + SpaceSim.Units.UnitFormatter.Number(p.ClosestDistance / 1e9, 2) + Loc.T(" млн км"), k, v);
-                if (orbit != null)
-                {
-                    Row(ix, ref cy, iw, Loc.T("Перицентр сейчас"), orbit.PeriapsisText, k, v);
-                    Row(ix, ref cy, iw, Loc.T("Апоцентр сейчас"), orbit.ApoapsisText, k, v);
-                }
-                cy += 14f;
-                if (GUI.Button(new Rect(ix, cy, 120f, 40f), Loc.T("УДАЛИТЬ"), HudStyle.BigButton))
-                {
-                    nav.CancelWarpToBurn();
-                    nav.ClearNode();
-                }
-                bool warping = nav.WarpingToBurn;
-                bool canWarp = !g.Started && g.TimeToIgnition > NavigationService.WarpToBurnLead;
-                bool wasEnabled = GUI.enabled;
-                GUI.enabled = wasEnabled && (canWarp || warping);
-                if (GUI.Button(new Rect(ix + 132f, cy, iw - 132f, 40f), warping ? Loc.T("ОСТАНОВИТЬ УСКОРЕНИЕ") : Loc.T("УСКОРИТЬ ДО МАНЁВРА") + "  →", HudStyle.Primary))
-                {
-                    if (warping) nav.CancelWarpToBurn();
-                    else nav.WarpToBurn();
-                }
-                GUI.enabled = wasEnabled;
-                cy += 50f;
-                GUI.Label(new Rect(ix, cy, iw, 30f), Loc.T("Время ускоряется и само вернётся к ×1 за ") + NavigationService.WarpToBurnLead.ToString("0") +
-                                                    Loc.T(" с до зажигания. Двигатель включаете вы."), HudStyle.Small);
+                ManeuverOverlay.WarpReadout(m, ix, ref cy, iw, k, v);
+                if (GUI.Button(new Rect(ix, cy + 2f, iw, 26f), Loc.T("ОТМЕНИТЬ УСКОРЕНИЕ") + "  " + FlightInput.KeyLabel(InputKey.WarpToTarget), HudStyle.Button)) m.CancelWarp();
                 cy += 36f;
+                Separator(ix, ref cy, iw);
+            }
+            if (m != null && m.HasSelection) DrawSelection(m, ix, ref cy, iw, k, v);
+            if (m != null && m.Node != null) DrawNodeEditor(m, ix, ref cy, iw, k, v);
+            else DrawOrbit(ix, ref cy, iw, k, v);
+            if (m != null) DrawTransfer(m, ix, ref cy, iw, k, v);
+
+            GUI.Label(new Rect(ix, cy, iw, 14f), Loc.T("ПОКАЗАТЬ"), HudStyle.Style(HudStyle.Face.Mono, 11, HudStyle.TextSoft));
+            cy += 18f;
+            float bx = ix, rowH = 24f;
+            FocusChip(ref bx, ref cy, ix, iw, rowH, FocusVehicle, Loc.T("Аппарат"));
+            foreach (MapBody b in bodies) FocusChip(ref bx, ref cy, ix, iw, rowH, b.Index, Loc.T(b.Name));
+            cy += rowH + 10f;
+            GUI.EndScrollView();
+            if (Event.current.type == EventType.Repaint) panelContentHeight = cy;
+        }
+
+        static void Separator(float x, ref float y, float w)
+        {
+            HudStyle.HLine(x, y, w, new Color(1f, 1f, 1f, 0.14f));
+            y += 8f;
+        }
+
+        static void Section(float x, ref float y, float w, string title, Color color)
+        {
+            GUI.Label(new Rect(x, y, w, 14f), title, HudStyle.Style(HudStyle.Face.Mono, 11, color));
+            y += 18f;
+        }
+
+        static void Line(float x, ref float y, float w, string key, string value, GUIStyle k, GUIStyle v)
+        {
+            GUI.Label(new Rect(x, y, w * 0.6f, 18f), key, k);
+            GUI.Label(new Rect(x + w * 0.3f, y, w * 0.7f, 18f), value, v);
+            y += 19f;
+        }
+
+        static string Alt(double radius, double bodyRadius) =>
+            double.IsInfinity(radius) ? Loc.T("нет (незамкнута)") : NavigationUI.Dist(radius - bodyRadius);
+
+        static string Speed(double ms) => SpaceSim.Units.UnitFormatter.Number(ms, 1) + Loc.T(" м/с");
+
+        void DrawSelection(ManeuverController m, float x, ref float y, float w, GUIStyle k, GUIStyle v)
+        {
+            TrajectoryPoint p = m.Selected;
+            PatchedConicSystem sys = boot.Navigation.System;
+            Section(x, ref y, w, Loc.T("ТОЧКА НА ТРАЕКТОРИИ") + " · " + Loc.T(sys.NameOf(p.State.Primary)).ToUpperInvariant(), HudStyle.Warning);
+            double now = boot.Simulation.SimulationTime;
+            double bodyRadius = p.State.Primary < 0 ? sys.StarProperties.radius : sys[p.State.Primary].Radius;
+            Line(x, ref y, w, Loc.T("Через"), SpaceSim.Units.UnitFormatter.Duration(p.Time - now), k, v);
+            Line(x, ref y, w, Loc.T("Прибытие (часы симуляции)"), SpaceSim.Units.UnitFormatter.Duration(p.Time), k, v);
+            Line(x, ref y, w, Loc.T("Высота"), NavigationUI.Dist(p.State.Position.Magnitude - bodyRadius), k, v);
+            Line(x, ref y, w, Loc.T("Скорость в точке"), Speed(p.State.Velocity.Magnitude), k, v);
+            Line(x, ref y, w, Loc.T("Скорость сейчас"), Speed(m.CurrentSpeed()), k, v);
+            float bw = (w - 8f) / 3f;
+            if (GUI.Button(new Rect(x, y + 2f, bw, 26f), Loc.T("УСКОРИТЬ СЮДА"), HudStyle.Primary)) m.WarpToSelected();
+            if (GUI.Button(new Rect(x + bw + 4f, y + 2f, bw, 26f), Loc.T("УЗЕЛ ЗДЕСЬ"), HudStyle.Button)) m.CreateNodeAtSelected();
+            if (GUI.Button(new Rect(x + 2f * (bw + 4f), y + 2f, bw, 26f), Loc.T("СНЯТЬ"), HudStyle.Button)) m.ClearSelection();
+            y += 36f;
+            Separator(x, ref y, w);
+        }
+
+        void DrawNodeEditor(ManeuverController m, float x, ref float y, float w, GUIStyle k, GUIStyle v)
+        {
+            NavigationService nav = boot.Navigation;
+            PatchedConicSystem sys = nav.System;
+            ManeuverNode n = m.Node;
+            NodePreview pv = m.Preview;
+            NodeGuidance g = nav.Guidance;
+            double now = boot.Simulation.SimulationTime;
+            string state = m.Mode == BurnMode.Assisted ? Loc.T("ВЫПОЛНЯЕТСЯ") : m.Mode == BurnMode.InstantSandbox ? Loc.T("ПЕСОЧНИЦА") :
+                m.NodeConfirmed ? Loc.T("ПОДТВЕРЖДЁН") : Loc.T("РЕДАКТИРУЕТСЯ");
+            Section(x, ref y, w, Loc.T("МАНЁВР") + " · " + state, NodeColor);
+            GUI.Label(new Rect(x, y, w * 0.5f, 40f), SpaceSim.Units.UnitFormatter.Number(n.Magnitude, 1), HudStyle.Style(HudStyle.Face.DisplayStrong, 34, HudStyle.TextStrong));
+            string ign = g.Active ? (g.Started ? Loc.T("ИДЁТ") : g.TimeToIgnition > 0 ? Short(g.TimeToIgnition) : Loc.T("СЕЙЧАС")) : Short(n.Time - now);
+            GUI.Label(new Rect(x + w * 0.5f, y, w * 0.5f, 40f), ign, HudStyle.Style(HudStyle.Face.DisplayStrong, 26, HudStyle.Blue, TextAnchor.MiddleRight));
+            y += 40f;
+            GUI.Label(new Rect(x, y, w, 14f), Loc.T("Δv ВСЕГО, М/С") + "  ·  " + Loc.T("ДО ЗАЖИГАНИЯ"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
+            y += 18f;
+
+            // Components: X prograde, Y normal, Z radial — buttons by the step, typed values.
+            bool editable = !m.NodeConfirmed && m.Mode == BurnMode.None;
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = wasEnabled && editable;
+            string[] names = { Loc.T("X прогрейд"), Loc.T("Y нормаль"), Loc.T("Z радиально") };
+            double[] values = { n.Prograde, n.Normal, n.Radial };
+            for (int a = 0; a < 3; a++)
+            {
+                GUI.Label(new Rect(x, y, 96f, 24f), names[a], HudStyle.Style(HudStyle.Face.Mono, 11, AxisColors[a]));
+                if (GUI.Button(new Rect(x + 98f, y, 28f, 22f), "−", HudStyle.Button)) m.AddComponent(a, -editStep);
+                string name = "node-field-" + a;
+                if (GUI.GetNameOfFocusedControl() != name) fieldText[a] = SpaceSim.Units.UnitFormatter.Number(values[a], 1);
+                GUI.SetNextControlName(name);
+                string text = GUI.TextField(new Rect(x + 130f, y, w - 130f - 32f, 22f), fieldText[a], HudStyle.Field);
+                if (text != fieldText[a])
+                {
+                    fieldText[a] = text;
+                    if (SpaceSim.Academy.AcademyNumber.TryParse(text, out double typed))
+                        m.SetComponents(a == 0 ? typed : n.Prograde, a == 1 ? typed : n.Normal, a == 2 ? typed : n.Radial);
+                }
+                if (GUI.Button(new Rect(x + w - 28f, y, 28f, 22f), "+", HudStyle.Button)) m.AddComponent(a, editStep);
+                y += 26f;
+            }
+            GUI.Label(new Rect(x, y, 60f, 22f), Loc.T("Шаг"), k);
+            double[] steps = { 0.1, 1.0, 10.0, 100.0 };
+            float sw = (w - 60f) / steps.Length;
+            for (int i = 0; i < steps.Length; i++)
+                if (GUI.Toggle(new Rect(x + 60f + i * sw, y, sw - 3f, 22f), editStep == steps[i], SpaceSim.Units.UnitFormatter.Number(steps[i], steps[i] < 1 ? 1 : 0), HudStyle.Button))
+                    editStep = steps[i];
+            y += 26f;
+            GUI.Label(new Rect(x, y, 60f, 22f), Loc.T("Время"), k);
+            double[] shifts = { -600.0, -60.0, 60.0, 600.0 };
+            string[] shiftNames = { Loc.T("−10 мин"), Loc.T("−1 мин"), Loc.T("+1 мин"), Loc.T("+10 мин") };
+            for (int i = 0; i < shifts.Length; i++)
+                if (GUI.Button(new Rect(x + 60f + i * sw, y, sw - 3f, 22f), shiftNames[i], HudStyle.Button)) m.ShiftNode(shifts[i]);
+            y += 28f;
+            GUI.enabled = wasEnabled;
+            if (editable)
+            {
+                GUI.Label(new Rect(x, y, w, 30f), Loc.T("Тяните ручки X/Y/Z на карте: чем дальше, тем быстрее меняется Δv."), HudStyle.Small);
+                y += 30f;
+            }
+
+            // Cost for the real rocket.
+            BurnEstimate b = pv.Burn;
+            Line(x, ref y, w, Loc.T("Работа двигателя"), double.IsInfinity(b.Duration) ? "∞" : SpaceSim.Units.UnitFormatter.Duration(b.Duration), k, v);
+            Line(x, ref y, w, Loc.T("Топливо (Циолковский)"), SpaceSim.Units.UnitFormatter.Number(b.Propellant, 0) + Loc.T(" кг") +
+                (b.StagesUsed > 1 ? " · " + b.StagesUsed + Loc.T(" ступ.") : ""), k, v);
+            GUIStyle ok = HudStyle.Style(HudStyle.Face.Mono, 12, b.Sufficient ? HudStyle.Success : HudStyle.Danger, TextAnchor.MiddleRight);
+            Line(x, ref y, w, Loc.T("Запас Δv"), SpaceSim.Units.UnitFormatter.Number(b.Available, 0) + Loc.T(" м/с") + (b.Sufficient ? Loc.T(" · хватает") : Loc.T(" · НЕ ХВАТАЕТ")), k, ok);
+
+            // Orbit after the burn.
+            if (pv.Valid)
+            {
+                y += 4f;
+                GUI.Label(new Rect(x, y, w, 14f), Loc.T("ОРБИТА ПОСЛЕ МАНЁВРА · ") + Loc.T(sys.NameOf(pv.After.Primary)).ToUpperInvariant(), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
+                y += 16f;
+                Line(x, ref y, w, Loc.T("Апоцентр"), Alt(pv.Before.ApoapsisRadius, pv.BodyRadius) + " → " + Alt(pv.After.ApoapsisRadius, pv.BodyRadius), k, v);
+                Line(x, ref y, w, Loc.T("Перицентр"), Alt(pv.Before.PeriapsisRadius, pv.BodyRadius) + " → " + Alt(pv.After.PeriapsisRadius, pv.BodyRadius),
+                    k, pv.After.PeriapsisRadius < pv.BodyRadius ? HudStyle.Style(HudStyle.Face.Mono, 12, HudStyle.Danger, TextAnchor.MiddleRight) : v);
+                Line(x, ref y, w, Loc.T("Наклонение"), SpaceSim.Units.UnitFormatter.Number(pv.Before.Inclination * MathD.RadToDeg, 2) + "° → " +
+                    SpaceSim.Units.UnitFormatter.Number(pv.After.Inclination * MathD.RadToDeg, 2) + "°", k, v);
+                Line(x, ref y, w, Loc.T("Период"), (pv.After.Bound ? SpaceSim.Units.UnitFormatter.Duration(pv.After.Period) : "—"), k, v);
+            }
+            foreach (EncounterInfo e in pv.Encounters)
+            {
+                string body = Loc.T(sys.NameOf(e.Body));
+                Line(x, ref y, w, Loc.T("Сфера ") + body, Loc.T("через ") + SpaceSim.Units.UnitFormatter.Duration(e.Time - now), k, v);
+                Line(x, ref y, w, Loc.T("  сближение"), e.Impact ? Loc.T("СТОЛКНОВЕНИЕ") : NavigationUI.Dist(e.Periapsis - sys[e.Body].Radius) + Loc.T(" над поверхностью"), k,
+                    e.Impact ? HudStyle.Style(HudStyle.Face.Mono, 12, HudStyle.Danger, TextAnchor.MiddleRight) : v);
+            }
+            int target = nav.Plan.Target;
+            if (target >= 0 && !double.IsNaN(pv.TargetClosest))
+            {
+                bool hit = nav.Prediction != null && nav.Prediction.Encounter;
+                Line(x, ref y, w, Loc.T(sys.NameOf(target)), (hit ? Loc.T("перицентр ") : Loc.T("промах ")) + NavigationUI.Dist(pv.TargetClosest) +
+                    Loc.T(", через ") + SpaceSim.Units.UnitFormatter.Duration(pv.TargetClosestTime - now), k, v);
+            }
+
+            // Execution.
+            y += 6f;
+            float bw = (w - 4f) / 2f;
+            if (m.Mode != BurnMode.None)
+            {
+                GUI.Label(new Rect(x, y, w, 18f), Loc.T("Состояние: ") + m.BurnStatus + " · Δv " + Loc.T("осталось ") + Speed(g.Remaining), HudStyle.Small);
+                y += 20f;
+                if (GUI.Button(new Rect(x, y, w, 26f), Loc.T("ПРЕРВАТЬ МАНЁВР"), HudStyle.Button)) m.AbortBurn();
+                y += 30f;
+            }
+            else if (!m.NodeConfirmed)
+            {
+                if (GUI.Button(new Rect(x, y, bw, 26f), Loc.T("ПОДТВЕРДИТЬ"), HudStyle.Primary)) m.ConfirmNode(true);
+                if (GUI.Button(new Rect(x + bw + 4f, y, bw, 26f), Loc.T("УДАЛИТЬ"), HudStyle.Button)) m.DeleteNode();
+                y += 30f;
             }
             else
             {
-                GUI.Label(new Rect(ix, cy, iw, 14f), orbit != null ? Loc.T("ОРБИТА · ВОКРУГ ") + orbit.PrimaryName.ToUpperInvariant() : Loc.T("ОРБИТА"),
-                    HudStyle.Style(HudStyle.Face.Mono, 11, HudStyle.Blue));
-                cy += 22f;
-                if (orbit == null)
+                if (GUI.Button(new Rect(x, y, bw, 26f), Loc.T("ИЗМЕНИТЬ"), HudStyle.Button)) m.ConfirmNode(false);
+                if (GUI.Button(new Rect(x + bw + 4f, y, bw, 26f), Loc.T("УДАЛИТЬ"), HudStyle.Button)) m.DeleteNode();
+                y += 30f;
+                bool warping = m.Warping && m.WarpIsToNode;
+                if (GUI.Button(new Rect(x, y, w, 26f), warping ? Loc.T("ОСТАНОВИТЬ УСКОРЕНИЕ") : Loc.T("УСКОРИТЬ ДО МАНЁВРА") + "  " + FlightInput.KeyLabel(InputKey.WarpToTarget), HudStyle.Button))
                 {
-                    GUI.Label(new Rect(ix, cy, iw, 40f), Loc.T("Аппарат на поверхности — орбиты нет."), HudStyle.Body);
-                    cy += 44f;
+                    if (warping) m.CancelWarp();
+                    else m.WarpToNode();
                 }
-                else
+                y += 30f;
+                if (GUI.Button(new Rect(x, y, w, 26f), Loc.T("ВЫПОЛНИТЬ С ПОМОЩНИКОМ (ДВИГАТЕЛЬ)"), HudStyle.Primary)) m.StartAssistedBurn();
+                y += 30f;
+                if (m.InstantBurnAllowed) // Sandbox only: a Career pays for its Δv
                 {
-                    GUI.Label(new Rect(ix, cy, 200f, 14f), Loc.T("ПЕРИЦЕНТР"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
-                    GUI.Label(new Rect(ix + 200f, cy, 170f, 14f), Loc.T("АПОЦЕНТР"), HudStyle.Style(HudStyle.Face.Mono, 10, HudStyle.TextMuted));
-                    GUI.Label(new Rect(ix, cy + 14f, 196f, 32f), orbit.PeriapsisText, HudStyle.Style(HudStyle.Face.Mono, 18, orbit.PeriapsisBelowSurface ? HudStyle.Danger : HudStyle.Blue));
-                    GUI.Label(new Rect(ix + 200f, cy + 14f, 176f, 32f), orbit.ApoapsisText, HudStyle.Style(HudStyle.Face.Mono, 18, HudStyle.TextStrong));
-                    cy += 54f;
-                    Row(ix, ref cy, iw, Loc.T("До перицентра"), orbit.TimeToPeriapsisText, k, v);
-                    Row(ix, ref cy, iw, Loc.T("До апоцентра"), orbit.TimeToApoapsisText, k, v);
-                    Row(ix, ref cy, iw, Loc.T("Период"), orbit.PeriodText, k, v);
-                    Row(ix, ref cy, iw, Loc.T("Эксцентриситет"), SpaceSim.Units.UnitFormatter.Number(orbit.Apsides.Eccentricity, 4), k, v);
+                    if (GUI.Button(new Rect(x, y, w, 24f), Loc.T("МГНОВЕННО — ПЕСОЧНИЦА / ЧИТ (без топлива)"), HudStyle.Button)) m.StartInstantSandbox();
+                    y += 28f;
                 }
-                GUI.Label(new Rect(ix, cy + 4f, iw, 34f), Loc.T("Высоты — над средним радиусом тела. Манёвр планируется в навигации (") +
-                                                         FlightInput.KeyLabel(InputKey.G) + ").", HudStyle.Small);
-                cy += 44f;
+                GUI.Label(new Rect(x, y, w, 44f), Loc.T("Вручную: развернитесь на тангаж ") + SpaceSim.Units.UnitFormatter.Number(g.Pitch, 1) + Loc.T("°, курс ") +
+                    SpaceSim.Units.UnitFormatter.Number(g.Heading, 1) + Loc.T("° и включите двигатель за половину прожига до узла; остаток Δv — в HUD."), HudStyle.Small);
+                y += 46f;
             }
+            Separator(x, ref y, w);
+        }
 
-            // Bodies to centre the map on.
-            GUI.Label(new Rect(ix, cy, iw, 14f), Loc.T("ПОКАЗАТЬ"), HudStyle.Style(HudStyle.Face.Mono, 11, HudStyle.TextSoft));
-            cy += 20f;
-            float bx = ix, rowH = 28f;
-            FocusChip(ref bx, ref cy, ix, iw, rowH, FocusVehicle, Loc.T("Аппарат"));
-            foreach (MapBody b in bodies)
+        void DrawOrbit(float x, ref float y, float w, GUIStyle k, GUIStyle v)
+        {
+            Section(x, ref y, w, orbit != null ? Loc.T("ОРБИТА · ВОКРУГ ") + orbit.PrimaryName.ToUpperInvariant() : Loc.T("ОРБИТА"), HudStyle.Blue);
+            if (orbit == null)
             {
-                if (cy + rowH > r.yMax - 8f) break;
-                FocusChip(ref bx, ref cy, ix, iw, rowH, b.Index, Loc.T(b.Name));
+                GUI.Label(new Rect(x, y, w, 36f), Loc.T("Аппарат на поверхности — орбиты нет."), HudStyle.Body);
+                y += 40f;
             }
+            else
+            {
+                Line(x, ref y, w, Loc.T("Перицентр"), orbit.PeriapsisText, k, v);
+                Line(x, ref y, w, Loc.T("Апоцентр"), orbit.ApoapsisText, k, v);
+                Line(x, ref y, w, Loc.T("До перицентра"), orbit.TimeToPeriapsisText, k, v);
+                Line(x, ref y, w, Loc.T("До апоцентра"), orbit.TimeToApoapsisText, k, v);
+                Line(x, ref y, w, Loc.T("Период"), orbit.PeriodText, k, v);
+                Line(x, ref y, w, Loc.T("Эксцентриситет"), SpaceSim.Units.UnitFormatter.Number(orbit.Apsides.Eccentricity, 4), k, v);
+                GUI.Label(new Rect(x, y, w, 30f), Loc.T("Щёлкните по траектории: точка для ускорения времени или узла манёвра."), HudStyle.Small);
+                y += 32f;
+            }
+            Separator(x, ref y, w);
+        }
+
+        /// <summary>Transfer planner: pick a destination, see Hohmann/Lambert numbers and the window, put the node at the window.</summary>
+        void DrawTransfer(ManeuverController m, float x, ref float y, float w, GUIStyle k, GUIStyle v)
+        {
+            NavigationService nav = boot.Navigation;
+            PatchedConicSystem sys = nav.System;
+            FreeFlightSimulation sim = boot.Body != null ? boot.Body.Simulation : null;
+            if (sys == null || sim == null || sim.Navigation == null || sim.IsLanded) return;
+            int primary = sim.Primary;
+            Section(x, ref y, w, Loc.T("ПЕРЕЛЁТ К ТЕЛУ"), HudStyle.Warning);
+            if (transferTarget == int.MinValue) transferTarget = nav.Plan.Target;
+            float bx = x, rowH = 24f;
+            for (int i = 0; i < sys.Count; i++)
+            {
+                NavBody b = sys[i];
+                bool reachable = i != primary && (b.ParentIndex == primary || (primary >= 0 && b.ParentIndex == sys.Parent(primary)));
+                if (!reachable) continue;
+                string label = Loc.T(b.Name);
+                float cw = HudStyle.Button.CalcSize(new GUIContent(label)).x + 16f;
+                if (bx + cw > x + w)
+                {
+                    bx = x;
+                    y += rowH + 4f;
+                }
+                bool on = transferTarget == i;
+                if (GUI.Toggle(new Rect(bx, y, cw, rowH), on, label, HudStyle.Button) && !on)
+                {
+                    transferTarget = i;
+                    nav.SetTarget(i);
+                    m.PlanTransfer(i, false);
+                }
+                bx += cw + 4f;
+            }
+            y += rowH + 8f;
+            if (transferTarget < 0 || transferTarget >= sys.Count)
+            {
+                GUI.Label(new Rect(x, y, w, 30f), Loc.T("Выберите цель: Гоман, окно запуска и решение Ламберта с реальными положениями тел."), HudStyle.Small);
+                y += 34f;
+                Separator(x, ref y, w);
+                return;
+            }
+            TransferPlan p = m.Transfer;
+            double now = boot.Simulation.SimulationTime;
+            if (p != null && p.Target == transferTarget && p.Kind != TransferKind.None && p.Error == null)
+            {
+                Line(x, ref y, w, Loc.T("Гоман: Δv отлёта / захвата"), SpaceSim.Units.UnitFormatter.Number(p.HohmannDeltaV1, 0) + " / " + SpaceSim.Units.UnitFormatter.Number(p.HohmannDeltaV2, 0) + Loc.T(" м/с"), k, v);
+                Line(x, ref y, w, Loc.T("Гоман: время полёта"), SpaceSim.Units.UnitFormatter.Duration(p.HohmannTime), k, v);
+                Line(x, ref y, w, Loc.T("Фазовый угол: нужен / сейчас"), SpaceSim.Units.UnitFormatter.Number(p.RequiredPhase * MathD.RadToDeg, 1) + "° / " +
+                    SpaceSim.Units.UnitFormatter.Number(p.CurrentPhase * MathD.RadToDeg, 1) + "°", k, v);
+                Line(x, ref y, w, Loc.T("Окно (Гоман) через"), SpaceSim.Units.UnitFormatter.Duration(p.WindowTime - now), k, v);
+                if (!double.IsInfinity(p.SynodicPeriod)) Line(x, ref y, w, Loc.T("Синодический период"), SpaceSim.Units.UnitFormatter.Duration(p.SynodicPeriod), k, v);
+                Line(x, ref y, w, Loc.T("Ламберт: импульс через"), SpaceSim.Units.UnitFormatter.Duration(p.Node.Time - now), k, v);
+                Line(x, ref y, w, Loc.T("Ламберт: Δv отлёта"), Speed(p.DepartureDeltaV), k, v);
+                Line(x, ref y, w, Loc.T("Ламберт: время полёта"), SpaceSim.Units.UnitFormatter.Duration(p.TimeOfFlight), k, v);
+                Line(x, ref y, w, Loc.T("v∞ прилёта / захват"), SpaceSim.Units.UnitFormatter.Number(p.ArrivalExcess, 0) + " / " + Speed(p.CaptureDeltaV), k, v);
+                Line(x, ref y, w, Loc.T("Всего Δv"), Speed(p.TotalDeltaV), k, v);
+            }
+            if (!string.IsNullOrEmpty(m.TransferStatus))
+            {
+                GUI.Label(new Rect(x, y, w, 30f), m.TransferStatus, HudStyle.Small);
+                y += 32f;
+            }
+            float bw = (w - 4f) / 2f;
+            bool wasEnabled = GUI.enabled;
+            GUI.enabled = wasEnabled && !m.TransferBusy;
+            if (GUI.Button(new Rect(x, y, bw, 26f), m.TransferBusy ? Loc.T("СЧИТАЮ…") : Loc.T("РАССЧИТАТЬ"), HudStyle.Button)) m.PlanTransfer(transferTarget, false);
+            if (GUI.Button(new Rect(x + bw + 4f, y, bw, 26f), Loc.T("УЗЕЛ В ОКНЕ"), HudStyle.Primary)) m.PlanTransfer(transferTarget, true);
+            GUI.enabled = wasEnabled;
+            y += 34f;
+            Separator(x, ref y, w);
         }
 
         static string Short(double seconds)
@@ -857,14 +1325,17 @@ namespace SpaceSim.Runtime
         /// <summary>Bottom: key hints in the middle, the line legend on the right.</summary>
         void DrawFooter(Vector2 screen)
         {
-            float y = screen.y - 32f, x = screen.x * 0.5f - 300f;
+            float y = screen.y - 32f, x = screen.x * 0.5f - 420f;
+            x += HudStyle.KeyHint(x, y, Loc.T("ЛКМ"), Loc.T("ТОЧКА / УЗЕЛ"));
+            x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.WarpToTarget), Loc.T("УСКОРИТЬ ДО ТОЧКИ"));
             x += HudStyle.KeyHint(x, y, Loc.T("КОЛЕСО"), Loc.T("ЗУМ"));
             x += HudStyle.KeyHint(x, y, Loc.T("ПКМ"), Loc.T("ВРАЩЕНИЕ"));
             x += HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.G), Loc.T("НАВИГАЦИЯ"));
             HudStyle.KeyHint(x, y, FlightInput.KeyLabel(InputKey.M), Loc.T("К ПОЛЁТУ"));
 
-            float lx = screen.x - 36f - 520f;
+            float lx = screen.x - 36f - 640f;
             Legend(ref lx, y, HudStyle.Accent, Loc.T("ТРАЕКТОРИЯ"));
+            Legend(ref lx, y, NodeColor, Loc.T("ПОСЛЕ МАНЁВРА (ПУНКТИР)"));
             Legend(ref lx, y, HudStyle.Warning, Loc.T("ЦЕЛЬ"));
             Legend(ref lx, y, OrbitColor, Loc.T("ОРБИТЫ ТЕЛ"));
             GUI.Label(new Rect(screen.x - 36f - 520f, y - 20f, 520f, 14f),
@@ -901,6 +1372,13 @@ namespace SpaceSim.Runtime
                     best = b.Index;
                     bestDistance = d;
                 }
+            }
+            // A click right on a body's centre or the vehicle focuses it; anywhere else on the trajectory picks a point there.
+            if ((best == int.MinValue || bestDistance > 16f) && boot.Navigation.Maneuvers != null && PickTrajectory(e.mousePosition, out TrajectoryPoint point))
+            {
+                if (point.Time > boot.Simulation.SimulationTime) boot.Navigation.Maneuvers.Select(point);
+                e.Use();
+                return;
             }
             if (best == int.MinValue) return;
             SetFocus(best);

@@ -735,3 +735,17 @@ Button {
 .scenario-card__body { flex-shrink: 1; min-width: 0; overflow: hidden; margin-right: 14px; }
 .scenario-card__title { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .scenario-card__target { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* New Mission: game-mode tiles (Career / Sandbox), chosen once per new save. */
+.diff-tile {
+    padding: 16px 20px; margin-bottom: 10px;
+    background-color: rgba(14, 14, 15, 0.6);
+    border-width: 1px; border-color: rgba(255, 255, 255, 0.12); border-radius: 0;
+}
+.diff-tile__head { flex-direction: row; align-items: center; justify-content: space-between; }
+.diff-tile__title { font-size: 19px; letter-spacing: 4px; color: rgb(204, 199, 188); }
+.diff-tile__tag { font-size: 12px; letter-spacing: 2px; color: rgb(110, 107, 101); }
+.diff-tile__text { font-size: 14px; color: rgb(134, 131, 124); white-space: normal; margin-top: 6px; }
+.diff-tile--selected { border-color: rgb(98, 140, 255); background-color: rgba(98, 140, 255, 0.08); }
+.diff-tile--selected .diff-tile__title { color: rgb(255, 255, 255); }
+.diff-tile--selected .diff-tile__tag { color: rgb(98, 140, 255); }

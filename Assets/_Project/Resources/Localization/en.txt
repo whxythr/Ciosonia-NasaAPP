@@ -2623,3 +2623,246 @@ N₂ ≈ 95 %, CH₄ ≈ 5 % (давление и состав не заданы
 Зеленоватая порода	Greenish rock
 Жёлто-зелёный реголит	Yellow-green regolith
 Иней CO₂ светлых пятен	CO₂ frost from the bright spots
+СЕЙЧАС ИГРАЕТ	NOW PLAYING
+файл не найден	file not found
+Положите файл	Put the file
+Открыть в SoundCloud	Open on SoundCloud
+Скрыть	Hide
+Звук	Audio
+Музыка по умолчанию	Music settings reset to defaults
+МУЗЫКА	MUSIC
+Громкость музыки	Music volume
+Выключить музыку	Mute music
+Плавный переход	Crossfade
+Длительность смены трека при перелёте между зонами	How long one track fades into the next when you fly between zones
+Папка с музыкой	Music folder
+ОТКРЫТЬ	OPEN
+ОБНОВИТЬ	RESCAN
+ТРЕКИ	TRACKS
+найден	found
+нет файла — ожидается	no file — expected
+тела без своей музыки	bodies without their own track
+Тишина	Silence
+Музыка зависит от того, где вы: у какой планеты или спутника, у звезды или в открытом космосе	The music depends on where you are: near which planet or moon, near the star or in deep space
+Треки защищены авторским правом и в игру не входят: положите свои копии (.ogg, .mp3 или .wav) в папку с музыкой под именами из списка и нажмите «Обновить»	The tracks are copyrighted and not included with the game: put your own copies (.ogg, .mp3 or .wav) into the music folder under the names listed and press «Rescan»
+Без файла трек не звучит — кнопка SoundCloud открывает его официальную страницу в браузере	Without a file the track is silent — the SoundCloud button opens its official page in your browser
+главное меню	main menu
+у звезды	near the star
+Теонан и Кварис	Teonan and Quoris
+Гермеус Мора и Мора I	Hermeous Mora and Mora I
+Циозония: поверхность и атмосфера	Ciozonia: surface and atmosphere
+спутники Циозонии	moons of Ciozonia
+Колосс	Colossus
+у Еремуса (внутри орбиты Ори	near Eremus (inside Ori's orbit
+Еремус	Eremus
+Моти-Моти и Дотта	Mochi-Mochi and Dotta
+Золин	Tholin
+открытый космос	deep space
+Альбедо	Albedo
+В обработке	Processing
+в.д	E
+вакуум (0 Па	vacuum (0 Pa
+все 3 слоя	all 3 layers
+Высота орбиты	Orbit altitude
+Высота съёмки	Scan altitude
+глубоководье	deep ocean
+з.д	W
+Зондирует столб атмосферы: давление у поверхности по всей полосе обзора. Обзор ±20°, высота 20–2000 км	Sounds the atmospheric column: surface pressure across the whole swath. Field of view ±20°, altitude 20–2000 km
+ИДЁТ СЪЁМКА	SCANNING
+Координаты	Coordinates
+Лазерный альтиметр и многоспектральная камера: высоты, альбедо и тип поверхности. Обзор ±12°, высота 10–1500 км	Laser altimeter and multispectral camera: elevation, albedo and surface type. Field of view ±12°, altitude 10–1500 km
+лес	forest
+логарифмическая шкала	logarithmic scale
+луга	grassland
+мелководье	shallow water
+Микроволновый радиометр: с орбиты картирует температуру поверхности под собой. Обзор ±30°, высота 20–3000 км	Microwave radiometer: maps the surface temperature below from orbit. Field of view ±30°, altitude 20–3000 km
+морской лёд	sea ice
+МПа	MPa
+мрад	mrad
+Научная карта	Science map
+не исследовано	not surveyed
+Нет данных: поставьте на аппарат научные сканеры (Ангар → Наука) и выйдите на орбиту этого тела	No data: fit science scanners to your vehicle (Hangar → Science) and orbit this body
+Нет электропитания — приборы стоят	No electric power — instruments idle
+побережье	coast
+Под аппаратом	Below vehicle
+Покрытие	Coverage
+Поле обзора	Field of view
+ПРИБОРЫ АППАРАТА	VEHICLE INSTRUMENTS
+равнина / пустыня	plain / desert
+Радар давления РД-1	Pressure Radar RD-1
+Радиус пятна	Footprint radius
+разрешение хуже ячейки карты	resolution coarser than a map cell
+Рельеф	Terrain
+с.ш	N
+скалы	rock
+Сканер рельефа СР-1	Terrain Scanner SR-1
+Сканеров на борту нет (или приборы отключены повреждением	No scanners on board (or instruments disabled by damage
+слишком высоко (макс	too high (max
+слишком низко (мин	too low (min
+Слишком сильное ускорение: между кадрами возможны пропуски трассы	Time warp too high: the ground track may have gaps between frames
+слой	layer
+слоя	layers
+снег и лёд	snow and ice
+Температурный радар ТР-1	Temperature Radar TR-1
+тундра	tundra
+Щёлкните по карте, чтобы увидеть значения	Click the map to see the values
+ю.ш	S
+яч	cells
+ЯЧЕЙКА	CELL
+Карьера	Career
+РЕЖИМ ИГРЫ	GAME MODE
+Стартовый бюджет, каждый модуль покупается один раз, уровни техники открываются достижениями и очками исследований	Starting budget; every module is bought once; technology tiers open with milestones and research points
+Все модули доступны сразу и бесплатно, без покупок и проверок бюджета	Every module is available at once and for free, with no purchases and no budget checks
+Стартовый бюджет карьеры	Career starting budget
+Основы ракетостроения	Rocketry basics
+Суборбитальные полёты	Suborbital flight
+Орбитальная техника	Orbital technology
+Межпланетные полёты	Interplanetary flight
+Дальний космос	Deep space
+Уровень	Tier
+Ур	T
+открыт	open
+закрыт	locked
+исследовать за	research for
+требуется	requires
+без достижения	without the milestone:
+сначала — уровень	first tier
+Песочница: все уровни техники уже открыты	Sandbox: every technology tier is already open
+Нет такого уровня техники	There is no such technology tier
+уже открыт	is already open
+Сначала откройте уровень	First open tier
+Не хватает очков исследований: нужно	Not enough research points: need
+Исследован уровень	Researched tier
+Открыт уровень	Opened tier
+его модули можно покупать	its modules can now be bought
+уже доступен — покупать ничего не нужно	is already available — nothing needs to be bought
+Покупка	Purchase
+Достижение	Milestone
+Продажа образца	Sample sale
+Исследовать за	Research for
+Заблокировано	Locked
+уровень техники	technology tier
+Открывает для исследования	Opens for research
+Все модули каталога уже доступны в ангаре — покупать ничего не нужно, бюджет нигде не проверяется	Every catalog module is already available in the hangar — nothing needs to be bought and the budget is never checked
+Рынок образцов и исследования работают как обычно. Режим выбирается при создании новой игры в главном меню	The sample market and research work as usual. The mode is chosen when a new game is created in the main menu
+Покупка разовая: модуль остаётся в профиле и ставится на любое число ракет. Уровни техники открываются очками исследований после достижений	Purchases are one-time: the module stays in the profile and can be installed on any number of rockets. Technology tiers open with research points after milestones
+Финансы · последние операции	Finances · recent transactions
+Карьера: на ракете есть некупленные детали	Career: the rocket has parts that are not bought
+купите их в магазине за	buy them in the shop for
+или снимите с ракеты	or remove them from the rocket
+До новой игры	Before new game
+Новая игра	New game
+Текущая игра останется в «Сохранениях»	The current game stays in «Saves»
+Не удалось начать новую игру	Could not start a new game
+НАЧАТЬ НОВУЮ ИГРУ	START NEW GAME
+ВСЁ ОТКРЫТО	ALL UNLOCKED
+БЮДЖЕТ	BUDGET
+v∞ прилёта / захват	arrival v∞ / capture
+X прогрейд	X prograde
+Y нормаль	Y normal
+Z радиально	Z radial
+Δv ВСЕГО, М/С	TOTAL Δv, M/S
+Аппарат уже в сфере влияния цели	The vehicle is already inside the target's sphere of influence
+Аппарат уже покидает сферу влияния: перелёт считается с замкнутой орбиты ожидания	The vehicle is already escaping: the transfer is planned from a closed parking orbit
+Вручную: развернитесь на тангаж	Manually: turn to pitch
+Выберите цель — другое тело	Choose a target — another body
+Выберите цель: Гоман, окно запуска и решение Ламберта с реальными положениями тел	Choose a target: Hohmann, launch window and a Lambert solution with the bodies' real positions
+Выполнение манёвра отменено	Manoeuvre execution cancelled
+ВЫПОЛНИТЬ С ПОМОЩНИКОМ (ДВИГАТЕЛЬ	EXECUTE WITH ASSIST (ENGINE
+ВЫПОЛНЯЕТСЯ	EXECUTING
+Гоман: Δv отлёта / захвата	Hohmann: departure / capture Δv
+Гоман: время полёта	Hohmann: flight time
+До апоцентра	To apoapsis
+ДО ЗАЖИГАНИЯ	TO IGNITION
+До манёвра меньше, чем нужно на разворот и половину прожига — ускорять время некуда	The node is closer than the turn plus half the burn — nothing to warp
+До перицентра	To periapsis
+До точки	To the point
+доворот	aligning
+Запас Δv	Δv available
+и включите двигатель за половину прожига до узла; остаток Δv — в HUD	and light the engine half a burn before the node; remaining Δv is in the HUD
+ИДЁТ	IN PROGRESS
+ИЗМЕНИТЬ	EDIT
+Израсходовано Δv	Δv used
+или вокруг него самого: сначала долетите до	or around it: first fly to
+Ламберт: Δv отлёта	Lambert: departure Δv
+Ламберт: время полёта	Lambert: flight time
+Ламберт: импульс через	Lambert: burn in
+м/с добавлен мгновенно, без топлива	m/s added instantly, no propellant used
+манёвр	manoeuvre
+Манёвр выполнен	Manoeuvre complete
+Манёвр выполняется в полёте	Manoeuvres are executed in flight
+МГНОВЕННО — ПЕСОЧНИЦА / ЧИТ (без топлива	INSTANT — SANDBOX / CHEAT (no propellant
+мгновенно в момент узла (песочница	instantly at the node (sandbox
+над поверхностью	above the surface
+Наклонение	Inclination
+Не удалось найти точку отлёта на орбите ожидания	Could not find a departure point on the parking orbit
+нет (незамкнута	none (open
+Нет двигателя или топлива: манёвр выполнить нечем	No engine or propellant: nothing to execute the manoeuvre with
+нет тяги	no thrust
+ожидание зажигания	waiting for ignition
+Окно (Гоман) через	Window (Hohmann) in
+окно манёвра прошло	the manoeuvre window has passed
+Окно рассчитано	Window computed
+Окно уже наступает — пересчитайте через минуту	The window is starting now — recompute in a minute
+ОРБИТА ПОСЛЕ МАНЁВРА	ORBIT AFTER THE BURN
+осталось	left
+Осталось времени	Time left
+ОСТАНОВИТЬ УСКОРЕНИЕ	STOP WARP
+остаток Δv	remaining Δv
+ОТМЕНИТЬ УСКОРЕНИЕ	CANCEL WARP
+Ошибка расчёта перелёта	Transfer computation error
+ПЕРЕЛЁТ К ТЕЛУ	TRANSFER TO A BODY
+Перелёт не найден	No transfer found
+Перелёт планируется с орбиты (аппарат на поверхности	Transfers are planned from orbit (the vehicle is on the surface
+Перелёт рассчитывается к телу, которое обращается вокруг того же центра, что и	Transfers are computed to a body orbiting the same centre as
+ПЕСОЧНИЦА	SANDBOX
+Песочница: импульс	Sandbox: impulse of
+ПОДТВЕРДИТЬ	CONFIRM
+ПОДТВЕРЖДЁН	CONFIRMED
+Помощник: разворот к узлу манёвра; двигатель включится за половину прожига до узла	Assist: turning to the node; the engine will light half a burn before the node
+ПОСЛЕ МАНЁВРА (ПУНКТИР	AFTER THE BURN (DASHED
+ПРЕРВАТЬ МАНЁВР	ABORT MANOEUVRE
+Прибыли	Arrived
+Прибытие (часы симуляции	Arrival (simulation clock
+прожиг	burning
+разворот к узлу	turning to the node
+Расчёт перелёта (Ламберт	Computing the transfer (Lambert
+РЕДАКТИРУЕТСЯ	EDITING
+Решение задачи Ламберта не найдено	No Lambert solution found
+сближение	closest approach
+Скорость в точке	Speed at the point
+Скорость сейчас	Speed now
+Состояние	State
+СТОЛКНОВЕНИЕ	IMPACT
+ступ	stg
+ступень пуста — отделите её	stage empty — separate it
+Сфера	Sphere of
+Считаю	Computing
+Тангаж / курс узла	Node pitch / heading
+Твердотопливная ступень не дросселируется и не выключается: точный прожиг невозможен. Отделите её или летите вручную	A solid stage cannot be throttled or shut down: a precise burn is impossible. Separate it or fly manually
+Твердотопливная ступень: помощник отключён, ступень горит до конца	Solid stage: assist disengaged, the stage burns to the end
+Топливо (Циолковский	Propellant (Tsiolkovsky
+ТОЧКА	POINT
+ТОЧКА / УЗЕЛ	POINT / NODE
+ТОЧКА НА ТРАЕКТОРИИ	POINT ON THE TRAJECTORY
+точка орбиты	orbit point
+Тяните ручки X/Y/Z на карте: чем дальше, тем быстрее меняется Δv	Drag the X/Y/Z handles on the map: the farther you pull, the faster Δv changes
+УЗЕЛ В ОКНЕ	NODE AT WINDOW
+Узел в окне перелёта (Ламберт	Node at the transfer window (Lambert
+Узел в окне создан (решение Ламберта; уточните его ручками	Node created at the window (Lambert solution; fine-tune it with the handles
+Узел в окне создан и уточнён по прогнозу	Node created at the window and refined against the prediction
+УЗЕЛ ЗДЕСЬ	NODE HERE
+Узел манёвра ставится в будущей точке траектории	A manoeuvre node goes on a future point of the trajectory
+УСКОРЕНИЕ ДО	WARPING TO
+Ускорение до точки — только в полёте	Warp to a point works only in flight
+Ускорение до точки остановлено: работает двигатель	Warp to the point stopped: the engine is running
+УСКОРИТЬ ДО МАНЁВРА	WARP TO NODE
+УСКОРИТЬ ДО ТОЧКИ	WARP TO POINT
+УСКОРИТЬ СЮДА	WARP HERE
+Ускорить до точки / манёвра	Warp to point / manoeuvre
+Фазовый угол: нужен / сейчас	Phase angle: required / now
+Щёлкните по траектории: точка для ускорения времени или узла манёвра	Click the trajectory: a point to warp to or to place a manoeuvre node
+Эта точка уже пройдена	This point has already been passed
+Орбитальное картирование	Orbital mapping
+Наука: картирование	Science: mapping
+Карьера: мгновенный манёвр недоступен — выполните его двигателем	Career: the instant manoeuvre is not available — perform it with the engine
