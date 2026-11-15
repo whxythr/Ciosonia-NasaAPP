@@ -1,4 +1,4 @@
-# NasaAPP — Realistic Space Simulator (Unity), Phase 1 - The ACTUAL GAME is in Builds
+# NasaAPP — Realistic Space Simulator (Unity), Phase 1
 
 The foundation of a scientifically accurate space simulator: one planet (Earth by default) with real SI-unit gravity, numerical motion integration, a physical atmospheric model, a seamless visual transition from surface to space, deterministic procedural surface generation, an instrument panel, and a Flight Manual.
 
