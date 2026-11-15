@@ -421,10 +421,10 @@ namespace UnityEngine
     {
         public static bool isPlaying => false;
         public static bool isEditor => false;
+        public static string dataPath => "";
         public static int targetFrameRate { get; set; }
         public static RuntimePlatform platform => RuntimePlatform.WindowsPlayer;
         public static string persistentDataPath => "";
-        public static string dataPath => "";
         public static string streamingAssetsPath => "";
         public static void OpenURL(string url) { }
         public static bool CanStreamedLevelBeLoaded(string levelName) => false;

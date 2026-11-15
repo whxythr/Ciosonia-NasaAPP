@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 164a212d00c0443484b2de555da7132b, type: 3}
   m_Name: RobotModelSettings
   m_EditorClassIdentifier: 
-  prefab: {fileID: 100030, guid: fe764102aa5aa431795da15fa2dec0e2, type: 3}
+  prefab: {fileID: 1528915638184230, guid: 8e0f285c21cdcf14e8d5c06c57ba936b, type: 3}
   height: 1.1
   eyeHeightFraction: 0.82
   eyeForward: 0.12
@@ -20,9 +20,9 @@ MonoBehaviour:
   firstPersonHideRadius: 0.3
   speedParameter: Speed
   groundedParameter: Grounded
-  idleState: Idle 0
-  walkState: Walk
-  runState: Run
+  idleState: anim_Idle_Loop_S
+  walkState: anim_Walk_Loop
+  runState: anim_open_GoToRoll
   airState: Jump
   walkClipSpeed: 1.3
   rollingPart: 
