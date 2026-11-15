@@ -39,12 +39,12 @@ namespace SpaceSim.Economy
 
         static readonly List<MilestoneDefinition> all = new List<MilestoneDefinition>
         {
-            new MilestoneDefinition(Loc.T(ReachSpace), "Первый выход в космос", "Пересечь условную границу космоса стартовой планеты на своей ракете.", 8000, 10),
-            new MilestoneDefinition(Loc.T(FirstOrbit), "Первая орбита", "Выйти на устойчивую орбиту (ε < 0, перицентр выше плотной атмосферы).", 20000, 30),
-            new MilestoneDefinition(Loc.T(EscapeHome), "Уход от планеты", "Набрать скорость убегания (ε ≥ 0) у стартовой планеты.", 30000, 50),
-            new MilestoneDefinition(Loc.T(OtherworldLanding), "Посадка на другом теле", "Мягко или жёстко сесть на другую планету или спутник на своей ракете.", 50000, 150),
-            new MilestoneDefinition(Loc.T(FirstSample), "Первый образец", "Взять первый образец грунта, породы или жидкости.", 5000, 20),
-            new MilestoneDefinition(Loc.T(Interplanetary), "Первый межпланетный перелёт", "Долететь до сферы влияния другой планеты на своей ракете.", 40000, 100),
+            new MilestoneDefinition(ReachSpace, "Первый выход в космос", "Пересечь условную границу космоса стартовой планеты на своей ракете.", 8000, 10),
+            new MilestoneDefinition(FirstOrbit, "Первая орбита", "Выйти на устойчивую орбиту (ε < 0, перицентр выше плотной атмосферы).", 20000, 30),
+            new MilestoneDefinition(EscapeHome, "Уход от планеты", "Набрать скорость убегания (ε ≥ 0) у стартовой планеты.", 30000, 50),
+            new MilestoneDefinition(OtherworldLanding, "Посадка на другом теле", "Мягко или жёстко сесть на другую планету или спутник на своей ракете.", 50000, 150),
+            new MilestoneDefinition(FirstSample, "Первый образец", "Взять первый образец грунта, породы или жидкости.", 5000, 20),
+            new MilestoneDefinition(Interplanetary, "Первый межпланетный перелёт", "Долететь до сферы влияния другой планеты на своей ракете.", 40000, 100),
         };
 
         public static IReadOnlyList<MilestoneDefinition> All => all;

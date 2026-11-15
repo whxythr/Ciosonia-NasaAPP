@@ -74,7 +74,7 @@ namespace SpaceSim.Academy
             double twr = RocketEquations.ThrustToWeight(s1.SurfaceThrust, launchMass, g);
             var t = new AcademyTopic
             {
-                Id = Loc.T(MassThrust),
+                Id = MassThrust,
                 Title = Loc.T("Масса ракеты и тяга"),
                 Explanation =
                     Loc.T("Ракетный двигатель отбрасывает назад продукты сгорания со скоростью vₑ. По третьему закону Ньютона газ толкает ракету вперёд ") +
@@ -124,7 +124,7 @@ namespace SpaceSim.Academy
             double g400 = PlanetaryGravity.AccelerationMagnitude(c.Mu, c.Radius + 400000.0);
             var t = new AcademyTopic
             {
-                Id = Loc.T(Gravity),
+                Id = Gravity,
                 Title = Loc.T("Гравитация"),
                 Explanation =
                     Loc.T("Любые две массы притягиваются с силой, обратно пропорциональной квадрату расстояния между их центрами. ") +
@@ -168,7 +168,7 @@ namespace SpaceSim.Academy
             double a1 = RocketEquations.Acceleration(s1.VacuumThrust, s1.MassAtBurnout);
             var t = new AcademyTopic
             {
-                Id = Loc.T(Acceleration),
+                Id = Acceleration,
                 Title = Loc.T("Ускорение"),
                 Explanation =
                     Loc.T("Второй закон Ньютона: ускорение равно сумме сил, делённой на массу. На ракету при вертикальном подъёме действуют тяга вверх и вес вниз, ") +
@@ -213,7 +213,7 @@ namespace SpaceSim.Academy
             double t2 = RocketEquations.BurnTime(s2.PropellantMass, RocketEquations.MassFlow(s2.VacuumThrust, s2.VacuumIsp));
             var t = new AcademyTopic
             {
-                Id = Loc.T(FuelConsumption),
+                Id = FuelConsumption,
                 Title = Loc.T("Расход топлива"),
                 Explanation =
                     Loc.T("Для заданной тяги двигатель должен выбрасывать ṁ килограммов в секунду; чем выше скорость истечения (Isp), тем меньше нужно. ") +
@@ -254,7 +254,7 @@ namespace SpaceSim.Academy
             string total = AcademyCalculators.HasRocket(c) ? Loc.T("Δv всей ракеты (сумма ступеней) — ") + N(c.Design.TotalDeltaVVacuum) + Loc.T(" м/с.") : "";
             var t = new AcademyTopic
             {
-                Id = Loc.T(Tsiolkovsky),
+                Id = Tsiolkovsky,
                 Title = Loc.T("Формула Циолковского"),
                 Explanation =
                     Loc.T("Сколько скорости может набрать ракета, сжигая топливо? Каждая порция газа уносит импульс, а ракете приходится разгонять ещё не сожжённое ") +
@@ -303,7 +303,7 @@ namespace SpaceSim.Academy
             StageReport s2 = AcademyCalculators.Stage(c, AcademyCalculators.LastStage(c));
             var t = new AcademyTopic
             {
-                Id = Loc.T(DeltaVBudget),
+                Id = DeltaVBudget,
                 Title = Loc.T("Δv — бюджет миссии"),
                 Explanation =
                     Loc.T("Δv — «валюта» космического полёта: каждая задача (подняться, выйти на орбиту, улететь) требует определённого изменения скорости. ") +
@@ -346,7 +346,7 @@ namespace SpaceSim.Academy
             double v400 = OrbitalMechanics.CircularVelocity(c.Mu, c.Radius + 400000.0);
             var t = new AcademyTopic
             {
-                Id = Loc.T(OrbitalVelocity),
+                Id = OrbitalVelocity,
                 Title = Loc.T("Орбитальная скорость"),
                 Explanation =
                     Loc.T("Орбита — это падение, при котором аппарат движется вбок так быстро, что поверхность «уходит» из-под него с той же скоростью, с какой он падает. ") +
@@ -389,7 +389,7 @@ namespace SpaceSim.Academy
             double vcLow = OrbitalMechanics.CircularVelocity(c.Mu, rLow);
             var t = new AcademyTopic
             {
-                Id = Loc.T(EscapeVelocity),
+                Id = EscapeVelocity,
                 Title = Loc.T("Вторая космическая скорость"),
                 Explanation =
                     Loc.T("Чтобы улететь навсегда, кинетической энергии должно хватить на подъём «до бесконечности»: v²/2 ≥ μ/r, то есть ε ≥ 0. ") +
@@ -429,7 +429,7 @@ namespace SpaceSim.Academy
             string source = exponential ? Loc.T("атмосфера «") + c.PlanetName + "»" : Loc.T("земные значения (у «") + c.PlanetName + "» " + (c.HasAtmosphere ? Loc.T("табличная атмосфера") : Loc.T("нет атмосферы")) + ")";
             var t = new AcademyTopic
             {
-                Id = Loc.T(Drag),
+                Id = Drag,
                 Title = Loc.T("Сопротивление атмосферы"),
                 Explanation =
                     Loc.T("Плотность воздуха падает с высотой экспоненциально: каждые H километров (шкала высот) — в e ≈ 2.72 раза. ") +
@@ -473,7 +473,7 @@ namespace SpaceSim.Academy
             double dvDeep = OrbitalMechanics.CircularizationDeltaV(c.Mu, ra, c.Radius * 0.5);
             var t = new AcademyTopic
             {
-                Id = Loc.T(Insertion),
+                Id = Insertion,
                 Title = Loc.T("Выход на орбиту"),
                 Explanation =
                     Loc.T("Пока двигатель выключен, аппарат летит по эллипсу (или его куску). Если перицентр этого эллипса под поверхностью или в атмосфере — ") +
@@ -527,7 +527,7 @@ namespace SpaceSim.Academy
                 }
             var t = new AcademyTopic
             {
-                Id = Loc.T(Hohmann),
+                Id = Hohmann,
                 Title = Loc.T("Гомановский переход"),
                 Explanation =
                     Loc.T("Самый экономный способ перейти между двумя круговыми орбитами в одной плоскости — по половине эллипса, касающегося обеих: ") +
@@ -578,7 +578,7 @@ namespace SpaceSim.Academy
                 }
             var t = new AcademyTopic
             {
-                Id = Loc.T(LaunchWindows),
+                Id = LaunchWindows,
                 Title = Loc.T("Окна запуска"),
                 Explanation =
                     Loc.T("Цель не стоит на месте: пока аппарат летит по переходному эллипсу, планета-цель проходит часть своей орбиты. ") +
@@ -620,7 +620,7 @@ namespace SpaceSim.Academy
             double synodic = TransferCalculator.SynodicPeriod(OrbitalMechanics.CircularPeriod(c.Mu, r1), OrbitalMechanics.CircularPeriod(c.Mu, r2));
             var t = new AcademyTopic
             {
-                Id = Loc.T(Rendezvous),
+                Id = Rendezvous,
                 Title = Loc.T("Орбитальная встреча"),
                 Explanation =
                     Loc.T("Встреча (стыковка) — та же задача окна запуска, только вокруг планеты: нужно прибыть на орбиту цели туда, где в этот момент окажется цель.\n\n") +

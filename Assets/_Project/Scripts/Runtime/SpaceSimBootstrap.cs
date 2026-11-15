@@ -231,6 +231,7 @@ namespace SpaceSim.Runtime
             var bodyGo = new GameObject("TestProbe");
             bodyGo.transform.SetParent(flightStack.transform, false);
             Body = bodyGo.AddComponent<FlightBody>();
+            Body.Session = Session;
             Body.Initialize(planet, Gravity, Simulation, Origin, litShader, design, Session.Owns, System.Navigation, System.ActiveIndex, carry);
             Body.BlueprintApplied += applied =>
             {
@@ -244,6 +245,7 @@ namespace SpaceSim.Runtime
             FlightState.Initialize(Body, planet);
 
             CameraController.Initialize(viewCamera, planet, Body, Origin, Simulation);
+            CameraController.FlightState = FlightState;
 
             var ui = new GameObject("UI");
             ui.transform.SetParent(flightStack.transform, false);
@@ -264,6 +266,9 @@ namespace SpaceSim.Runtime
             hud.SetSession(Session);
             var shop = ui.AddComponent<ShopUI>();
             shop.Initialize(Session, FlightState, System);
+            Session.ContractCompleted += c => FlightState.Notify(Loc.T("КОНТРАКТ ВЫПОЛНЕН: «") + c.Title + "» — +" +
+                SpaceSim.Economy.Contracts.CreditsFor(Session.Profile, c) + Loc.T(" кр") +
+                (c.TalentPoints > 0 ? ", +" + c.TalentPoints + Loc.T(" очк. талантов робота") : "") + ".");
             hud.SetShop(shop);
             hangar.SetShop(shop);
             hangar.SetSession(Session);
@@ -317,7 +322,11 @@ namespace SpaceSim.Runtime
                 int delivered = Session.DeliverCargo();
                 if (delivered > 0) FlightState.Notify(Loc.T("Доставлено образцов: ") + delivered + Loc.T(" — их можно продать на рынке (") + FlightInput.KeyLabel(InputKey.K) + ").");
             }
-            else if (!Body.UsedTestTool) Session.CrewVisited(System.ActiveBody.Id);
+            else if (!Body.UsedTestTool)
+            {
+                Session.CrewVisited(System.ActiveBody.Id);
+                Session.MarkLanded(System.ActiveBody.Id); // contract board: «Посадка на …»
+            }
             if (!home && !Body.UsedTestTool && !Session.Profile.HasMilestone(SpaceSim.Economy.ResearchMilestones.OtherworldLanding))
             {
                 var m = Session.Award(SpaceSim.Economy.ResearchMilestones.OtherworldLanding);

@@ -30,9 +30,25 @@ namespace SpaceSim.Planets
     ///
     /// Notes on interpretation:
     /// • "Prot" is used as the sidereal rotation period.
-    /// • Orbits are coplanar (no i given) and circular unless pericentre/apocentre are given (Tholin, Eremus).
     /// • The star's mass is not given; it is derived from Kepler's third law, M = 4π²a³/(G·T²), using the
     ///   given a and T of Hermeous Mora (≈ 5.19·10³⁰ kg ≈ 2.6 M☉). All three planets agree within 1 %.
+    ///
+    /// Orbits (designer data of 2026-11-15: pericentre Dp, apocentre Da and a for every planet and the moons Aegis, Kolimpri,
+    /// Tromos, Lin and Tiafoe; inclinations):
+    /// • e = (Da − Dp)/(Da + Dp); the quoted a is used (it equals (Dp + Da)/2 to the quoted digits; differences are noted per body).
+    /// • Periods: where a period was quoted it is kept and compared with Kepler's third law (all agree within 0.5 %, noted per
+    ///   body); otherwise period = 0 and KeplerOrbit derives it from the parent's μ.
+    /// • Inclinations are measured from the simulation's reference plane (inertial XY, "ecliptic" in the physics code; read it
+    ///   as the star's equator). Every planet has i = <see cref="PlanetInclination"/> (3.17°) and the Mocha-Mocha–Dott barycentre
+    ///   5.46°. The nodes were not given: every orbit has Ω = 0 and ω = 0 (node line and pericentres along +X), the convention
+    ///   the Eremus moons already used. So the planets share one plane tilted 3.17° — as the Solar System's planets lie ≈ 6°
+    ///   from the Sun's equator around one common plane — and transfers between them need no plane change; the binary is
+    ///   2.29° out of that plane. Moon inclinations are measured from the same reference plane (not from the parent's orbit).
+    /// • Spin axes: PlanetRotation tilts the axis about the same X axis, so with Ω = 0 the angle between the spin axis and the
+    ///   orbit normal is |axialTilt − i|. The designer's obliquities are relative to the body's own orbit, so a freely
+    ///   rotating planet gets axialTilt = i + obliquity (<see cref="TiltFromObliquity"/>), and a tidally locked body
+    ///   axialTilt = i (spin axis perpendicular to its orbit). SurfaceClimate still reads axialTiltDegrees as the obliquity
+    ///   (e.g. 25.67° instead of 22.5° for Ciosonia) — a known approximation.
     /// </summary>
     public static partial class HomeSystemCatalog
     {
@@ -66,8 +82,34 @@ namespace SpaceSim.Planets
         /// 3 = the eight moons of Eremus (HomeSystemCatalog.EremusMoons.cs), Eremus' obliquity 4.15°.
         /// 4 = names Lumini A / Ciosonia / Aegis, Tholin's moons Lin and Tiafoe, the Ciosonia artist map and its new pad.
         /// 5 = artist colour maps for all remaining bodies (ArtistMaps), Coloss' seas from its map.
+        /// 6 = designer orbits (apsides, inclinations) for the planets and the moons of Ciosonia, Mora and Tholin; the double
+        ///     planet Mocha-Mocha + Dott (HomeSystemCatalog.Binary.cs).
         /// </summary>
-        public const int DataVersion = 5;
+        public const int DataVersion = 6;
+
+        /// <summary>Inclination of every planet's orbit to the reference plane [deg] (designer data).</summary>
+        public const double PlanetInclination = 3.17;
+
+        /// <summary>e = (Da − Dp)/(Da + Dp) from the pericentre and apocentre distances (any unit).</summary>
+        public static double EccentricityFromApsides(double pericentre, double apocentre) =>
+            (apocentre - pericentre) / (apocentre + pericentre);
+
+        /// <summary>
+        /// Axial tilt about the reference X axis that gives an obliquity <paramref name="obliquity"/> to an orbit of inclination
+        /// <paramref name="inclination"/> with Ω = 0 (both rotations are about X, so the angles add).
+        /// </summary>
+        static double TiltFromObliquity(double inclination, double obliquity) => inclination + obliquity;
+
+        /// <summary>True anomaly [deg] for a mean anomaly [deg] and eccentricity (Newton on Kepler's equation).</summary>
+        public static double TrueAnomalyDegrees(double meanAnomalyDegrees, double eccentricity)
+        {
+            double M = meanAnomalyDegrees * MathD.DegToRad, E = M;
+            for (int i = 0; i < 30; i++) E -= (E - eccentricity * Math.Sin(E) - M) / (1.0 - eccentricity * Math.Cos(E));
+            double nu = 2.0 * Math.Atan2(Math.Sqrt(1.0 + eccentricity) * Math.Sin(0.5 * E), Math.Sqrt(1.0 - eccentricity) * Math.Cos(0.5 * E));
+            // Keep the same turn as the mean anomaly, so callers can compare the two directly.
+            double deg = nu * MathD.RadToDeg;
+            return deg + 360.0 * Math.Round((meanAnomalyDegrees - deg) / 360.0);
+        }
 
         public static double StarMassFromKepler(double semiMajorAxis, double period) =>
             4.0 * Math.PI * Math.PI * Math.Pow(semiMajorAxis, 3) / (PhysicalConstants.GravitationalConstant * period * period);
@@ -95,6 +137,7 @@ namespace SpaceSim.Planets
             CelestialBodyPreset eremus = Eremus();
             list.Add(eremus);
             AddEremusMoons(list, eremus.Physical.GravitationalParameter);
+            AddDoublePlanet(list);
             foreach (CelestialBodyPreset b in list)
                 if (b.Generation != null && !b.Generation.UsesAlbedoMap && ArtistMaps.TryGetValue(b.Id, out string key))
                     b.Generation.albedoMap = key;
@@ -117,8 +160,10 @@ namespace SpaceSim.Planets
         /// <summary>
         /// Tholin (Золин) — fifth planet, an analogue for Mars missions (designer data: M = 1.56 M⊕ = 9.36·10²⁴ kg,
         /// R = 7 244 420 m, ρ = 5880 kg/m³, g = 11.9 m/s², T = 37.8 °C, day 1.75 d, year 182 d, a = 0.865 AU,
-        /// pericentre 0.799 AU, apocentre 0.931 AU). M and R reproduce ρ and g to 0.1 %; Kepler with the star's mass gives
-        /// 181.9 d for a = 0.865 AU, so a, T and the apsides agree (e = (0.931 − 0.799)/(0.931 + 0.799) = 0.0763).
+        /// pericentre 0.798 AU, apocentre 0.931 AU, i = 3.17°). M and R reproduce ρ and g to 0.1 %; Kepler with the star's mass
+        /// gives 181.93 d for a = 0.865 AU (0.04 % below the quoted 182 d, which is kept). e = (0.931 − 0.798)/(0.931 + 0.798)
+        /// = 0.0769; (Dp + Da)/2 = 0.8645 AU, the quoted a = 0.865 AU is used (the apsides it implies, 0.7985 / 0.9315 AU, are
+        /// within 0.05 % of the quoted ones). (Before 2026-11-15 the pericentre was 0.799 AU.)
         /// Interpretation (not given):
         /// • Liquid CO₂ exists only between its triple point (−56.6 °C, 5.18 bar) and critical point (31.0 °C, 73.8 bar). At
         ///   the quoted mean of 37.8 °C no CO₂ can be liquid at any pressure, so the lakes must lie where it is colder: the
@@ -130,6 +175,8 @@ namespace SpaceSim.Planets
         /// • The optical coefficients are tuned to the artist render (hazy cream disk), not derived from 60 bar of CO₂, which
         ///   would hide the surface completely (as Hermeous Mora's are tuned).
         /// </summary>
+        static readonly double TholinEccentricity = EccentricityFromApsides(0.798, 0.931);
+
         static CelestialBodyPreset Tholin()
         {
             const double orbitAngle = 200.0, padLat = 38.0, padLon = 12.0;
@@ -148,8 +195,8 @@ namespace SpaceSim.Planets
                 mass = 9.36e24,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 1.75 * Day,
-                axialTiltDegrees = 30.0,
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                axialTiltDegrees = TiltFromObliquity(PlanetInclination, 30.0),
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(TrueAnomalyDegrees(orbitAngle, TholinEccentricity), padLon, StartHour),
                 spaceBoundaryAltitude = 120000.0,   // ≈ 24 scale heights: p there ≈ Earth's at 100 km
                 atmosphere = a
             };
@@ -192,7 +239,7 @@ namespace SpaceSim.Planets
                 Physical = p, Generation = g, Optics = optics,
                 Orbit = new OrbitProperties
                 {
-                    semiMajorAxis = 0.865 * AU, eccentricity = (0.931 - 0.799) / (0.931 + 0.799),
+                    semiMajorAxis = 0.865 * AU, eccentricity = TholinEccentricity, inclinationDegrees = PlanetInclination,
                     period = 182.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle
                 },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
@@ -207,9 +254,11 @@ namespace SpaceSim.Planets
         /// With M⊕ = 5.9722·10²⁴ kg and R⊕ = 6 371 000 m: ρ = 2219 kg/m³ and g = 51.0 m/s² (0.5 % above the quoted values).
         /// Orbit: the apsides give a = (1.98 + 2.12)/2 = 2.05 AU and e = 0.034, and Kepler with the star's mass gives
         /// 664 d for a = 2.05 AU (but 654 d for 2.03 AU), so a = 2.05 AU is used — it agrees with both the period and
-        /// the apsides. Not modelled: the flattening (the shape and gravity stay spherical, no J2).
-        /// The eight major moons are in HomeSystemCatalog.EremusMoons.cs; the obliquity (not given) is 4.15° so that they orbit in
-        /// its equatorial plane.
+        /// the apsides. i = 3.17° like every planet (added 2026-11-15; a, e and T unchanged). Not modelled: the flattening
+        /// (the shape and gravity stay spherical, no J2).
+        /// The eight major moons are in HomeSystemCatalog.EremusMoons.cs; the axial tilt (not given) is 4.15° to the reference
+        /// plane so that they orbit in its equatorial plane (0.98° to its own orbit now that the orbit is inclined 3.17°; the
+        /// moons' inclinations, also measured from the reference plane, are left as they were).
         /// The reference radius is the 1-bar level; there is no solid surface — the "ground" is the cloud tops.
         /// </summary>
         static CelestialBodyPreset Eremus()
@@ -272,7 +321,7 @@ namespace SpaceSim.Planets
                 Physical = p, Generation = g, Optics = optics,
                 Orbit = new OrbitProperties
                 {
-                    semiMajorAxis = 2.05 * AU, eccentricity = (2.12 - 1.98) / (2.12 + 1.98),
+                    semiMajorAxis = 2.05 * AU, eccentricity = EccentricityFromApsides(1.98, 2.12), inclinationDegrees = PlanetInclination,
                     period = 664.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle
                 },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
@@ -284,8 +333,11 @@ namespace SpaceSim.Planets
         /// Kolimpri — inner moon of the start planet (designer data: M = 1.43·10²¹ kg, R = 427 406 m, ρ = 4440 kg/m³,
         /// g = 0.531 m/s², a = 56 896 095 m, rotation = revolution = 1.7 d, −111…−156 °C).
         /// The given M and R give ρ = 4373 kg/m³ and g = 0.522 m/s² (1.5–2 % below the quoted values); the mass is kept.
+        /// Orbit (2026-11-15): Dp = 54 684 487 m, Da = 59 092 271 m, a = 56 888 489 m → e = 0.0387, i = 6.51° (to the reference
+        /// plane). (Dp + Da)/2 = 56 888 379 m: 110 m (2·10⁻⁶) below the quoted a, which is used. (Before: circular, 56 896 095 m.)
         /// The period follows from Kepler with the start planet's μ: 1.703 d (the quoted 1.7 d agrees).
-        /// Tidally locked: the map's central meridian (longitude 0) always faces the planet.
+        /// Tidally locked: the map's central meridian (longitude 0) faces the planet on average — exactly at pericentre and
+        /// apocentre, with a libration of up to ±(2e + 1.25e²) ≈ ±4.5° between them; the spin axis is the orbit normal.
         /// Colours come from the artist map Resources/PlanetMaps/kolimpri (iron-rich pink highlands, dark grey "seas");
         /// without it the procedural colours below approximate the map.
         /// </summary>
@@ -293,8 +345,12 @@ namespace SpaceSim.Planets
         {
             // 60° from the anti-star direction of the planet (home orbit angle 40° + 0°): the near side and the pad
             // (≈ 35° from the sub-solar point) are in the afternoon sun at the start; from the planet it is gibbous.
-            const double orbitAngle = 100.0, radius = 427406.0;
-            var orbit = new OrbitProperties { semiMajorAxis = 56896095.0, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true };
+            const double orbitAngle = 100.0, radius = 427406.0, inclination = 6.51;
+            var orbit = new OrbitProperties
+            {
+                semiMajorAxis = 56888489.0, eccentricity = EccentricityFromApsides(54684487.0, 59092271.0),
+                inclinationDegrees = inclination, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true
+            };
             double period = OrbitalMechanics.CircularPeriod(parentMu, orbit.semiMajorAxis);
             var p = new PlanetPhysicalProperties
             {
@@ -302,8 +358,8 @@ namespace SpaceSim.Planets
                 mass = 1.43e21,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = period,
-                rotationPhaseAtEpochDegrees = orbitAngle + 180.0,  // prime meridian faces the parent
-                axialTiltDegrees = 0.0,
+                rotationPhaseAtEpochDegrees = orbitAngle + 180.0,  // prime meridian faces the parent (mean direction)
+                axialTiltDegrees = inclination,                    // spin axis = orbit normal
                 spaceBoundaryAltitude = 10000.0,
                 atmosphere = new AtmosphereProperties
                 {
@@ -350,11 +406,19 @@ namespace SpaceSim.Planets
         /// 4 % He → M = 37.3 g/mol. With g this small the isothermal scale height is ≈ 165 km (0.6 R).
         /// Physically such air would escape: Jeans parameter for Ar λ = (v_esc / v_th)² ≈ 1.7 (needs ≳ 20 to last), so it
         /// has to be replenished — the origin of the moon is unknown by design.
+        /// Orbit (2026-11-15): Dp = 84 676 534 m, Da = 109 000 000 m, a = 96 890 115 m → e = 0.1256, i = 3.58° (to the reference
+        /// plane). (Dp + Da)/2 = 96 838 267 m, 52 km (0.05 %) below the quoted a: Da looks rounded to 10⁶ m. The quoted a is used,
+        /// so the modelled apsides are 84 722 km and 109 058 km. Kepler with the start planet's μ gives 3.785 d (the quoted
+        /// revolution of 3.80 d is 0.4 % longer). (Before: circular, 97 059 000 m.)
         /// </summary>
         static CelestialBodyPreset Tromos(double parentMu)
         {
             const double orbitAngle = 75.0, radius = 266478.0, padLon = 40.0;
-            var orbit = new OrbitProperties { semiMajorAxis = 97059000.0, meanAnomalyAtEpochDegrees = orbitAngle };
+            var orbit = new OrbitProperties
+            {
+                semiMajorAxis = 96890115.0, eccentricity = EccentricityFromApsides(84676534.0, 109000000.0),
+                inclinationDegrees = 3.58, meanAnomalyAtEpochDegrees = orbitAngle
+            };
             var a = new AtmosphereProperties
             {
                 hasAtmosphere = true,
@@ -370,9 +434,9 @@ namespace SpaceSim.Planets
                 mass = 3.31e20,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 2.55 * Day,
-                // Seen from a moon the star is where it is seen from the planet (orbit angle 40° + 180°): pad at 10:00.
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(HomeOrbitAngle, padLon, 10.0),
-                axialTiltDegrees = 0.0,
+                // Seen from a moon the star is where it is seen from the planet (its true anomaly + 180°): pad at 10:00.
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(HomeTrueAnomaly, padLon, 10.0),
+                axialTiltDegrees = 0.0,             // not given: spin axis along the reference-plane normal
                 spaceBoundaryAltitude = 300000.0, // ≈ 2 scale heights: the air is very extended on such a small body
                 atmosphere = a
             };
@@ -437,7 +501,13 @@ namespace SpaceSim.Planets
         /// Interpretation: axial tilt 22.5°; the second "11.5°" is taken as the magnetic-pole tilt (informational,
         /// together with B = 0.254 G and the magnetopause at 13 627 603 m). Oblateness 0.286 % is stored but not
         /// yet used by gravity (no J2) nor by the shape.
+        /// Orbit (2026-11-15): Dp = 0.63 AU, Da = 0.71 AU, a = 0.67 AU → e = 0.0597, i = 3.17°. The quoted year of 124 d is kept;
+        /// Kepler with the star's mass gives 124.02 d (0.02 %).
         /// </summary>
+        static readonly double HomeEccentricity = EccentricityFromApsides(0.63, 0.71);
+        /// <summary>True anomaly of the start planet at t = 0 [deg]: the direction of the star seen from it and its moons.</summary>
+        static double HomeTrueAnomaly => TrueAnomalyDegrees(HomeOrbitAngle, HomeEccentricity);
+
         static CelestialBodyPreset HomeWorld()
         {
             // The pad is on the green plain of the western continent of the artist map (the old 28° N, 52° W is open sea there).
@@ -460,8 +530,8 @@ namespace SpaceSim.Planets
                 mass = 5.03e24,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 0.844 * Day,
-                axialTiltDegrees = 22.5,
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, startHour),
+                axialTiltDegrees = TiltFromObliquity(PlanetInclination, 22.5), // 22.5° to its own orbit
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(HomeTrueAnomaly, padLon, startHour),
                 spaceBoundaryAltitude = 100000.0,
                 atmosphere = a
             };
@@ -503,7 +573,11 @@ namespace SpaceSim.Planets
                 Id = HomeWorldId, DisplayName = "Циосония (Ciosonia)",
                 Description = "Обитаемая стартовая планета: копия Земли с меньшей массой (0.842 M⊕) и g = 8.27 м/с². Фиолетовая вода (свет звезды K-класса), экваториальные пустыни, горы у экваториальных побережий, на полюсах до −49 °C. Сплюснутость 0.286 %, наклон оси 22.5°, магнитный полюс 11.5°, B = 0.254 Гс, магнитопауза 13 627 603 м. Сутки 0.844 земных, год 124 дня.",
                 Physical = p, Generation = g, Optics = new AtmosphereOpticalProperties(),
-                Orbit = new OrbitProperties { semiMajorAxis = 0.67 * AU, period = 124.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle },
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 0.67 * AU, eccentricity = HomeEccentricity, inclinationDegrees = PlanetInclination,
+                    period = 124.0 * Day, meanAnomalyAtEpochDegrees = orbitAngle
+                },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
                 Hazards = new EnvironmentHazards() // magnetosphere + atmosphere: safe
             };
@@ -511,11 +585,21 @@ namespace SpaceSim.Planets
 
         /// <summary>
         /// Rotation phase at t = 0 that puts a pad at <paramref name="padLongitude"/> at local solar time
-        /// <paramref name="hour"/> (circular coplanar orbit, small tilt). The Sun is at orbit angle + 180°.
+        /// <paramref name="hour"/>. <paramref name="orbitAngleDeg"/> is the body's direction angle in its orbit plane at t = 0
+        /// (the true anomaly — pass <see cref="TrueAnomalyDegrees"/> for an eccentric orbit, not the mean anomaly); the star is
+        /// at that angle + 180°. With Ω = 0 the orbit inclination and the axial tilt are both rotations about X, so only the
+        /// obliquity to the orbit enters, and it is neglected here (small-tilt approximation: off by under ±20 min at 30°).
         /// </summary>
         static double PhaseForLocalTime(double orbitAngleDeg, double padLongitude, double hour) =>
             (orbitAngleDeg + 180.0) - (12.0 - hour) * 15.0 - padLongitude;
 
+        /// <summary>Teonan's orbit: Dp = 0.0858 AU, Da = 0.0908 AU, a = 0.0883 AU (= (Dp + Da)/2), e = 0.0283, i = 3.17°.</summary>
+        static readonly double TeonanEccentricity = EccentricityFromApsides(0.0858, 0.0908);
+
+        /// <summary>
+        /// Teonan — innermost planet. Orbit: see <see cref="TeonanEccentricity"/>; the quoted period of 5.94 d is kept, Kepler
+        /// with the star's mass gives 5.934 d (0.1 % shorter). Obliquity 0.6° to its orbit.
+        /// </summary>
         static CelestialBodyPreset Teonan()
         {
             const double orbitAngle = 0.0, padLat = 12.0, padLon = 25.0;
@@ -525,8 +609,8 @@ namespace SpaceSim.Planets
                 mass = 1.24e23,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 54.1 * Day,
-                axialTiltDegrees = 0.6,
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                axialTiltDegrees = TiltFromObliquity(PlanetInclination, 0.6),
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(TrueAnomalyDegrees(orbitAngle, TeonanEccentricity), padLon, StartHour),
                 spaceBoundaryAltitude = 50000.0,
                 atmosphere = new AtmosphereProperties { hasAtmosphere = false, surfaceDensity = 0.0, surfacePressure = 0.0, surfaceTemperature = 451.15, composition = "нет атмосферы" }
             };
@@ -555,17 +639,30 @@ namespace SpaceSim.Planets
                 Id = TeonanId, DisplayName = "Теонан (Teonan)",
                 Description = "Ближайшая к звезде. Без атмосферы, силикатная серо-коричневая кора, железное ядро (ρ = 4350 кг/м³), кратеры и небольшие «моря», тектонически активна. Сутки = 54.1 земных.",
                 Physical = p, Generation = g, Optics = new AtmosphereOpticalProperties(),
-                Orbit = new OrbitProperties { semiMajorAxis = 0.0883 * AU, period = 5.94 * Day, meanAnomalyAtEpochDegrees = orbitAngle },
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 0.0883 * AU, eccentricity = TeonanEccentricity, inclinationDegrees = PlanetInclination,
+                    period = 5.94 * Day, meanAnomalyAtEpochDegrees = orbitAngle
+                },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
                 Hazards = new EnvironmentHazards { radiationLevel = 2 } // closest to the star, no air, no magnetosphere
             };
         }
 
+        /// <summary>
+        /// Quoris — the smallest planet, tidally locked. Orbit (2026-11-15): Dp = 0.124 AU, Da = 0.132 AU, a = 0.128 AU →
+        /// e = 0.03125, i = 3.17°. The quoted period of 10.4 d (= the quoted rotation) is kept for both the orbit and the spin,
+        /// so they stay exactly equal; Kepler with the star's mass gives 10.356 d (0.4 % shorter).
+        /// Tidal lock on an inclined, eccentric orbit: the spin axis is the orbit normal (axial tilt = i, both about X with Ω = 0)
+        /// and the prime meridian turns uniformly with the mean anomaly (phase = M₀ + 180°), so it points at the star at
+        /// pericentre and apocentre and between them the star librates by up to ±(2e + 1.25e²) ≈ ±3.7° in longitude, as the
+        /// Earth does in the Moon's sky. The pad's local time therefore swings by about ±15 min around 9:30.
+        /// </summary>
         static CelestialBodyPreset Quoris()
         {
             const double orbitAngle = 130.0, padLat = 4.0;
-            // Tidally locked: rotation period = orbital period, prime meridian always faces the star.
-            // A pad 37.5° west of the sub-stellar point sees permanent 9:30 morning.
+            // Tidally locked: rotation period = orbital period, prime meridian faces the star on average (see above).
+            // A pad 37.5° west of the sub-stellar point sees a (nearly) permanent 9:30 morning.
             double padLon = -(12.0 - StartHour) * 15.0;
             var a = new AtmosphereProperties
             {
@@ -581,8 +678,8 @@ namespace SpaceSim.Planets
                 meanRadius = 1175730.0,
                 mass = 2.82e22,
                 gravitySource = GravitationalParameterSource.FromMass,
-                siderealRotationPeriod = 10.4 * Day,
-                axialTiltDegrees = 0.0,
+                siderealRotationPeriod = QuorisPeriod,
+                axialTiltDegrees = PlanetInclination, // spin axis = orbit normal
                 rotationPhaseAtEpochDegrees = orbitAngle + 180.0,
                 spaceBoundaryAltitude = 100000.0,
                 atmosphere = a
@@ -624,12 +721,28 @@ namespace SpaceSim.Planets
                 Id = QuorisId, DisplayName = "Кварис (Quoris)",
                 Description = "Самая малая планета. Приливный захват: всегда повёрнута одной стороной к звезде (−3 °C … 361 °C). Очень тонкий кислородный слой, ржавые красные пятна, массивные глубокие кратеры и «сердечко».",
                 Physical = p, Generation = g, Optics = optics,
-                Orbit = new OrbitProperties { semiMajorAxis = 0.128 * AU, period = 10.4 * Day, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true },
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 0.128 * AU, eccentricity = EccentricityFromApsides(0.124, 0.132), inclinationDegrees = PlanetInclination,
+                    period = QuorisPeriod, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true
+                },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
                 Hazards = new EnvironmentHazards { radiationLevel = 1 }
             };
         }
 
+        /// <summary>Quoris' orbital period = its rotation period [s] (designer data).</summary>
+        const double QuorisPeriod = 10.4 * Day;
+
+        /// <summary>Hermeous Mora's orbit: Dp = 0.411 AU, Da = 0.442 AU → e = 0.0363.</summary>
+        static readonly double MoraEccentricity = EccentricityFromApsides(0.411, 0.442);
+
+        /// <summary>
+        /// Hermeous Mora. Orbit (2026-11-15): Dp = 0.411 AU, Da = 0.442 AU, a = 0.427 AU, i = 3.17°. (Dp + Da)/2 = 0.4265 AU; the
+        /// quoted a = 0.427 AU is used because the star's mass is derived from it and the quoted 63.1 d (so a and T agree
+        /// exactly by construction); the apsides it implies, 0.4115 / 0.4425 AU, are within 0.12 % of the quoted ones.
+        /// Obliquity 2.6° to its orbit.
+        /// </summary>
         static CelestialBodyPreset HermeousMora()
         {
             const double orbitAngle = 250.0, padLat = 18.0, padLon = -40.0;
@@ -648,8 +761,8 @@ namespace SpaceSim.Planets
                 mass = 1.46e25,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = 4.65 * Day,
-                axialTiltDegrees = 2.6,
-                rotationPhaseAtEpochDegrees = PhaseForLocalTime(orbitAngle, padLon, StartHour),
+                axialTiltDegrees = TiltFromObliquity(PlanetInclination, 2.6),
+                rotationPhaseAtEpochDegrees = PhaseForLocalTime(TrueAnomalyDegrees(orbitAngle, MoraEccentricity), padLon, StartHour),
                 spaceBoundaryAltitude = 120000.0,
                 atmosphere = a
             };
@@ -683,18 +796,35 @@ namespace SpaceSim.Planets
             return new CelestialBodyPreset
             {
                 Id = HermeousMoraId, DisplayName = "Гермеус Мора (Hermeous Mora)",
-                Description = "300 °C, смертельное давление, сернокислотные осадки, атмосфера из SO₂ и CO₂ с примесью O₂ и Ar. Голубая органическая дымка над атмосферой, бело-голубые закаты. g ≈ 14.5 м/с². Сутки = 4.65 земных. Один несферический спутник на 30 000 км.",
+                Description = "300 °C, смертельное давление, сернокислотные осадки, атмосфера из SO₂ и CO₂ с примесью O₂ и Ar. Голубая органическая дымка над атмосферой, бело-голубые закаты. g ≈ 14.5 м/с². Сутки = 4.65 земных. Один несферический спутник на вытянутой орбите 18 000 … 37 000 км.",
                 Physical = p, Generation = g, Optics = optics,
-                Orbit = new OrbitProperties { semiMajorAxis = 0.427 * AU, period = 63.1 * Day, meanAnomalyAtEpochDegrees = orbitAngle },
+                Orbit = new OrbitProperties
+                {
+                    semiMajorAxis = 0.427 * AU, eccentricity = MoraEccentricity, inclinationDegrees = PlanetInclination,
+                    period = 63.1 * Day, meanAnomalyAtEpochDegrees = orbitAngle
+                },
                 LaunchLatitude = padLat, LaunchLongitude = padLon,
                 Hazards = new EnvironmentHazards { radiationLevel = 1, acidLevel = 1 } // sulphuric acid rain inside the air
             };
         }
 
+        /// <summary>
+        /// Aegis — Hermeous Mora's irregular moon (size and density are estimates). Orbit (2026-11-15): Dp = 18 280 005 m,
+        /// Da = 37 311 552 m, a = 27 795 780 m (= (Dp + Da)/2 within 2 m) → e = 0.342, i = 4.37° (to the reference plane).
+        /// No period was given: Kepler with Mora's μ gives 0.341 d (8.2 h). The pericentre is 2.23 Mora radii from its centre
+        /// (≈ 10 000 km above the surface) — inside the fluid Roche limit for ρ = 2100 kg/m³ (≈ 3.5 R), which a small
+        /// solid, non-spherical body survives (rigid limit ≈ 1.8 R).
+        /// Kept tidally locked (rotation = revolution, prime meridian on the mean direction to Mora); with e = 0.34 Mora then
+        /// librates by up to ≈ ±40° in its sky — a real 1:1 lock this eccentric would be fragile (cf. Mercury's 3:2), accepted.
+        /// </summary>
         static CelestialBodyPreset MoraMoon(double parentMu)
         {
-            const double orbitAngle = 40.0, radius = 120000.0, density = 2100.0;
-            var orbit = new OrbitProperties { semiMajorAxis = 3.0e7, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true };
+            const double orbitAngle = 40.0, radius = 120000.0, density = 2100.0, inclination = 4.37;
+            var orbit = new OrbitProperties
+            {
+                semiMajorAxis = 27795780.0, eccentricity = EccentricityFromApsides(18280005.0, 37311552.0),
+                inclinationDegrees = inclination, meanAnomalyAtEpochDegrees = orbitAngle, tidallyLocked = true
+            };
             double period = OrbitalMechanics.CircularPeriod(parentMu, orbit.semiMajorAxis);
             var p = new PlanetPhysicalProperties
             {
@@ -702,8 +832,8 @@ namespace SpaceSim.Planets
                 mass = density * 4.0 / 3.0 * Math.PI * radius * radius * radius,
                 gravitySource = GravitationalParameterSource.FromMass,
                 siderealRotationPeriod = period,
-                rotationPhaseAtEpochDegrees = orbitAngle + 180.0,
-                axialTiltDegrees = 0.0,
+                rotationPhaseAtEpochDegrees = orbitAngle + 180.0, // mean direction to Mora
+                axialTiltDegrees = inclination,                   // spin axis = orbit normal
                 spaceBoundaryAltitude = 5000.0,
                 atmosphere = new AtmosphereProperties { hasAtmosphere = false, surfaceDensity = 0.0, surfacePressure = 0.0, composition = "нет атмосферы" }
             };
@@ -726,7 +856,7 @@ namespace SpaceSim.Planets
             return new CelestialBodyPreset
             {
                 Id = MoraMoonId, DisplayName = "Эгида (Aegis)", ParentId = HermeousMoraId,
-                Description = "Несферический спутник Гермеус Моры на расстоянии 30 000 км, приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка).",
+                Description = "Несферический спутник Гермеус Моры на вытянутой орбите 18 000 … 37 000 км (обращение ≈ 8 ч), приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка).",
                 Physical = p, Generation = g, Optics = new AtmosphereOpticalProperties(),
                 Orbit = orbit,
                 LaunchLatitude = 0.0, LaunchLongitude = 90.0,

@@ -44,6 +44,14 @@ namespace SpaceSim.Runtime
         [Tooltip("Logarithmic zoom per scroll notch.")]
         [SerializeField] float zoomPerNotch = 0.18f;
 
+        [Header("Atmospheric buffeting")]
+        [Tooltip("Largest view shake [deg] (reached at the dynamic pressure below and above).")]
+        [SerializeField] float maxShakeDegrees = 0.9f;
+        [Tooltip("Dynamic pressure q at which the shake is full [Pa] (≈ max-q of a launch).")]
+        [SerializeField] float fullShakeDynamicPressure = 30000f;
+        [Tooltip("Below this dynamic pressure the air is felt as nothing [Pa].")]
+        [SerializeField] float shakeThresholdPressure = 1500f;
+
         [Header("Limits")]
         [SerializeField] double minDistance = 4.0;
         [SerializeField] double maxDistance = 1.5e8;
@@ -64,6 +72,7 @@ namespace SpaceSim.Runtime
         double centerHeight; // smoothed FlightBody.VisualCenterHeight [m]
         FlightBody centerBody;
         int seenSeparations;
+        float shakeAmplitude; // smoothed [deg]
 
         public Camera Camera => cam;
         public ReferenceFrame Frame => frame;
@@ -78,6 +87,21 @@ namespace SpaceSim.Runtime
         public float Pitch => targetPitch;
         /// <summary>When set, the camera looks through these eyes instead of orbiting the vehicle.</summary>
         public IFirstPersonView FirstPerson { get; set; }
+        /// <summary>Source of the dynamic pressure that shakes the chase view in fast flight through the air (optional).</summary>
+        public FlightStateController FlightState { get; set; }
+        /// <summary>Current buffeting shake of the chase view [deg].</summary>
+        public float ShakeAmplitude => shakeAmplitude;
+
+        /// <summary>
+        /// Chase-view shake [deg] from the dynamic pressure q = ½ρv²: nothing below the threshold, then growing as √ (so it is
+        /// felt early in the climb and on the first bite of the air on entry), full at <paramref name="fullPressure"/>, capped.
+        /// </summary>
+        public static float BuffetShake(double dynamicPressure, double threshold, double fullPressure, double maxDegrees)
+        {
+            if (double.IsNaN(dynamicPressure) || dynamicPressure <= threshold || fullPressure <= threshold) return 0f;
+            double x = (dynamicPressure - threshold) / (fullPressure - threshold);
+            return (float)(maxDegrees * Math.Min(1.25, Math.Sqrt(x)));
+        }
 
         public void Initialize(Camera camera, PlanetRuntime planetRuntime, FlightBody flightBody, FloatingOrigin floatingOrigin, SimulationController sim)
         {
@@ -189,8 +213,38 @@ namespace SpaceSim.Runtime
 
             Vector3 forward = CoordinateSystem.ToUnityVector((target - camPos).Normalized);
             Vector3 upHint = CoordinateSystem.ToUnityVector(up);
-            transform.SetPositionAndRotation(origin.ToUnityPosition(camPos), Quaternion.LookRotation(forward, upHint));
+            Quaternion look = Quaternion.LookRotation(forward, upHint) * Buffet(dt);
+            transform.SetPositionAndRotation(origin.ToUnityPosition(camPos), look);
             UpdateClipPlanes(camPos, alt, (target - camPos).Magnitude);
+        }
+
+        /// <summary>
+        /// Rotation jitter of the chase view while the vehicle tears through the air (launch near max-q, atmospheric entry).
+        /// Fades out when the camera is pulled far away or looks at the planet; frozen on pause. Visual only.
+        /// </summary>
+        Quaternion Buffet(float dt)
+        {
+            var t = FlightState != null ? FlightState.Telemetry : null;
+            float want = 0f;
+            if (t != null && !t.IsLanded && focus == FocusTarget.FlightBody && !simulation.Paused)
+            {
+                want = BuffetShake(t.DynamicPressure, shakeThresholdPressure, fullShakeDynamicPressure, maxShakeDegrees);
+                // Felt up close, gone from a few kilometres away.
+                want *= Mathf.Clamp01((float)(1.0 - (distance - 300.0) / 2700.0));
+            }
+            // Builds up quickly, dies down a little slower.
+            float rate = want > shakeAmplitude ? 8f : 3f;
+            shakeAmplitude = Mathf.Lerp(shakeAmplitude, want, 1f - Mathf.Exp(-rate * dt));
+            if (shakeAmplitude < 1e-3f) return Quaternion.identity;
+
+            // Two octaves of smooth noise per axis: a low rumble plus a fast rattle.
+            float time = Time.unscaledTime;
+            float Noise(float seed) =>
+                0.65f * (Mathf.PerlinNoise(time * 9f, seed) * 2f - 1f) + 0.35f * (Mathf.PerlinNoise(time * 27f, seed + 17.3f) * 2f - 1f);
+            return Quaternion.Euler(
+                shakeAmplitude * 1.6f * Noise(0.13f),
+                shakeAmplitude * 1.6f * Noise(5.71f),
+                shakeAmplitude * 0.8f * Noise(11.37f));
         }
 
         void HandleInput()

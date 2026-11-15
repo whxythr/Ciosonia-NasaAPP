@@ -89,6 +89,20 @@ namespace SpaceSim.Runtime
         System.Func<string, bool> ownsModule = id => true;
         /// <summary>Whether the player may install a module (profile ownership; free modules always).</summary>
         public bool OwnsModule(string moduleId) => ownsModule(moduleId);
+
+        /// <summary>
+        /// The player's session (set by the bootstrap before <see cref="Initialize"/>): career rocket upgrades are applied to every
+        /// compiled rocket, and a Sandbox session flies with endless propellant. Null = plain module data, normal fuel.
+        /// </summary>
+        public PlayerSession Session { get; set; }
+
+        /// <summary>Compiles a design with the player's ownership check and rocket upgrades (hangar previews and the pad rocket).</summary>
+        public CompiledRocket CompileDesign(RocketBlueprint design)
+        {
+            CompiledRocket c = BlueprintCompiler.Compile(design, ownsModule);
+            SpaceSim.Economy.RocketUpgrades.Apply(c.Configuration, Session != null ? Session.Profile : null);
+            return c;
+        }
         /// <summary>Raised after a new design was applied (new rocket on the pad).</summary>
         public event System.Action<RocketBlueprint> BlueprintApplied;
 
@@ -358,7 +372,7 @@ namespace SpaceSim.Runtime
 
         void CompileBlueprint()
         {
-            Compiled = BlueprintCompiler.Compile(blueprint ?? RocketBlueprint.CreateDefault(), ownsModule);
+            Compiled = CompileDesign(blueprint ?? RocketBlueprint.CreateDefault());
             rocket = Compiled.Configuration;
             mass = Compiled.PayloadMass;
         }
@@ -382,6 +396,7 @@ namespace SpaceSim.Runtime
         public void ResetToLaunchSite()
         {
             sim.Rocket = startWithRocket ? new RocketState(rocket) : null;
+            if (sim.Rocket != null) sim.Rocket.InfinitePropellant = Session != null && Session.Transient && Session.Profile.IsSandbox;
             sim.Systems = new FlightSystems(DesignCapabilities);
             sim.TakeHeatDamage();
             Condition.Reset();

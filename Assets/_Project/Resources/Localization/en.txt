@@ -1083,8 +1083,8 @@ SO₂ и CO₂ с примесью O₂ и Ar; сернокислотные об
 Обитаемая стартовая планета: копия Земли с меньшей массой (0.842 M⊕) и g = 8.27 м/с². Фиолетовая вода (свет звезды K-класса), экваториальные пустыни, горы у экваториальных побережий, на полюсах до −49 °C. Сплюснутость 0.286 %, наклон оси 22.5°, магнитный полюс 11.5°, B = 0.254 Гс, магнитопауза 13 627 603 м. Сутки 0.844 земных, год 124 дня	Habitable starting planet: a copy of Earth with lower mass (0.842 M⊕) and g = 8.27 m/s². Violet water (K-class starlight), equatorial deserts, mountains on equatorial coasts, down to −49 °C at the poles. Flattening 0.286 %, axial tilt 22.5°, magnetic pole 11.5°, B = 0.254 G, magnetopause 13 627 603 m. Day 0.844 Earth days, year 124 days
 Ближайшая к звезде. Без атмосферы, силикатная серо-коричневая кора, железное ядро (ρ = 4350 кг/м³), кратеры и небольшие «моря», тектонически активна. Сутки = 54.1 земных	Closest to the star. No atmosphere, silicate grey-brown crust, iron core (ρ = 4350 kg/m³), craters and small “seas”, tectonically active. Day = 54.1 Earth days
 Самая малая планета. Приливный захват: всегда повёрнута одной стороной к звезде (−3 °C … 361 °C). Очень тонкий кислородный слой, ржавые красные пятна, массивные глубокие кратеры и «сердечко	The smallest planet. Tidally locked: one side always faces the star (−3 °C … 361 °C). Very thin oxygen layer, rusty red patches, massive deep craters and a “heart
-C, смертельное давление, сернокислотные осадки, атмосфера из SO₂ и CO₂ с примесью O₂ и Ar. Голубая органическая дымка над атмосферой, бело-голубые закаты. g ≈ 14.5 м/с². Сутки = 4.65 земных. Один несферический спутник на 30 000 км	C, lethal pressure, sulphuric acid rain, SO₂ and CO₂ atmosphere with traces of O₂ and Ar. Blue organic haze above the atmosphere, white-blue sunsets. g ≈ 14.5 m/s². Day = 4.65 Earth days. One non-spherical moon at 30 000 km
-Несферический спутник Гермеус Моры на расстоянии 30 000 км, приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка	Non-spherical moon of Hermeous Mora at 30 000 km, tidally locked. Radius ≈ 120 km (parameters not given — estimate
+C, смертельное давление, сернокислотные осадки, атмосфера из SO₂ и CO₂ с примесью O₂ и Ar. Голубая органическая дымка над атмосферой, бело-голубые закаты. g ≈ 14.5 м/с². Сутки = 4.65 земных. Один несферический спутник на вытянутой орбите 18 000 … 37 000 км	C, lethal pressure, sulphuric acid rain, SO₂ and CO₂ atmosphere with traces of O₂ and Ar. Blue organic haze above the atmosphere, white-blue sunsets. g ≈ 14.5 m/s². Day = 4.65 Earth days. One non-spherical moon on an elongated 18 000 … 37 000 km orbit
+Несферический спутник Гермеус Моры на вытянутой орбите 18 000 … 37 000 км (обращение ≈ 8 ч), приливно захвачен. Радиус ≈ 120 км (параметры не заданы — оценка	Non-spherical moon of Hermeous Mora on an elongated 18 000 … 37 000 km orbit (period ≈ 8 h), tidally locked. Radius ≈ 120 km (parameters not given — estimate
 Русский	Русский
 Brightness, mouse sensitivity, controls	Brightness, resolution, mouse, controls, language
 вашей ракеты	your rocket
@@ -2583,8 +2583,12 @@ C — робот перегреется (предел	C — the robot will overh
 Эгида (Aegis	Aegis
 Лин (Lin	Lin
 Тиафо (Tiafoe	Tiafoe
-Внутренний и крупнейший спутник Золина. Тёмный серо-коричневый, без атмосферы, весь в кратерах, приливно захвачен. Параметры не заданы — оценка: R ≈ 310 км, ρ ≈ 2600 кг/м³, орбита ≈ 62 000 км	Tholin's inner and largest moon. Dark grey-brown, airless, covered in craters, tidally locked. Parameters not specified — estimate: R ≈ 310 km, ρ ≈ 2600 kg/m³, orbit ≈ 62,000 km
-Внешний малый спутник Золина неправильной формы, рыхлая груда обломков, покрытая красноватой толиновой пылью с планеты. Приливно захвачен. Параметры не заданы — оценка: R ≈ 95 км, ρ ≈ 1900 кг/м³, орбита ≈ 165 000 км	Tholin's small, irregular outer moon: a loose rubble pile covered in reddish tholin dust from the planet. Tidally locked. Parameters not specified — estimate: R ≈ 95 km, ρ ≈ 1900 kg/m³, orbit ≈ 165,000 km
+Внешний и крупнейший спутник Золина. Тёмный серо-коричневый, без атмосферы, весь в кратерах, приливно захвачен. Орбита 45 000 … 52 000 км, обращение ≈ 24 ч. Размер не задан — оценка: R ≈ 310 км, ρ ≈ 2600 кг/м³	Tholin's outer and largest moon. Dark grey-brown, airless, covered in craters, tidally locked. Orbit 45,000 … 52,000 km, period ≈ 24 h. Size not specified — estimate: R ≈ 310 km, ρ ≈ 2600 kg/m³
+Внутренний малый спутник Золина неправильной формы, рыхлая груда обломков, покрытая красноватой толиновой пылью с планеты. Приливно захвачен. Сильно наклонённая (40°) вытянутая орбита 19 000 … 30 000 км, обращение ≈ 8.4 ч. Размер не задан — оценка: R ≈ 95 км, ρ ≈ 1900 кг/м³	Tholin's small, irregular inner moon: a loose rubble pile covered in reddish tholin dust from the planet. Tidally locked. Steeply inclined (40°) elongated orbit of 19,000 … 30,000 km, period ≈ 8.4 h. Size not specified — estimate: R ≈ 95 km, ρ ≈ 1900 kg/m³
+Моча-Моча (Mocha-Mocha	Mocha-Mocha
+Дот (Dott	Dott
+Самая дальняя планета, больший компонент двойной планеты Моча-Моча + Дот. Кофейно-коричневая, без атмосферы, в кратерах и пятнах инея. Общий центр масс пары лежит вне планеты, в 14 550 км от её центра; пара обращается вокруг звезды за 5.6 года. 1.65·10²³ кг, g = 2.66 м/с², −249 °C, сутки 26 земных	The outermost planet, the larger half of the double planet Mocha-Mocha + Dott. Coffee-brown, airless, cratered and patched with frost. The pair's common centre of mass lies outside the planet, 14 550 km from its centre; the pair circles the star in 5.6 years. 1.65·10²³ kg, g = 2.66 m/s², −249 °C, day 26 Earth days
+Меньший компонент двойной планеты Моча-Моча + Дот. Серый, без атмосферы, в кратерах и светлом инее. Приливно захвачен: всегда повёрнут к Моче-Моче одной стороной, сутки = обращение = 5.39 земных, расстояние между центрами ≈ 44 750 км. 7.95·10²² кг, g = 1.96 м/с², −202 °C	The smaller half of the double planet Mocha-Mocha + Dott. Grey, airless, cratered, with bright frost. Tidally locked: always shows Mocha-Mocha the same face, day = orbit = 5.39 Earth days, centre-to-centre distance ≈ 44 750 km. 7.95·10²² kg, g = 1.96 m/s², −202 °C
 Ори (Ori	Ori
 Оин (Oin	Oin
 Бифур (Bifur	Bifur
@@ -2867,3 +2871,342 @@ Z радиально	Z radial
 Наука: картирование	Science: mapping
 Карьера: мгновенный манёвр недоступен — выполните его двигателем	Career: the instant manoeuvre is not available — perform it with the engine
 на стартовой площадке	on the launch pad
+Айгерим Садыкова	Aigerim Sadykova
+Данияр Омаров	Daniyar Omarov
+Мира Ковальска	Mira Kowalska
+Тимур Беков	Timur Bekov
+Лена Халворсен	Lena Halvorsen
+Арман Исмаилов	Arman Ismailov
+София Рейес	Sofia Reyes
+Нурлан Абенов	Nurlan Abenov
+Дана Жумабаева	Dana Zhumabayeva
+Ержан Касымов	Yerzhan Kasymov
+Ингрид Ланге	Ingrid Lange
+Солёная вода (salt water, 0.5 M NaCl	Salt water (0.5 M NaCl
+Рассол (saturated brine	Brine (saturated NaCl
+Этанол (ethanol	Ethanol (C₂H₅OH
+Глицерин (glycerol	Glycerol (C₃H₈O₃
+Нефть (crude oil	Crude oil (petroleum
+Керосин (kerosene	Kerosene (RP-1
+Ртуть (mercury	Mercury (Hg
+Серная кислота 98 % (sulphuric acid	Sulphuric acid 98 % (H₂SO₄
+Соляная кислота 1 M (hydrochloric acid	Hydrochloric acid 1 M (HCl
+Гидроксид натрия 1 M (sodium hydroxide	Sodium hydroxide 1 M (NaOH
+Раствор сульфата натрия (sodium sulphate solution	Sodium sulphate solution (Na₂SO₄
+Жидкий метан (liquid methane	Liquid methane (CH₄
+Жидкий азот (liquid nitrogen	Liquid nitrogen (N₂
+Жидкий аммиак (liquid ammonia	Liquid ammonia (NH₃
+Жидкий CO₂ (liquid carbon dioxide	Liquid CO₂ (carbon dioxide
+Вода (water	Water (H₂O
+задержка света … (туда-обратно	light delay … (round trip
+Экипаж полёта	Flight crew
+д	d
+ТРАЕКТОРИЯ	TRAJECTORY
+малые тела показаны крупнее; расстояния — в истинном масштабе	small bodies are drawn larger; distances are to true scale
+ЦЕНТР	CENTRE
+Земля (прототип	Earth (prototype
+Площадка	Pad
+Стартовая площадка 1	Launch Pad 1
+Сохранение повреждено или создано более новой версией игры	The save is damaged or was made by a newer version of the game
+Сохранение	Save
+только что	just now
+мин назад	min ago
+ч назад	h ago
+вчера	yesterday
+Автосохранение	Autosave
+ПОЛЁТ	FLIGHT
+НА СТАРТЕ	ON THE PAD
+потеряна	is lost
+стоит на стартовой площадке	stands on the launch pad
+держится на высоте	is holding at
+Экипаж на борту	Crew aboard
+БУДЕТ ПОТЕРЯН	WILL BE LOST
+М · НАД ПОВЕРХН	M · ABOVE SURFACE
+КМ · НАД ПОВЕРХН	KM · ABOVE SURFACE
+М/С · ОТН. ПОВЕРХН	M/S · SURFACE
+М/С · ИНЕРЦИАЛЬНАЯ	M/S · INERTIAL
+АППАРАТ ПОТЕРЯН	CRAFT LOST
+ТОПЛИВО СТУПЕНИ КОНЧИЛОСЬ	STAGE OUT OF FUEL
+ОТДЕЛИТЬ	SEPARATE
+СКОРО ОТДЕЛЕНИЕ	SEPARATION SOON
+НАГРЕВ	HEATING
+ДОПУСТИМОГО	OF ALLOWED
+В КОСМОСЕ	IN SPACE
+ИССЛ	RES
+нельзя	not allowed
+ускорение ограничено производительностью	warp limited by performance
+ТВЁРДОТОПЛ. · НЕ ВЫКЛ	SOLID FUEL · CAN'T SHUT DOWN
+ПАРАШ	CHUTE
+ДВИГ	ENG
+РЕСУРСЫ	RESOURCES
+Заряд	Charge
+РСУ, топливо	RCS, fuel
+Питание	Power
+ТРАЕКТОРИЯ · ОРБИТА	TRAJECTORY · ORBIT
+ВЕРТИКАЛЬНАЯ	VERTICAL
+ГОРИЗОНТ	HORIZONTAL
+МДж/кг	MJ/kg
+орбита (проверка	orbit (check
+орбиту считаете вы (НК-1 — расчёт	you compute the orbit (NC-1 — computation
+АКТИВНА	ACTIVE
+СЛЕДУЮЩАЯ	NEXT
+Только зонд — ступеней не осталось	Probe only — no stages left
+УСКОРЕНИЕ ВРЕМЕНИ	TIME WARP
+Перегрузка	G-load
+Нагрев носа	Nose heating
+Потери: гравит. / сопрот. / управл	Losses: gravity / drag / steering
+v_круг / v_уход	v_circ / v_esc
+ПОЛОЖЕНИЕ И СКОРОСТЬ	POSITION AND VELOCITY
+СРЕДА, СИЛЫ, РАСХОД Δv	ENVIRONMENT, FORCES, Δv SPENT
+МАНЁВР · ЗАПЛАНИРОВАН	MANEUVER · PLANNED
+ОСТАЛОСЬ, М/С	REMAINING, M/S
+все клавиши: Esc → Настройки → Управление	all keys: Esc → Settings → Controls
+пуск	launch
+Tab — экипаж	Tab — crew
+Без экипажа	Uncrewed
+КУПИТЬ	BUY
+ВСЁ КУПЛЕНО	ALL BOUGHT
+СТОИМОСТЬ	COST
+ВСЕГО Δv · ВАКУУМ	TOTAL Δv · VACUUM
+СТАРТ · РАБОТАЕТ ПЕРВОЙ	LIFT-OFF · FIRES FIRST
+Здесь никого нет	Nobody here
+НАНЯТЬ КАНДИДАТА	HIRE AN APPLICANT
+у вас	you have
+НАВЫКИ	SKILLS
+Пилотирование	Piloting
+Инженерия	Engineering
+Выдержка	Composure
+Навыки — характеристика персонажа: на физику полёта они не влияют	Skills describe the character: they do not affect flight physics
+Полёты	Flights
+Время в космосе	Time in space
+Выходы на поверхность	Surface walks
+Курсов обучения	Training courses
+ТЕКУЩЕЕ НАЗНАЧЕНИЕ	CURRENT ASSIGNMENT
+Курс подготовки	Training course
+ПРОПУСТИТ СЛЕДУЮЩИЙ ПУСК	WILL MISS THE NEXT LAUNCH
+Кандидат в отряд	Corps applicant
+НАЙМ	HIRING
+Без назначения	Unassigned
+ПОЛЕТИТ, ЕСЛИ В КАБИНЕ ХВАТИТ МЕСТ	WILL FLY IF THE CABIN HAS ROOM
+НАНЯТЬ	HIRE
+НА ОБУЧЕНИЕ	SEND TO TRAINING
+Курс начат: пропустит следующий пуск, затем вернётся с навыком	Course started: will miss the next launch, then return with the skill
+Отправить на обучение можно только свободного космонавта (не в полёте	Only a free astronaut can be sent to training (not in flight
+Нанят: теперь в отряде и может лететь	Hired: now in the corps and able to fly
+Не хватает кредитов на найм	Not enough credits to hire
+Пилот	Pilot
+Инженер	Engineer
+Учёный	Scientist
+КАНДИДАТ	APPLICANT
+СВОБОДЕН	AVAILABLE
+СВОБОДНЫ	AVAILABLE
+В ПОЛЁТЕ	IN FLIGHT
+НА ОБУЧЕНИИ	IN TRAINING
+КАНДИДАТЫ	APPLICANTS
+РОЛЬ	ROLE
+ПОЛЁТЫ	FLIGHTS
+СТАТУС	STATUS
+Профиль игрока ещё не создан — начните игру, и экипаж появится	No player profile yet — start a game and the crew will appear
+Начать заново на старте	Start over on the pad
+Текущий полёт закончится: ракета и образцы на борту будут потеряны, экипаж вернётся в отряд	The current flight will end: the rocket and the samples aboard will be lost, the crew returns to the corps
+НА СТАРТ	TO THE PAD
+В АНГАР	TO HANGAR
+СБОРКА	ASSEMBLY
+Вернуться в ангар	Return to the hangar
+Новая ракета встанет на площадку и откроется ангар. Текущий полёт закончится	A new rocket will be put on the pad and the hangar will open. The current flight will end
+СОХРАНИТЬ ИГРУ	SAVE GAME
+НЕТ СЦЕНЫ	NO SCENE
+Текущий полёт не сохраняется. Профиль — кредиты, модули, образцы, экипаж — уже сохранён	The current flight is not saved. The profile — credits, modules, samples, crew — is already saved
+ПОЛЁТ НА ПАУЗЕ	FLIGHT PAUSED
+ВРЕМЯ ИГРЫ ОСТАНОВЛЕНО	GAME TIME STOPPED
+АВТОСОХРАНЕНИЕ	AUTOSAVE
+ЦЕЛИ ПРОГРАММЫ	PROGRAMME GOALS
+Нечего сохранять: профиль не загружен	Nothing to save: no profile loaded
+Полёт	Flight
+Сохранено	Saved
+в главном меню: «Продолжить	in the main menu: “Continue
+Не удалось сохранить	Could not save
+ВЫБОР	SELECT
+Профиль игрока уже сохранён	The player profile is already saved
+Текущая игра останется в «Сохранениях	The current game will stay in “Saves
+ЧЕТВЁРТАЯ ПЛАНЕТА	FOURTH PLANET
+СТАРТОВЫЙ КОМПЛЕКС 01	LAUNCH COMPLEX 01
+СОХРАНЕНИЯ	SAVES
+АРХИВ МИССИЙ	MISSION ARCHIVE
+ПРОФИЛЬ	PROFILE
+СЧЁТ ПРОГРАММЫ	PROGRAMME ACCOUNT
+ПРОДОЛЖИТЬ	CONTINUE
+КОМАНДНАЯ МИССИЯ	TEAM MISSION
+СБОРКА 0.3	BUILD 0.3
+ПРОТОТИП	PROTOTYPE
+НЕДАВНИЕ СОХРАНЕНИЯ	RECENT SAVES
+Ручных сохранений пока нет. В полёте: Esc → «Сохранить игру» — снимок экрана и весь профиль	No manual saves yet. In flight: Esc → “Save game” — a screenshot and the whole profile
+ЗАГРУЗКА ИГРЫ	LOAD GAME
+ЗАГРУЗКА	LOAD
+СОХРАНЕНИЕ	SAVE
+СОХРАНЕНИЙ	SAVES
+ПАПКА	FOLDER
+Сохранений нет: игра ещё не начиналась. «Новая миссия» или «Песочница» создадут профиль	No saves: the game has not started yet. “New mission” or “Sandbox” will create a profile
+Профиль игрока	Player profile
+НАЧАТЬ	START
+АВТО	AUTO
+РУЧНОЕ СОХРАНЕНИЕ	MANUAL SAVE
+СОХРАНИТЬ ИМЯ	SAVE NAME
+Полётов	Flights
+Образцы	Samples
+Посещено тел	Bodies visited
+Время в игре	Time played
+ПЕРЕИМЕНОВАТЬ	RENAME
+ЗАГРУЗИТЬ	LOAD
+Ручных сохранений пока нет	No manual saves yet
+НОВОЕ СОХРАНЕНИЕ	NEW SAVE
+Сохранить текущий профиль	Save the current profile
+Профиля ещё нет — сохранять нечего	No profile yet — nothing to save
+В полёте (Esc → «Сохранить игру») к сохранению добавляется снимок экрана	In flight (Esc → “Save game”) a screenshot is added to the save
+Треки защищены авторским правом и в игру не входят: положите свои копии (.ogg, .mp3 или .wav) в папку с музыкой под именами из списка и нажмите «Обновить	The tracks are copyrighted and not included in the game: put your own copies (.ogg, .mp3 or .wav) into the music folder under the names from the list and press “Refresh
+ВКЛАДКИ	TABS
+СБРОС РАЗДЕЛА	RESET SECTION
+СБРОСИТЬ ВСЁ	RESET ALL
+Графика	Graphics
+Қазақша	Қазақша
+Графика по умолчанию: яркость 100 %, разрешение экрана	Default graphics: brightness 100 %, screen resolution
+Мышь и все клавиши — как по умолчанию	Mouse and all keys are back to default
+Все настройки — по умолчанию (язык не меняется	All settings back to default (the language is kept
+ПРИМЕНЯЕТСЯ СРАЗУ	APPLIED AT ONCE
+Режим экрана	Display mode
+В редакторе Unity окно не меняется — только в собранной игре	In the Unity Editor the window does not change — only in a built game
+ОКНО	WINDOWED
+БЕЗ РАМКИ	BORDERLESS
+ПОЛНЫЙ ЭКРАН	FULL SCREEN
+Размер изображения в пикселях	Image size in pixels
+Ограничение частоты кадров	Frame rate limit
+Не действует, пока включена вертикальная синхронизация	Has no effect while vertical sync is on
+Вертикальная синхронизация	Vertical sync
+Кадр совпадает с обновлением монитора: без разрывов	Frames match the monitor refresh: no tearing
+МЫШЬ И КЛАВИШИ	MOUSE AND KEYS
+ГБ	GB
+ПРЕДПРОСМОТР	PREVIEW
+Изменения видны сразу. «Отмена» вернёт всё, как было до входа в настройки	Changes show at once. “Cancel” restores everything as it was before you opened the settings
+Яркость меняет только изображение: освещённость в симуляции, приборы и физика те же	Brightness changes only the picture: the simulated lighting, instruments and physics stay the same
+Чувствительность умножает поворот камеры (ПКМ / СКМ) и взгляд астронавта; ×1 — как было изначально	Sensitivity multiplies the camera turn (RMB / MMB) and the astronaut's look; ×1 is the original
+ЧАСТОТА КАДРОВ	FRAME RATE
+КАДР	FRAME
+ВИДЕОПАМЯТЬ	VIDEO MEMORY
+Первый пуск	First launch
+Поднимите ракету выше условной границы космоса Циосонии	Fly a rocket above Ciosonia's edge of space
+Погода над домом	Weather over home
+Нанесите на карту 25 % температуры поверхности Циосонии с орбиты	Map 25 % of Ciosonia's surface temperature from orbit
+На орбите	In orbit
+Выйдите на устойчивую орбиту вокруг Циосонии	Reach a stable orbit around Ciosonia
+Барометр планеты	Planetary barometer
+Нанесите на карту 50 % давления у поверхности Циосонии	Map 50 % of Ciosonia's surface pressure
+Рельеф Циосонии	Ciosonia terrain
+Нанесите на карту 50 % рельефа Циосонии	Map 50 % of Ciosonia's terrain
+К Колимпри	To Kolimpri
+Долетите до сферы влияния внутренней луны Колимпри	Reach the sphere of influence of the inner moon Kolimpri
+К Тромосу	To Tromos
+Долетите до сферы влияния внешней луны Тромос	Reach the sphere of influence of the outer moon Tromos
+Карта Колимпри	Kolimpri map
+Нанесите на карту 30 % рельефа Колимпри	Map 30 % of Kolimpri's terrain
+Посадка на Колимпри	Kolimpri landing
+Посадите ракету на поверхность Колимпри	Land a rocket on the surface of Kolimpri
+Посадка на Тромос	Tromos landing
+Посадите ракету на поверхность Тромоса	Land a rocket on the surface of Tromos
+Возьмите роботом первый образец грунта, породы или жидкости	Have the robot take its first sample of soil, rock or liquid
+Грунт Колимпри	Kolimpri soil
+Доставьте на Циосонию образец с Колимпри	Bring a sample from Kolimpri back to Ciosonia
+Грунт Тромоса	Tromos soil
+Доставьте на Циосонию образец с Тромоса	Bring a sample from Tromos back to Ciosonia
+Прочь от дома	Away from home
+Наберите скорость убегания от Циосонии	Reach escape velocity from Ciosonia
+К Теонану	To Teonan
+Долетите до сферы влияния Теонана	Reach Teonan's sphere of influence
+К Кварису	To Quoris
+Долетите до сферы влияния Квариса	Reach Quoris's sphere of influence
+Климат Квариса	Quoris climate
+Нанесите на карту 40 % температуры поверхности Квариса	Map 40 % of Quoris's surface temperature
+К Гермеус Море	To Hermeous Mora
+Долетите до сферы влияния Гермеус Моры	Reach Hermeous Mora's sphere of influence
+Посадка на Эгиду	Aegis landing
+Посадите ракету на Эгиду, спутник Гермеус Моры	Land a rocket on Aegis, the moon of Hermeous Mora
+К Золину	To Tholin
+Долетите до сферы влияния Золина	Reach Tholin's sphere of influence
+Образец с Золина	Sample from Tholin
+Доставьте на Циосонию образец с Золина	Bring a sample from Tholin back to Ciosonia
+К Еремусу	To Eremus
+Долетите до сферы влияния Еремуса	Reach Eremus's sphere of influence
+Нанесено на карту	Mapped
+Контракт	Contract
+Усиленный корпус	Reinforced hull
+износа корпуса от давления и ударов за ранг	hull wear from pressure and impacts per rank
+износа от жары и холода за ранг	wear from heat and cold per rank
+износа от кислот и радиации за ранг	wear from acids and radiation per rank
+Мощные приводы	Powerful drives
+скорости ходьбы и бега за ранг	walking and running speed per rank
+Прыжковые ускорители	Jump boosters
+скорости прыжка за ранг	jump speed per rank
+Амортизаторы	Shock absorbers
+м/с безопасной скорости удара за ранг	m/s of safe impact speed per rank
+Аккуратный отбор	Careful sampling
+к цене образцов за ранг	to sample prices per rank
+Полевой анализ	Field analysis
+к научной ценности образцов за ранг	to the science value of samples per rank
+Отчётность	Reporting
+кредитов за контракты за ранг	contract credits per rank
+Мобильность	Mobility
+Нет такого таланта	No such talent
+Песочница: все таланты робота уже изучены	Sandbox: all robot talents are already learned
+Талант	Talent
+уже изучен полностью	is already fully learned
+Сначала изучите	First learn
+Нет свободных очков талантов — выполняйте контракты	No free talent points — complete contracts
+Робот изучил	The robot learned
+ранг	rank
+Оптимизация сопел	Nozzle optimisation
+удельного импульса двигателей за уровень	engine specific impulse per level
+Форсирование двигателей	Engine uprating
+тяги двигателей за уровень	engine thrust per level
+Облегчённые конструкции	Lightweight structures
+сухой массы ступеней за уровень	stage dry mass per level
+Аэродинамика обтекателей	Fairing aerodynamics
+аэродинамического сопротивления за уровень	aerodynamic drag per level
+Нет такого улучшения	No such upgrade
+Песочница: все улучшения уже установлены	Sandbox: all upgrades are already installed
+уже на максимальном уровне	is already at its top level
+Нужен уровень техники	Requires technology tier
+Не хватает кредитов: нужно	Not enough credits: need
+Улучшение	Upgrade
+действует на все новые ракеты	applies to every new rocket
+КОНТРАКТ ВЫПОЛНЕН	CONTRACT COMPLETE
+очк. талантов робота	robot talent pts
+Песочница: всё открыто, топливо бесконечное, игра не сохраняется	Sandbox: everything unlocked, endless fuel, nothing is saved
+Профиль только для чтения (сохранение от более новой версии игры) — изменения недоступны	Read-only profile (saved by a newer game version) — changes are unavailable
+Контракты	Contracts
+Улучшения	Upgrades
+Робот	Robot
+Откроется после	Opens after
+Выполнено контрактов	Contracts completed
+Контракт засчитывается сам, как только условие выполнено настоящим полётом	A contract counts automatically as soon as a real flight meets its condition
+Максимум	Maximum
+Установлен максимальный уровень	Top level installed
+Изучен полностью	Fully learned
+Можно изучить	Can be learned
+Сначала предыдущий талант ветки	Learn the previous talent of the branch first
+Нет свободных очков	No free points
+Свободных очков талантов	Free talent points
+получено всего	earned in total
+Очки дают выполненные контракты; одно очко — один ранг	Points come from completed contracts; one point buys one rank
+Песочница: все таланты робота изучены полностью	Sandbox: all robot talents are fully learned
+В песочнице нет контрактов: летайте куда угодно без цели. Контракты, кредиты и таланты робота — в режиме «Карьера	The sandbox has no contracts: fly anywhere without a goal. Contracts, credits and robot talents are in Career mode
+Активные контракты	Active contracts
+Выполненные	Completed
+Закрытые	Locked
+В песочнице все улучшения ракет уже установлены на максимум	In the sandbox every rocket upgrade is already at its top level
+Улучшения покупаются за кредиты один раз и действуют на все ракеты, которые выкатываются на старт	Upgrades are bought once for credits and apply to every rocket rolled out to the pad
+Каждый следующий уровень требует более высокого уровня техники	Each next level needs a higher technology tier
+Изучить (1 очко	Learn (1 point
+Песочница не сохраняется: в ней и так всё открыто	The sandbox is not saved: everything is open there anyway
+НОВАЯ КАРЬЕРА	NEW CAREER
+СВОБОДНЫЙ ПОЛЁТ · БЕЗ СОХРАНЕНИЙ	FREE FLIGHT · NO SAVES
+Сохранений нет: игра ещё не начиналась. «Карьера» или «Новая миссия» создадут профиль	No saves: the game has not started yet. «Career» or «New mission» will create a profile
+Выход из сферы влияния	SOI exit

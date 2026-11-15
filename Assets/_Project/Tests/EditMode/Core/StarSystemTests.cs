@@ -43,23 +43,32 @@ namespace SpaceSim.Tests
         {
             var b = Body(HomeSystemCatalog.QuorisId);
             var orbit = new KeplerOrbit(b.Orbit, 1.0);
-            var rot = new PlanetRotation(b.Physical.siderealRotationPeriod, 0.0, b.Physical.rotationPhaseAtEpochDegrees * MathD.DegToRad);
-            foreach (double t in new[] { 0.0, 2.0e5, 7.0e5, 3.0e6 })
+            Assert.AreEqual(orbit.Period, b.Physical.siderealRotationPeriod, 1e-6, "rotation = revolution");
+            var rot = new PlanetRotation(b.Physical.siderealRotationPeriod, b.Physical.axialTiltDegrees * MathD.DegToRad,
+                b.Physical.rotationPhaseAtEpochDegrees * MathD.DegToRad);
+            Vector3d normal = Vector3d.Cross(orbit.Position(0.0), orbit.Velocity(0.0)).Normalized;
+            Assert.Greater(Vector3d.Dot(rot.SpinAxis, normal), Math.Cos(1e-6), "spin axis = orbit normal on the inclined orbit");
+            // The eccentric orbit (e = 0.031) makes the star librate by up to 2e + 1.25e² ≈ 3.7° around the sub-stellar point.
+            double e = b.Orbit.eccentricity;
+            double libration = 2.0 * e + 1.25 * e * e + 1e-3;
+            foreach (double t in new[] { 0.0, 2.0e5, 7.0e5, 3.0e6, 5.0e7 })
             {
                 Vector3d toStar = (-orbit.Position(t)).Normalized;
                 Vector3d primeMeridian = rot.FixedToInertial(Vector3d.UnitX, t);
-                Assert.Greater(Vector3d.Dot(toStar, primeMeridian), 0.9999, "the same face always looks at the star");
+                Assert.Greater(Vector3d.Dot(toStar, primeMeridian), Math.Cos(libration), "the same face always looks at the star");
             }
         }
 
         [Test]
-        public void Moon_OrbitsAt30000km_AndIsNotSpherical()
+        public void Moon_OrbitsOnItsEccentricOrbit_AndIsNotSpherical()
         {
             var moon = Body(HomeSystemCatalog.MoraMoonId);
             var parent = Body(HomeSystemCatalog.HermeousMoraId);
             var orbit = new KeplerOrbit(moon.Orbit, parent.Physical.GravitationalParameter);
-            Assert.AreEqual(3.0e7, orbit.Position(1234.0).Magnitude, 1.0);
-            Assert.AreEqual(2.0 * Math.PI * Math.Sqrt(Math.Pow(3.0e7, 3) / parent.Physical.GravitationalParameter), orbit.Period, 1e-6);
+            Assert.AreEqual(27795780.0, orbit.SemiMajorAxis, 1e-6);
+            double r = orbit.Position(1234.0).Magnitude;
+            Assert.That(r, Is.InRange(18280005.0 - 1e3, 37311552.0 + 1e3), "between the designer's pericentre and apocentre");
+            Assert.AreEqual(2.0 * Math.PI * Math.Sqrt(Math.Pow(27795780.0, 3) / parent.Physical.GravitationalParameter), orbit.Period, 1e-6);
 
             var sampler = PlanetSurfaceSampler.Create(moon.Generation, moon.Physical.meanRadius);
             double min = double.MaxValue, max = double.MinValue;

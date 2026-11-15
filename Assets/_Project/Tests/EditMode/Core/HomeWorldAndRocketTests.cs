@@ -25,7 +25,8 @@ namespace SpaceSim.Tests
             var p = Home().Physical;
             Assert.AreEqual(8.27, p.SurfaceGravity, 0.03);
             Assert.AreEqual(4640.0, p.MeanDensity, 30.0);
-            Assert.AreEqual(22.5, p.axialTiltDegrees);
+            // 22.5° to its own orbit; the orbit is inclined 3.17° about the same axis, so the tilt to the reference plane adds up.
+            Assert.AreEqual(22.5, p.axialTiltDegrees - Home().Orbit.inclinationDegrees, 1e-12);
             Assert.AreEqual(0.844 * 86400.0, p.siderealRotationPeriod, 1e-6);
             var orbit = new KeplerOrbit(Home().Orbit, HomeSystemCatalog.Star().GravitationalParameter);
             double implied = orbit.ImpliedParentGravitationalParameter / PhysicalConstants.GravitationalConstant;

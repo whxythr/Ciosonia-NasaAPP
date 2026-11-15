@@ -254,7 +254,7 @@ namespace SpaceSim.Runtime
             lastRequired = targets.Length > 0 ? targets[requiredTarget].IdealDeltaV : 0.0;
             lastGravity = model.Properties.SurfaceGravity;
 
-            compiled = BlueprintCompiler.Compile(design, body.OwnsModule);
+            compiled = body.CompileDesign(design);
             report = RocketDesignAnalysis.Analyze(compiled.Configuration, lastGravity, lastRequired);
             editVersion++;
 

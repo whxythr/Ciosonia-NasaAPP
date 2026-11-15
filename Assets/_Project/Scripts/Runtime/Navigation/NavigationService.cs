@@ -330,10 +330,11 @@ namespace SpaceSim.Runtime
             double horizon = PredictionHorizon(sys, vehicle);
             try
             {
-                Prediction = TrajectoryPredictor.Predict(sys, vehicle.State, horizon, Plan.Target, Plan.Departure);
+                Prediction = TrajectoryPredictor.Predict(sys, vehicle.State, horizon, Plan.Target, Plan.Departure, followGravity: true);
                 // The trajectory without the node: drawn solid on the map, the node's preview dashed over it.
                 BasePrediction = Plan.Departure == null ? Prediction
-                    : TrajectoryPredictor.Predict(sys, vehicle.State, Math.Max(horizon, Plan.Departure.Time - vehicle.State.Time + 60.0), Plan.Target);
+                    : TrajectoryPredictor.Predict(sys, vehicle.State, Math.Max(horizon, Plan.Departure.Time - vehicle.State.Time + 60.0), Plan.Target,
+                        followGravity: true);
             }
             catch (ArgumentException e)
             {

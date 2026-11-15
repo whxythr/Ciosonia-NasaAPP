@@ -149,6 +149,8 @@ namespace SpaceSim.Flight
 
         public RocketConfiguration Configuration => config;
         public double[] Propellant { get; }
+        /// <summary>Sandbox: burning and the RCS never empty the tanks (a stage loaded with propellant keeps it).</summary>
+        public bool InfinitePropellant { get; set; }
         /// <summary>Index of the stage currently attached at the bottom; = stage count when only the payload is left.</summary>
         public int StageIndex { get; private set; }
 
@@ -288,7 +290,7 @@ namespace SpaceSim.Flight
         {
             double mdot = MassFlow;
             if (HasStages && config.stages[StageIndex].IsElectric) UpdateBatteries(dt);
-            if (mdot <= 0.0) return;
+            if (mdot <= 0.0 || InfinitePropellant) return;
             double left = Propellant[StageIndex] - mdot * dt;
             // Treat a rounding residue (< 1 mg) as empty, otherwise the engine would stay "on" for one more tick.
             if (left < 1e-6) left = 0.0;
@@ -303,6 +305,7 @@ namespace SpaceSim.Flight
         public double DrawRcsPropellant(double mass)
         {
             if (!(mass > 0.0)) return 0.0;
+            if (InfinitePropellant) return RcsPropellantAvailable > 0.0 ? mass : 0.0;
             double taken = 0.0;
             for (int i = StageIndex; i < config.stages.Length && taken < mass; i++)
             {

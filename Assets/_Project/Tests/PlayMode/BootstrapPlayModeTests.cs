@@ -91,7 +91,8 @@ namespace SpaceSim.Tests
 
             var moon = boot.System.Bodies[boot.System.IndexOf(HomeSystemCatalog.MoraMoonId)].Runtime;
             var mora = boot.System.Bodies[boot.System.IndexOf(HomeSystemCatalog.HermeousMoraId)].Runtime;
-            Assert.AreEqual(3.0e7, (moon.Model.Position - mora.Model.Position).Magnitude, 10.0, "moon on its 30 000 km orbit");
+            Assert.That((moon.Model.Position - mora.Model.Position).Magnitude, Is.InRange(18280005.0 - 1e3, 37311552.0 + 1e3),
+                "moon on its 18 280 … 37 312 km orbit");
             var teonanIndex = boot.System.IndexOf(HomeSystemCatalog.TeonanId);
             Assert.Less(boot.System.Bodies[teonanIndex].Runtime.RenderScale, 1.0, "distant planet drawn in scaled space");
 

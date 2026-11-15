@@ -143,9 +143,23 @@ namespace SpaceSim.Runtime.Menu
             Stars = 0, Tint = new Color32(0xC6, 0xF2, 0x6B, 0xFF),
         };
 
-        /// <summary>A research mission or the sandbox by id; saves without a goal ("" or an unknown id) are the sandbox.</summary>
+        /// <summary>«Карьера»: the open-ended career started from the main menu — contracts, credits, upgrades, robot talents.</summary>
+        public static readonly Scenario Career = new Scenario
+        {
+            Id = "career", Title = "Career", Target = "Home system", Type = "SPACE PROGRAMME",
+            Summary = "Complete research contracts, earn credits, buy rocket upgrades and train your robot's talents.",
+            Goals = new[] { "Contract board", "Rocket upgrades for credits", "Robot talent tree" },
+            LearningFocus = "Plan every flight around a budget",
+            Critical = MissionResource.Budget,
+            Allowance = new[] { 15000f, 99999f, 99999f, 999f, 99999f, 99f },
+            Pressure = new[] { 0.5f, 0.3f, 0.3f, 0.2f, 0.3f, 0.2f },
+            Stars = 3, DifficultyIndex = 1, Tint = new Color32(0x6B, 0xC6, 0xF2, 0xFF),
+        };
+
+        /// <summary>A research mission, the career or the sandbox by id; saves without a goal ("" or an unknown id) are the sandbox.</summary>
         public static Scenario FindScenario(string id)
         {
+            if (id == Career.Id) return Career;
             if (!string.IsNullOrEmpty(id))
                 foreach (Scenario s in Scenarios)
                     if (s.Id == id) return s;

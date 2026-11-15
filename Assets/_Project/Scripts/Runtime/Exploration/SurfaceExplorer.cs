@@ -133,6 +133,7 @@ namespace SpaceSim.Runtime
             visor = gameObject.AddComponent<RobotVisorOverlay>();
             statusPanel = gameObject.AddComponent<RobotStatusPanel>();
             statusPanel.Status = robot;
+            if (session != null) SpaceSim.Economy.RobotTalents.Configure(robot.Rates, session.Profile);
             if (body != null)
             {
                 body.Touchdown += OnVehicleTouchdown;
@@ -309,8 +310,15 @@ namespace SpaceSim.Runtime
             if (sim == null || !sim.IsLanded || body.Destroyed) return Loc.T("Выйти можно только из стоящей на грунте ракеты.");
             CollectionCheck exit = RobotEva.CanExit(planet.Model.Properties, planet.Definition.hazards, robot);
             if (!exit.Ok) return exit.Reason;
+            // Talents learned since the scene started (contract board) take effect from this exit on.
+            if (session != null) SpaceSim.Economy.RobotTalents.Configure(robot.Rates, session.Profile);
             Vector3d landed = sim.LandedFixedPosition;
             walker = new SurfaceWalker(planet.Model.GravitationalParameter, planet.Model.Radius, WalkSurface(), landed, WaterTest());
+            if (session != null)
+            {
+                walker.SpeedFactor = SpaceSim.Economy.RobotTalents.SpeedFactor(session.Profile);
+                walker.JumpFactor = SpaceSim.Economy.RobotTalents.JumpFactor(session.Profile);
+            }
             PlanetRotation.LocalBasis(landed.Normalized, out Vector3d east, out _);
             walker.PlaceAt(landed + east * 5.0);
             if (session != null && !body.UsedTestTool)

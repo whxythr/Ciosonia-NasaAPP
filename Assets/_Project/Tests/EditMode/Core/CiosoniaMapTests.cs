@@ -79,9 +79,9 @@ namespace SpaceSim.Tests
                 CelestialBodyPreset m = bodies.Find(b => b.Id == id);
                 Assert.IsNotNull(m, id);
                 Assert.AreEqual(HomeSystemCatalog.TholinId, m.ParentId);
-                // Deep inside Tholin's Hill sphere and outside Tholin itself.
+                // Deep inside Tholin's Hill sphere, and even the pericentre outside the rigid Roche limit (≈ 1.8 R).
                 CelestialBodyPreset tholin = bodies.Find(b => b.Id == HomeSystemCatalog.TholinId);
-                Assert.Greater(m.Orbit.semiMajorAxis, 5.0 * tholin.Physical.meanRadius);
+                Assert.Greater(m.Orbit.semiMajorAxis * (1.0 - m.Orbit.eccentricity), 2.5 * tholin.Physical.meanRadius);
                 Assert.Less(m.Orbit.semiMajorAxis, 0.3e9);
             }
         }

@@ -59,7 +59,7 @@ namespace SpaceSim.Tests
             }
         }
 
-        [TestCase(HomeSystemCatalog.TholinId, 0.799, 0.931, 182.0)]
+        [TestCase(HomeSystemCatalog.TholinId, 0.798, 0.931, 182.0)]
         [TestCase(HomeSystemCatalog.EremusId, 1.98, 2.12, 664.0)]
         public void Orbits_ReproduceTheApsidesAndThePeriod(string id, double periAU, double apoAU, double periodDays)
         {

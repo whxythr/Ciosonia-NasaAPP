@@ -48,8 +48,25 @@ namespace SpaceSim.Navigation
         public readonly List<double> Times = new List<double>();
     }
 
+    /// <summary>A point where the predicted trajectory enters or leaves a body's sphere of influence.</summary>
+    public struct SoiCrossing
+    {
+        public PatchEvent Kind;
+        public double Time;
+        /// <summary>The body whose sphere is crossed (entered or left).</summary>
+        public int Body;
+        /// <summary>Primary before and after the crossing.</summary>
+        public int From, To;
+        /// <summary>Where the crossing happens, relative to <see cref="Body"/> (on its sphere of influence) [m].</summary>
+        public Vector3d Position;
+        /// <summary>Index of the patch that starts at the crossing.</summary>
+        public int Patch;
+    }
+
     public sealed class TrajectoryPrediction
     {
+        /// <summary>Every sphere-of-influence entry and exit along the sampled trajectory, in time order.</summary>
+        public readonly List<SoiCrossing> Crossings = new List<SoiCrossing>();
         public readonly List<PredictedPatch> Patches = new List<PredictedPatch>();
         public readonly List<PatchTransition> Transitions = new List<PatchTransition>();
         public bool Impact;
@@ -86,12 +103,23 @@ namespace SpaceSim.Navigation
     /// </summary>
     public static class TrajectoryPredictor
     {
+        /// <summary>How long a new conic is followed at most when <c>followGravity</c> extends the prediction [s] (400 days).</summary>
+        public const double MaxFollow = 400.0 * 86400.0;
+        /// <summary>Extensions stop once the prediction has this many patches (a chain of flybys is not followed forever).</summary>
+        public const int MaxFollowPatches = 12;
+
+        /// <param name="followGravity">
+        /// When the trajectory falls under another body's gravity (enters or leaves a sphere of influence, or the node changes the
+        /// orbit), the prediction is extended so the new conic is shown: a revolution of a closed orbit, or up to the next sphere
+        /// crossing; at most <see cref="MaxFollow"/> per patch and <see cref="MaxFollowPatches"/> patches.
+        /// </param>
         public static TrajectoryPrediction Predict(PatchedConicSystem sys, CoastState start, double duration, int target,
-            ManeuverNode node = null, int samplesPerPatch = 160, bool stopAfterArrival = true)
+            ManeuverNode node = null, int samplesPerPatch = 160, bool stopAfterArrival = true, bool followGravity = false)
         {
             var p = new TrajectoryPrediction { Target = target };
             CoastState s = start;
             double end = start.Time + Math.Max(0.0, duration);
+            double hardEnd = end + 2.0 * MaxFollow;
 
             if (node != null && node.Time >= s.Time && node.Time <= end)
             {
@@ -102,9 +130,10 @@ namespace SpaceSim.Navigation
                     p.NodeVector = node.DeltaVector(s.Position, s.Velocity);
                     s.Velocity += p.NodeVector;
                     p.NodeApplied = true;
+                    if (followGravity) end = Extend(sys, s, end, hardEnd);
                 }
             }
-            if (!p.Impact) Sample(sys, ref s, end, p, samplesPerPatch, stopAfterArrival);
+            if (!p.Impact) Sample(sys, ref s, end, p, samplesPerPatch, stopAfterArrival, followGravity ? hardEnd : double.NaN);
             p.Final = s;
             if (!p.Encounter && target >= 0) RefineClosest(sys, p);
             return p;
@@ -126,8 +155,32 @@ namespace SpaceSim.Navigation
             }
         }
 
-        static void Sample(PatchedConicSystem sys, ref CoastState s, double end, TrajectoryPrediction p, int samples, bool stopAfterArrival)
+        /// <summary>End time that also shows the conic of state <paramref name="s"/> (never earlier than <paramref name="end"/>).</summary>
+        static double Extend(PatchedConicSystem sys, CoastState s, double end, double hardEnd) =>
+            Math.Min(hardEnd, Math.Max(end, s.Time + FollowSpan(sys, s)));
+
+        /// <summary>How long a conic is worth showing: a revolution of a closed orbit, or until it leaves its sphere [s].</summary>
+        public static double FollowSpan(PatchedConicSystem sys, CoastState s)
         {
+            double mu = sys.Mu(s.Primary);
+            double r = s.Position.Magnitude;
+            if (!(r > 0.0)) return 0.0;
+            double span = double.PositiveInfinity;
+            double alpha = 2.0 / r - s.Velocity.SqrMagnitude / mu;
+            if (alpha > 0.0) span = 1.05 * MathD.TwoPi / (Math.Sqrt(mu) * Math.Pow(alpha, 1.5));
+            if (s.Primary >= 0)
+            {
+                double toExit = ConicPropagator.TimeToRadius(mu, s.Position, s.Velocity, sys[s.Primary].SoiRadius);
+                if (!double.IsInfinity(toExit) && !double.IsNaN(toExit)) span = Math.Min(span, toExit * 1.01 + 60.0);
+            }
+            return double.IsInfinity(span) || double.IsNaN(span) ? MaxFollow : Math.Min(span, MaxFollow);
+        }
+
+        /// <param name="hardEnd">NaN: never extend; otherwise extend at each crossing, up to this time.</param>
+        static void Sample(PatchedConicSystem sys, ref CoastState s, double end, TrajectoryPrediction p, int samples, bool stopAfterArrival,
+            double hardEnd)
+        {
+            bool follow = !double.IsNaN(hardEnd);
             PredictedPatch patch = NewPatch(p, sys, s);
             for (int guard = 0; guard < 200000 && s.Time < end; guard++)
             {
@@ -146,33 +199,40 @@ namespace SpaceSim.Navigation
                 }
                 int before = p.Transitions.Count;
                 sys.Coast(ref s, step, p.Transitions);
-                if (p.Transitions.Count > before)
+                // One step can cross several spheres (leave a moon's and enter its sibling's): a patch per crossing, each
+                // starting from the exact state on the boundary.
+                for (int k = before; k < p.Transitions.Count; k++)
                 {
-                    PatchTransition tr = p.Transitions[p.Transitions.Count - 1];
+                    PatchTransition tr = p.Transitions[k];
+                    CoastState at = tr.After;
                     patch.EndTime = tr.Time;
                     if (tr.Kind == PatchEvent.SoiExit && tr.To == PatchedConicSystem.Star && !p.HasHeliocentric)
                     {
                         p.HasHeliocentric = true;
-                        p.Heliocentric = s;
+                        p.Heliocentric = at;
                     }
-                    patch = NewPatch(p, sys, s);
+                    patch = NewPatch(p, sys, at);
+                    AddCrossing(sys, p, tr);
                     if (tr.Kind == PatchEvent.SoiEntry && tr.To == p.Target && !p.Encounter)
                     {
                         p.Encounter = true;
                         p.EncounterTime = tr.Time;
-                        p.Arrival = s;
-                        ConicPropagator.Shape(sys.Mu(s.Primary), s.Position, s.Velocity, out _, out _, out double rp);
+                        p.Arrival = at;
+                        ConicPropagator.Shape(sys.Mu(at.Primary), at.Position, at.Velocity, out _, out _, out double rp);
                         p.ArrivalPeriapsis = rp;
-                        double vInf2 = s.Velocity.SqrMagnitude - 2.0 * sys.Mu(s.Primary) / s.Position.Magnitude;
+                        double vInf2 = at.Velocity.SqrMagnitude - 2.0 * sys.Mu(at.Primary) / at.Position.Magnitude;
                         p.ArrivalVInfinity = vInf2 > 0.0 ? Math.Sqrt(vInf2) : 0.0;
                         if (stopAfterArrival)
                         {
                             // Keep the arrival conic until its periapsis (or a short while for the map), then stop.
-                            double toPeri = ConicPropagator.TimeToRadius(sys.Mu(s.Primary), s.Position, s.Velocity, rp * 1.000001);
+                            double toPeri = ConicPropagator.TimeToRadius(sys.Mu(at.Primary), at.Position, at.Velocity, rp * 1.000001);
                             double extra = double.IsInfinity(toPeri) ? 0.0 : toPeri * 1.2;
-                            end = Math.Min(end, s.Time + Math.Max(extra, 600.0));
+                            end = Math.Min(end, at.Time + Math.Max(extra, 600.0));
+                            follow = false;
                         }
                     }
+                    // The trajectory is now shaped by another body: show where that gravity takes it.
+                    if (follow && p.Patches.Count < MaxFollowPatches) end = Extend(sys, at, end, hardEnd);
                 }
                 AddPoint(sys, patch, s);
                 TrackTarget(sys, p, s);
@@ -233,6 +293,17 @@ namespace SpaceSim.Navigation
             p.Patches.Add(patch);
             AddPoint(sys, patch, s);
             return patch;
+        }
+
+        static void AddCrossing(PatchedConicSystem sys, TrajectoryPrediction p, PatchTransition tr)
+        {
+            Vector3d r = tr.After.Position, v = tr.After.Velocity;
+            int body = tr.Body;
+            sys.Transform(tr.To, body, tr.Time, ref r, ref v);
+            p.Crossings.Add(new SoiCrossing
+            {
+                Kind = tr.Kind, Time = tr.Time, Body = body, From = tr.From, To = tr.To, Position = r, Patch = p.Patches.Count - 1
+            });
         }
 
         static void AddPoint(PatchedConicSystem sys, PredictedPatch patch, CoastState s)

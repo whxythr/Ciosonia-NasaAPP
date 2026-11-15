@@ -373,6 +373,11 @@ namespace SpaceSim.Runtime.Menu
                 SetStatus(Loc.T("Нечего сохранять: профиль не загружен."));
                 return;
             }
+            if (flight.Profile.IsSandbox)
+            {
+                SetStatus(Loc.T("Песочница не сохраняется: в ней и так всё открыто."));
+                return;
+            }
             if (isActiveAndEnabled) StartCoroutine(CaptureFrame(WriteSave));
             else WriteSave(null);
         }

@@ -130,6 +130,19 @@ namespace SpaceSim.Runtime
         Vector3 vehicleScreen, periapsisScreen, apoapsisScreen;
         bool vehicleOccluded, periapsisOccluded, apoapsisOccluded, hasVehicle, showPeriapsis, showApoapsis;
 
+        /// <summary>A sphere-of-influence entry or exit on a shown trajectory (screen point computed in LateUpdate).</summary>
+        struct CrossingMark
+        {
+            public Vector3 Screen;
+            public bool Occluded;
+            public Color Color;
+            public string Caption, Value;
+        }
+
+        readonly List<CrossingMark> crossingMarks = new List<CrossingMark>();
+        const int MaxCrossingMarks = 10;
+        const float CrossingMarkSpacing = 16f;
+
         public bool IsOpen => open;
         /// <summary>Distance from the map camera's pivot [m] (the zoom level).</summary>
         public double ViewDistance => targetDistance;
@@ -573,6 +586,7 @@ namespace SpaceSim.Runtime
             RefreshTrajectory();
             PlaceLines(sys, time);
             PlaceMarkers(sys, time);
+            PlaceCrossingMarks(sys, time);
             PlaceNodeMarkers(sys, time);
             ApplyDrag(dt);
         }
@@ -869,6 +883,43 @@ namespace SpaceSim.Runtime
             if (Vector2.Distance(apoapsisScreen, body) < ApsisMinPixels) showApoapsis = false;
         }
 
+        /// <summary>
+        /// Points where the shown trajectories enter or leave a sphere of influence. Each sits on the boundary of the crossed body's
+        /// sphere, anchored to that body like the patch drawn around it (an exit at the end of the old patch, an entry at the start
+        /// of the new one).
+        /// </summary>
+        void PlaceCrossingMarks(PatchedConicSystem sys, double time)
+        {
+            crossingMarks.Clear();
+            AddCrossingMarks(sys, time, shownPrediction, HudStyle.Accent);
+            if (shownNodePrediction != null) AddCrossingMarks(sys, time, shownNodePrediction, NodeColor);
+        }
+
+        void AddCrossingMarks(PatchedConicSystem sys, double time, TrajectoryPrediction p, Color color)
+        {
+            if (p == null) return;
+            double now = boot.Navigation.Now;
+            int added = 0;
+            foreach (SoiCrossing c in p.Crossings)
+            {
+                if (added >= MaxCrossingMarks) break;
+                if (c.Time < now || c.Body < 0) continue;
+                if (!Project(sys.Position(c.Body, time) + c.Position, out Vector3 screen, out bool occluded)) continue;
+                bool crowded = false;
+                foreach (CrossingMark m in crossingMarks)
+                    if (Vector2.Distance(m.Screen, screen) < CrossingMarkSpacing) crowded = true;
+                if (crowded) continue;
+                string caption = (c.Kind == PatchEvent.SoiEntry ? Loc.T("ВХОД В СФЕРУ ВЛИЯНИЯ") : Loc.T("ВЫХОД ИЗ СФЕРЫ ВЛИЯНИЯ")) + " · " +
+                                 sys.NameOf(c.Body).ToUpperInvariant();
+                crossingMarks.Add(new CrossingMark
+                {
+                    Screen = screen, Occluded = occluded, Color = color, Caption = caption,
+                    Value = Loc.T("через ") + UnitFormatter.Duration(c.Time - now)
+                });
+                added++;
+            }
+        }
+
         bool Project(Vector3d position, out Vector3 screen, out bool occluded)
         {
             Vector3 p = ToMap(position, out _);
@@ -913,6 +964,7 @@ namespace SpaceSim.Runtime
             if (showPeriapsis)
                 Marker(periapsisScreen, periapsisOccluded, orbit.PeriapsisBelowSurface ? HudStyle.Danger : HudStyle.Accent, 8f, Loc.T("ПЕРИЦЕНТР"), orbit.PeriapsisText);
             if (showApoapsis) Marker(apoapsisScreen, apoapsisOccluded, HudStyle.TextStrong, 8f, Loc.T("АПОЦЕНТР"), orbit.ApoapsisText);
+            foreach (CrossingMark m in crossingMarks) Marker(m.Screen, m.Occluded, m.Color, 7f, m.Caption, m.Value);
             if (Event.current.type == EventType.MouseUp || !OverUi(Event.current.mousePosition)) HandleNodeMouse(Event.current);
             DrawNodeMarkers();
 

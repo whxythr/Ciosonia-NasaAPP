@@ -243,3 +243,11 @@ Radiation, heat and mission lifetime	Радиация, тепло и срок с
 MISSION DIFFICULTY	СЛОЖНОСТЬ МИССИИ
 Set by the mission — it cannot be changed	Задана миссией и не меняется
 STARTING BUDGET	СТАРТОВЫЙ БЮДЖЕТ
+Career	Карьера
+Home system	Родная система
+SPACE PROGRAMME	КОСМИЧЕСКАЯ ПРОГРАММА
+Complete research contracts, earn credits, buy rocket upgrades and train your robot's talents	Выполняйте исследовательские контракты, зарабатывайте кредиты, покупайте улучшения ракет и развивайте таланты робота
+Contract board	Доска контрактов
+Rocket upgrades for credits	Улучшения ракет за кредиты
+Robot talent tree	Древо талантов робота
+Plan every flight around a budget	Планируйте каждый полёт в рамках бюджета

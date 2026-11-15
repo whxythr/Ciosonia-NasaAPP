@@ -64,18 +64,25 @@ namespace SpaceSim.Physics
 
     public readonly struct PatchTransition
     {
-        public PatchTransition(PatchEvent kind, double time, int from, int to)
+        public PatchTransition(PatchEvent kind, double time, int from, int to) : this(kind, time, from, to, new CoastState(to, Vector3d.Zero, Vector3d.Zero, time)) { }
+
+        public PatchTransition(PatchEvent kind, double time, int from, int to, CoastState after)
         {
             Kind = kind;
             Time = time;
             From = from;
             To = to;
+            After = after;
         }
 
         public PatchEvent Kind { get; }
         public double Time { get; }
         public int From { get; }
         public int To { get; }
+        /// <summary>Exact state right after the crossing, relative to <see cref="To"/> (on the boundary of the sphere crossed).</summary>
+        public CoastState After { get; }
+        /// <summary>The body whose sphere of influence is crossed: the one entered, or the one left.</summary>
+        public int Body => Kind == PatchEvent.SoiEntry ? To : From;
     }
 
     /// <summary>
@@ -343,8 +350,9 @@ namespace SpaceSim.Physics
                     ConicPropagator.Propagate(mu, s.Position, s.Velocity, hi, out Vector3d re, out Vector3d ve);
                     double te = s.Time + hi;
                     Transform(s.Primary, entered, te, ref re, ref ve);
-                    transitions?.Add(new PatchTransition(PatchEvent.SoiEntry, te, s.Primary, entered));
+                    int previous = s.Primary;
                     s = new CoastState(entered, re, ve, te);
+                    transitions?.Add(new PatchTransition(PatchEvent.SoiEntry, te, previous, entered, s));
                     remaining -= hi;
                     continue;
                 }
@@ -354,8 +362,9 @@ namespace SpaceSim.Physics
                 {
                     int parent = Parent(s.Primary);
                     Transform(s.Primary, parent, t1, ref r1, ref v1);
-                    transitions?.Add(new PatchTransition(PatchEvent.SoiExit, t1, s.Primary, parent));
+                    int from = s.Primary;
                     s = new CoastState(parent, r1, v1, t1);
+                    transitions?.Add(new PatchTransition(PatchEvent.SoiExit, t1, from, parent, s));
                 }
                 else s = new CoastState(s.Primary, r1, v1, t1);
                 remaining -= seg;

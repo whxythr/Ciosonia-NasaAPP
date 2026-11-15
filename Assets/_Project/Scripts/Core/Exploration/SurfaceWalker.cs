@@ -77,12 +77,16 @@ namespace SpaceSim.Exploration
 
         public Vector3d Up => Position.Normalized;
         public double Gravity => PlanetaryGravity.AccelerationMagnitude(Mu, Position.Magnitude);
-        public double WalkSpeed => Locomotion.WalkSpeed(Gravity);
+        /// <summary>Robot talent «Мощные приводы»: multiplies walking and running speed (1 = as built).</summary>
+        public double SpeedFactor { get; set; } = 1.0;
+        /// <summary>Robot talent «Прыжковые ускорители»: multiplies the push-off speed of a jump (1 = as built).</summary>
+        public double JumpFactor { get; set; } = 1.0;
+        public double WalkSpeed => Locomotion.WalkSpeed(Gravity) * SpeedFactor;
         /// <summary>Top running speed here (= walking speed where running is impossible).</summary>
-        public double SprintSpeed => Locomotion.SprintSpeed(Gravity);
+        public double SprintSpeed => Locomotion.SprintSpeed(Gravity) * SpeedFactor;
         public bool CanSprint => Locomotion.CanRun(Gravity);
         /// <summary>Ideal jump height v²/(2g) for <see cref="JumpSpeed"/>.</summary>
-        public double JumpHeight => JumpSpeed * JumpSpeed / (2.0 * Gravity);
+        public double JumpHeight => JumpSpeed * JumpFactor * JumpSpeed * JumpFactor / (2.0 * Gravity);
         public Vector3d EyePosition => Position + Up * EyeHeight;
         public double DistanceToAnchor => (Position - Anchor).Magnitude;
         public double HorizontalSpeed => Vector3d.ProjectOnPlane(Velocity, Up).Magnitude;
@@ -133,7 +137,7 @@ namespace SpaceSim.Exploration
                 Velocity = horizontal + change;
                 if (jump)
                 {
-                    Velocity += up * JumpSpeed;
+                    Velocity += up * (JumpSpeed * JumpFactor);
                     OnGround = false;
                     JumpApex = 0.0;
                 }

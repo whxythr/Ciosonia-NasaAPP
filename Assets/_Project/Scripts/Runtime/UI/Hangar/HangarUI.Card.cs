@@ -178,7 +178,7 @@ namespace SpaceSim.Runtime
             RocketBlueprint copy = design.Clone();
             copy.EnsureLists();
             ApplyTo(copy, m, stage);
-            CompiledRocket c = BlueprintCompiler.Compile(copy, body.OwnsModule);
+            CompiledRocket c = body.CompileDesign(copy);
             RocketDesignReport r = RocketDesignAnalysis.Analyze(c.Configuration, lastGravity, lastRequired);
             preview = new InstallPreview
             {

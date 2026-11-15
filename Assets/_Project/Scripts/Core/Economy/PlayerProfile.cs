@@ -135,6 +135,18 @@ namespace SpaceSim.Economy
         /// maps so a reload never pays twice. Additive: older saves simply lack it.
         /// </summary>
         public List<SpaceSim.Science.ScienceRewardRecord> scienceRewards = new List<SpaceSim.Science.ScienceRewardRecord>();
+        /// <summary>Career contract board: ids of completed contracts (<see cref="Contracts"/>). Additive.</summary>
+        public List<string> completedContracts = new List<string>();
+        /// <summary>Bodies other than the start planet the player has landed on. Additive.</summary>
+        public List<string> landedBodies = new List<string>();
+        /// <summary>Bodies a sample has been delivered home from. Additive.</summary>
+        public List<string> returnedSampleBodies = new List<string>();
+        /// <summary>Rocket upgrades bought: one id per level (<see cref="RocketUpgrades"/>). Additive.</summary>
+        public List<string> rocketUpgrades = new List<string>();
+        /// <summary>Robot talent ranks learned: one id per rank (<see cref="RobotTalents"/>). Additive.</summary>
+        public List<string> learnedTalents = new List<string>();
+        /// <summary>Talent points ever earned from contracts (free points = earned − learned ranks).</summary>
+        public int talentPointsEarned;
 
         /// <summary>A new Sandbox profile (also what the flight scene creates when there is no save at all).</summary>
         public static PlayerProfile CreateNew(string homeBodyId) => CreateNew(homeBodyId, GameMode.Sandbox);
@@ -241,11 +253,13 @@ namespace SpaceSim.Economy
         public int DeliverCargo()
         {
             int n = 0;
+            if (returnedSampleBodies == null) returnedSampleBodies = new List<string>();
             foreach (var s in samples)
                 if (!s.delivered)
                 {
                     s.delivered = true;
                     n++;
+                    if (!string.IsNullOrEmpty(s.planetId) && !returnedSampleBodies.Contains(s.planetId)) returnedSampleBodies.Add(s.planetId);
                 }
             return n;
         }
@@ -295,6 +309,11 @@ namespace SpaceSim.Economy
             if (p.ledger == null) { p.ledger = new List<LedgerEntry>(); changed = true; }
             if (p.science == null) { p.science = new SpaceSim.Science.ScienceArchive(); changed = true; }
             if (p.scienceRewards == null) { p.scienceRewards = new List<SpaceSim.Science.ScienceRewardRecord>(); changed = true; }
+            if (p.completedContracts == null) { p.completedContracts = new List<string>(); changed = true; }
+            if (p.landedBodies == null) { p.landedBodies = new List<string>(); changed = true; }
+            if (p.returnedSampleBodies == null) { p.returnedSampleBodies = new List<string>(); changed = true; }
+            if (p.rocketUpgrades == null) { p.rocketUpgrades = new List<string>(); changed = true; }
+            if (p.learnedTalents == null) { p.learnedTalents = new List<string>(); changed = true; }
             if (p.unlockedTiers.RemoveAll(t => t <= 0 || t > TechTree.MaxTier) > 0) changed = true;
             if (p.ownedModules == null) { p.ownedModules = new List<string>(); changed = true; }
             if (p.samples == null) { p.samples = new List<SampleRecord>(); changed = true; }

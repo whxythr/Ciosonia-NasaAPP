@@ -45,9 +45,33 @@ namespace SpaceSim.Runtime
 
         public const string SandboxScenarioId = "sandbox";
 
+        /// <summary>
+        /// Set by the main menu's «Песочница»: the next <see cref="Initialize"/> starts a fresh Sandbox profile that lives only in
+        /// memory (<see cref="Transient"/>): nothing is read from or written to disk, so the career save is never touched.
+        /// </summary>
+        public static bool PendingSandbox;
+
+        /// <summary>Sandbox session: the profile is never saved (every module, upgrade and talent is available anyway).</summary>
+        public bool Transient { get; private set; }
+
+        /// <summary>Raised for each career contract completed by a profile change (the reward is already paid).</summary>
+        public event Action<ContractDefinition> ContractCompleted;
+
         public void Initialize(string homeBodyId)
         {
             initializedPath = SavePath;
+            if (PendingSandbox)
+            {
+                PendingSandbox = false;
+                PendingScenarioId = null;
+                Transient = true;
+                ReadOnly = false;
+                Profile = PlayerProfile.CreateNew(homeBodyId, GameMode.Sandbox);
+                Profile.scenarioId = SandboxScenarioId;
+                LoadMessage = Loc.T("Песочница: всё открыто, топливо бесконечное, игра не сохраняется.");
+                return;
+            }
+            Transient = false;
             Profile = Load(homeBodyId, out string message, out bool readOnly);
             LoadMessage = message;
             ReadOnly = readOnly;
@@ -101,7 +125,9 @@ namespace SpaceSim.Runtime
 
         public void Save()
         {
-            if (ReadOnly || Profile == null) return;
+            if (Profile == null) return;
+            CheckContracts();
+            if (ReadOnly || Transient) return;
             Directory.CreateDirectory(SaveDirectory);
             Profile.lastSavedUtc = DateTime.UtcNow.ToString("o");
             string path = SavePath, tmp = path + ".tmp";
@@ -114,6 +140,57 @@ namespace SpaceSim.Runtime
         {
             Save();
             Changed?.Invoke();
+        }
+
+        bool checkingContracts;
+
+        /// <summary>Career: pays every contract the profile now satisfies and announces it (runs before each save).</summary>
+        void CheckContracts()
+        {
+            if (checkingContracts || Profile == null || !Profile.IsCareer || ReadOnly) return;
+            checkingContracts = true;
+            try
+            {
+                foreach (ContractDefinition c in Contracts.CheckCompletions(Profile)) ContractCompleted?.Invoke(c);
+            }
+            finally
+            {
+                checkingContracts = false;
+            }
+        }
+
+        /// <summary>Career: buys the next level of a rocket upgrade (<see cref="RocketUpgrades.TryBuy"/>) and saves.</summary>
+        public PurchaseResult BuyUpgrade(string upgradeId, out string message)
+        {
+            if (ReadOnly)
+            {
+                message = Loc.T("Профиль только для чтения (сохранение от более новой версии игры) — покупки недоступны.");
+                return PurchaseResult.ReadOnlyProfile;
+            }
+            PurchaseResult r = RocketUpgrades.TryBuy(Profile, upgradeId, out message);
+            if (r == PurchaseResult.Success) Commit();
+            return r;
+        }
+
+        /// <summary>Career: learns one rank of a robot talent (<see cref="RobotTalents.TryLearn"/>) and saves.</summary>
+        public bool LearnTalent(string talentId, out string message)
+        {
+            if (ReadOnly)
+            {
+                message = Loc.T("Профиль только для чтения (сохранение от более новой версии игры) — изменения недоступны.");
+                return false;
+            }
+            bool ok = RobotTalents.TryLearn(Profile, talentId, out message);
+            if (ok) Commit();
+            return ok;
+        }
+
+        /// <summary>A landing on another body (real flights only): recorded for the contract board.</summary>
+        public void MarkLanded(string bodyId)
+        {
+            if (string.IsNullOrEmpty(bodyId) || Profile.landedBodies.Contains(bodyId)) return;
+            Profile.landedBodies.Add(bodyId);
+            Commit();
         }
 
         public bool Owns(string moduleId) => Profile != null && Profile.Owns(moduleId);
@@ -200,7 +277,9 @@ namespace SpaceSim.Runtime
         /// <summary>Puts a collected sample on board (saved at once). False if that site was already taken or the profile is read-only.</summary>
         public bool AddCargo(SampleRecord sample)
         {
-            if (ReadOnly || !Profile.AddCargo(sample)) return false;
+            if (ReadOnly || sample == null || Profile.collectedSites.Contains(sample.id)) return false;
+            RobotTalents.ApplyToSample(sample, Profile); // the science branch of the robot's talents
+            if (!Profile.AddCargo(sample)) return false;
             Commit();
             return true;
         }
@@ -364,7 +443,7 @@ namespace SpaceSim.Runtime
         void OnDestroy()
         {
             // Never write into another folder than the one loaded from (tests swap SaveDirectoryOverride back).
-            if (Profile == null || ReadOnly || SavePath != initializedPath) return;
+            if (Profile == null || ReadOnly || Transient || SavePath != initializedPath) return;
             FlushCrewTime();
             Save(); // leaving the flight scene (main menu): keep the play time and crew statistics
         }

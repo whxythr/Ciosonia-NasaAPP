@@ -216,16 +216,16 @@ namespace SpaceSim.Academy
 
         public AcademyAdvisor()
         {
-            rules.Add(new Rule { Id = Loc.T(TwrBelowOne), When = IsTwrBelowOne, Make = MakeTwrBelowOne });
-            rules.Add(new Rule { Id = Loc.T(DesignShort), OncePerFlight = true, When = IsDesignShort, Make = MakeDesignShort });
-            rules.Add(new Rule { Id = Loc.T(StageEmpty), Cooldown = 10.0, When = IsStageEmpty, Make = MakeStageEmpty });
-            rules.Add(new Rule { Id = Loc.T(VerticalAscent), OncePerFlight = true, When = IsVerticalAscent, Make = MakeVerticalAscent });
-            rules.Add(new Rule { Id = Loc.T(MaxQ), Cooldown = 60.0, When = IsMaxQ, Make = MakeMaxQ });
-            rules.Add(new Rule { Id = Loc.T(NeedsInsertion), OncePerFlight = true, When = IsNeedsInsertion, Make = MakeNeedsInsertion });
-            rules.Add(new Rule { Id = Loc.T(OutOfDeltaV), OncePerFlight = true, When = IsOutOfDeltaV, Make = MakeOutOfDeltaV });
-            rules.Add(new Rule { Id = Loc.T(LandingBurn), Cooldown = 20.0, When = IsLandingBurn, Make = MakeLandingBurn });
-            rules.Add(new Rule { Id = Loc.T(OrbitAchieved), OncePerFlight = true, When = s => !s.Landed && s.Phase == FlightPhase.OrbitalFlight, Make = MakeOrbitAchieved });
-            rules.Add(new Rule { Id = Loc.T(EscapeReached), OncePerFlight = true, When = s => !s.Landed && s.Phase == FlightPhase.EscapeTrajectory, Make = MakeEscape });
+            rules.Add(new Rule { Id = TwrBelowOne, When = IsTwrBelowOne, Make = MakeTwrBelowOne });
+            rules.Add(new Rule { Id = DesignShort, OncePerFlight = true, When = IsDesignShort, Make = MakeDesignShort });
+            rules.Add(new Rule { Id = StageEmpty, Cooldown = 10.0, When = IsStageEmpty, Make = MakeStageEmpty });
+            rules.Add(new Rule { Id = VerticalAscent, OncePerFlight = true, When = IsVerticalAscent, Make = MakeVerticalAscent });
+            rules.Add(new Rule { Id = MaxQ, Cooldown = 60.0, When = IsMaxQ, Make = MakeMaxQ });
+            rules.Add(new Rule { Id = NeedsInsertion, OncePerFlight = true, When = IsNeedsInsertion, Make = MakeNeedsInsertion });
+            rules.Add(new Rule { Id = OutOfDeltaV, OncePerFlight = true, When = IsOutOfDeltaV, Make = MakeOutOfDeltaV });
+            rules.Add(new Rule { Id = LandingBurn, Cooldown = 20.0, When = IsLandingBurn, Make = MakeLandingBurn });
+            rules.Add(new Rule { Id = OrbitAchieved, OncePerFlight = true, When = s => !s.Landed && s.Phase == FlightPhase.OrbitalFlight, Make = MakeOrbitAchieved });
+            rules.Add(new Rule { Id = EscapeReached, OncePerFlight = true, When = s => !s.Landed && s.Phase == FlightPhase.EscapeTrajectory, Make = MakeEscape });
         }
 
         /// <summary>Whether the condition behind a hint still holds.</summary>

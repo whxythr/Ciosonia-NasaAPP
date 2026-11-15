@@ -28,12 +28,12 @@ namespace SpaceSim.Tests
             Assert.IsEmpty(b.Physical.Validate());
         }
 
-        [TestCase(HomeSystemCatalog.KolimpriId, 56896095.0, 1.70)]
-        [TestCase(HomeSystemCatalog.TromosId, 97059000.0, 3.80)]
+        [TestCase(HomeSystemCatalog.KolimpriId, 56888489.0, 1.70)]
+        [TestCase(HomeSystemCatalog.TromosId, 96890115.0, 3.80)]
         public void Moons_PeriodFromKepler_MatchesTheGivenPeriod(string id, double a, double periodDays)
         {
             var orbit = new KeplerOrbit(Body(id).Orbit, HomeMu);
-            Assert.AreEqual(a, orbit.Position(5000.0).Magnitude, 1.0, "circular orbit at the given distance");
+            Assert.AreEqual(a, orbit.SemiMajorAxis, 1e-6, "the designer's semi-major axis");
             Assert.AreEqual(periodDays * Day, orbit.Period, periodDays * Day * 0.005, "the start planet's mass reproduces the quoted period");
         }
 
@@ -43,11 +43,14 @@ namespace SpaceSim.Tests
             CelestialBodyPreset b = Body(HomeSystemCatalog.KolimpriId);
             var orbit = new KeplerOrbit(b.Orbit, HomeMu);
             Assert.AreEqual(orbit.Period, b.Physical.siderealRotationPeriod, 1e-6);
-            var rot = new PlanetRotation(b.Physical.siderealRotationPeriod, 0.0, b.Physical.rotationPhaseAtEpochDegrees * MathD.DegToRad);
+            var rot = new PlanetRotation(b.Physical.siderealRotationPeriod, b.Physical.axialTiltDegrees * MathD.DegToRad,
+                b.Physical.rotationPhaseAtEpochDegrees * MathD.DegToRad);
+            // Eccentric (e = 0.039) and inclined (6.51°) orbit: the planet librates by up to 2e + 1.25e² ≈ 4.5°.
+            double e = b.Orbit.eccentricity;
             foreach (double t in new[] { 0.0, 4.0e4, 1.3e5, 9.0e5 })
             {
                 Vector3d toPlanet = (-orbit.Position(t)).Normalized;
-                Assert.Greater(Vector3d.Dot(toPlanet, rot.FixedToInertial(Vector3d.UnitX, t)), 0.9999);
+                Assert.Greater(Vector3d.Dot(toPlanet, rot.FixedToInertial(Vector3d.UnitX, t)), Math.Cos(2.0 * e + 1.25 * e * e + 1e-3));
             }
             Assert.IsFalse(b.Physical.atmosphere.hasAtmosphere, "no atmosphere at all");
             Assert.AreEqual(-133.5, b.Physical.atmosphere.surfaceTemperature - 273.15, 0.01, "mean of −111 … −156 °C");

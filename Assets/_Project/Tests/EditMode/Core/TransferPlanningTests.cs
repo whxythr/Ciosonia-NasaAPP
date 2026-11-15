@@ -130,6 +130,12 @@ namespace SpaceSim.Tests
             Assert.AreEqual(plan.HohmannDeltaV1, plan.DepartureDeltaV, 0.1 * plan.HohmannDeltaV1);
             TrajectoryPrediction p = TrajectoryPredictor.Predict(sys, s, TransferPlanner.Horizon(plan, now), moon, plan.Node);
             Assert.IsTrue(p.Encounter, "the Lambert arc aims at the moon's centre: it must enter its sphere (closest " + p.ClosestDistance + " m)");
+            SoiCrossing entry = p.Crossings.Find(c => c.Kind == PatchEvent.SoiEntry && c.Body == moon);
+            Assert.AreEqual(p.EncounterTime, entry.Time, 1e-9, "the entry into the moon's sphere is marked");
+            Assert.AreEqual(home, entry.From);
+            Assert.AreEqual(sys[moon].SoiRadius * PatchedConicSystem.EntryFactor, entry.Position.Magnitude, 1e-3 * sys[moon].SoiRadius);
+            Assert.AreEqual(moon, p.Patches[entry.Patch].Primary);
+            Assert.AreEqual(entry.Time, p.Patches[entry.Patch].StartTime, 1e-9);
         }
 
         [Test]

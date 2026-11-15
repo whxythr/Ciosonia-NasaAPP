@@ -250,6 +250,11 @@ namespace SpaceSim.Runtime.Menu
         /// </summary>
         public void StartNewGame()
         {
+            if (newGameMode == GameMode.Sandbox)
+            {
+                StartSandbox(); // never replaces the career save
+                return;
+            }
             try
             {
                 NewGame.Start(newGameMode);
@@ -259,8 +264,8 @@ namespace SpaceSim.Runtime.Menu
                 if (newGameNote != null) newGameNote.text = Loc.T("Не удалось начать новую игру: ") + e.Message;
                 return;
             }
-            // Career plays the selected research mission; Sandbox is free play (its goal is the sandbox).
-            StartScenario(newGameMode == GameMode.Sandbox ? MenuCatalog.Sandbox.Id : SelectedScenario.Id);
+            // A new career plays the selected research mission.
+            StartScenario(SelectedScenario.Id);
         }
 
         public void OpenQuitDialog() => modal.AddToClassList("modal--open");
@@ -268,8 +273,43 @@ namespace SpaceSim.Runtime.Menu
         /// <summary>Continues the saved game: the flight scene starts from the live profile and keeps its goal.</summary>
         public void BeginMission() => LoadGameplay(null);
 
-        /// <summary>«Песочница»: straight into the flight scene; the autosave records the sandbox as its goal.</summary>
-        public void StartSandbox() => LoadGameplay(MenuCatalog.Sandbox.Id);
+        /// <summary>
+        /// «Песочница»: straight into the flight scene with a fresh Sandbox profile kept only in memory — every module, upgrade and
+        /// talent is open, propellant is endless, no goal and nothing is saved (the career autosave is left untouched).
+        /// </summary>
+        public void StartSandbox()
+        {
+            if (LoadingScreen.IsShowing) return;
+            // Only flag it when the scene really loads, so a failed start never turns the next career load into a sandbox.
+            PlayerSession.PendingSandbox = Application.CanStreamedLevelBeLoaded(gameplayScene);
+            LoadGameplay(MenuCatalog.Sandbox.Id);
+        }
+
+        /// <summary>
+        /// «Карьера»: continues the career autosave; without one (or when the autosave is an old Sandbox game, which is kept as a save
+        /// slot) a new career starts with the starting budget and the contract board.
+        /// </summary>
+        public void StartCareer()
+        {
+            if (LoadingScreen.IsShowing) return;
+            PlayerSession.PendingSandbox = false;
+            PlayerProfile current = PlayerSession.ReadProfileFile();
+            if (current != null && current.IsCareer)
+            {
+                BeginMission();
+                return;
+            }
+            try
+            {
+                NewGame.Start(GameMode.Career);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[MainMenu] New career failed: " + e.Message);
+                return;
+            }
+            LoadGameplay(MenuCatalog.Career.Id);
+        }
 
         /// <summary>Starts a research mission (or the sandbox) by id; the autosave records it as its goal.</summary>
         public void StartScenario(string scenarioId) => LoadGameplay(string.IsNullOrEmpty(scenarioId) ? MenuCatalog.Sandbox.Id : scenarioId);
@@ -287,10 +327,10 @@ namespace SpaceSim.Runtime.Menu
             // The loading screen names what is being started: the mission (with its goals), the sandbox, or the continued save.
             bool resuming = scenarioId == null;
             MenuCatalog.Scenario s = MenuCatalog.FindScenario(resuming ? PlayerSession.ReadProfileFile()?.scenarioId : scenarioId);
-            bool sandbox = s == MenuCatalog.Sandbox;
+            bool sandbox = s == MenuCatalog.Sandbox, career = s == MenuCatalog.Career;
             string eyebrow = resuming ? Loc.T("ПРОДОЛЖЕНИЕ ИГРЫ")
-                : sandbox ? Loc.T("ПЕСОЧНИЦА") : Loc.T("НОВАЯ МИССИЯ") + "  ·  " + Loc.T(s.Difficulty.Title);
-            string goal = sandbox ? Loc.T(s.Summary) : string.Join("  ·  ", Array.ConvertAll(s.Goals, Loc.T));
+                : sandbox ? Loc.T("ПЕСОЧНИЦА") : career ? Loc.T("НОВАЯ КАРЬЕРА") : Loc.T("НОВАЯ МИССИЯ") + "  ·  " + Loc.T(s.Difficulty.Title);
+            string goal = sandbox || career ? Loc.T(s.Summary) : string.Join("  ·  ", Array.ConvertAll(s.Goals, Loc.T));
             if (!LoadingScreen.Begin(gameplayScene, eyebrow, Loc.T(s.Title), goal))
                 SceneManager.LoadScene(gameplayScene);
         }
@@ -339,26 +379,17 @@ namespace SpaceSim.Runtime.Menu
                 : UnitFormatter.Number(PlayerProfile.StartingCredits, 0) + Loc.T(" кр"), "hz-status__value", "t-mono"));
 
             var list = Add(screen, El("menu-list"));
-            // «Продолжить» opens the autosave (the live profile) on the load screen; its caption names the goal of that game.
-            // Without an autosave there is nothing to continue: the item is greyed out and ignores clicks.
-            string saved = profile != null
-                ? (GoalName(profile.scenarioId) + " · " + SaveSlots.Ago(DateTimeOf(profile.lastSavedUtc))).ToUpperInvariant()
-                : Loc.T("НЕТ АВТОСОХРАНЕНИЯ");
-            VisualElement resume = AddMenuItem(list, "ПРОДОЛЖИТЬ", saved, () =>
-            {
-                if (PlayerSession.ReadProfileFile() == null) return;
-                loadSaveTab = false;
-                loadSelected = SaveSlots.AutosaveId;
-                Show(LoadScreen);
-            });
-            if (profile == null)
-            {
-                resume.AddToClassList("menu-item--disabled");
-                resume.focusable = false;
-            }
+            // «Карьера» continues the career autosave straight away (its caption: budget, contracts, last save) or, without one,
+            // starts a new career. «Песочница» goes straight into free flight without a save.
+            string career = profile != null && profile.IsCareer
+                ? (Loc.T("ПРОДОЛЖИТЬ") + " · " + UnitFormatter.Number(profile.credits, 0) + Loc.T(" кр") + " · " +
+                   Loc.T("КОНТРАКТЫ ") + profile.completedContracts.Count + "/" + Contracts.All.Count + " · " +
+                   SaveSlots.Ago(DateTimeOf(profile.lastSavedUtc))).ToUpperInvariant()
+                : (Loc.T("НОВАЯ КАРЬЕРА") + " · " + Loc.T("БЮДЖЕТ ") + UnitFormatter.Number(GameModeRules.CareerStartingCredits, 0) + Loc.T(" кр")).ToUpperInvariant();
+            AddMenuItem(list, "КАРЬЕРА", career, StartCareer);
             AddMenuItem(list, "НОВАЯ МИССИЯ", null, () => { Show(NewMissionScreen); SelectGameMode(GameMode.Career); });
             AddMenuItem(list, "КОМАНДНАЯ МИССИЯ", null, () => Show(TeamScreen));
-            AddMenuItem(list, "ПЕСОЧНИЦА", null, () => { Show(NewMissionScreen); SelectGameMode(GameMode.Sandbox); });
+            AddMenuItem(list, "ПЕСОЧНИЦА", Loc.T("СВОБОДНЫЙ ПОЛЁТ · БЕЗ СОХРАНЕНИЙ"), StartSandbox);
             AddMenuItem(list, "НАСТРОЙКИ", null, () => Show(SettingsScreen));
             SelectMenuItem(menuItems.IndexOf(FirstEnabledMenuItem()));
 
@@ -501,10 +532,10 @@ namespace SpaceSim.Runtime.Menu
             }
             if (slots.Count == 0)
             {
-                loadList.Add(Text("Сохранений нет: игра ещё не начиналась. «Новая миссия» или «Песочница» создадут профиль.", "hz-note"));
+                loadList.Add(Text("Сохранений нет: игра ещё не начиналась. «Карьера» или «Новая миссия» создадут профиль.", "hz-note"));
                 loadDetail.Add(Text("НОВАЯ ИГРА", "eyebrow", "t-mono"));
                 loadDetail.Add(Text("Профиль игрока", "hz-detail__name", "t-strong"));
-                Add(Add(loadDetail, El("hz-detail__buttons")), ButtonEl(Loc.T("НАЧАТЬ") + "  →", StartSandbox, primary: true));
+                Add(Add(loadDetail, El("hz-detail__buttons")), ButtonEl(Loc.T("НАЧАТЬ") + "  →", StartCareer, primary: true));
                 ApplyFonts(screen);
                 return;
             }
@@ -788,7 +819,7 @@ namespace SpaceSim.Runtime.Menu
             var config = Add(body, El("config"));
             // Game mode of the new save: chosen only here, fixed for the save's whole life.
             Add(config, Text("РЕЖИМ ИГРЫ", "section-label", "t-strong")).style.marginTop = 0;
-            foreach (GameMode mode in new[] { GameMode.Career, GameMode.Sandbox })
+            foreach (GameMode mode in new[] { GameMode.Career })
             {
                 GameMode chosen = mode;
                 var tile = new Button(() => SelectGameMode(chosen));

@@ -28,9 +28,9 @@ namespace SpaceSim.Runtime
         const float PreferredWidth = 1000f;
         const float PreferredHeight = 640f;
 
-        enum Tab { Shop, Market, Research }
+        enum Tab { Shop, Market, Research, Contracts, Upgrades, Talents }
 
-        static readonly string[] TabNames = { "Магазин", "Рынок", "Исследования" };
+        static readonly string[] TabNames = { "Магазин", "Рынок", "Исследования", "Контракты", "Улучшения", "Робот" };
 
         PlayerSession session;
         FlightStateController state;
@@ -43,13 +43,13 @@ namespace SpaceSim.Runtime
         View view;
         bool dirty = true;
         int viewLanguage = -1;
-        (int credits, double research, int owned, int samples, int milestones, int visited, bool readOnly, int tiers) signature;
+        (int credits, double research, int owned, int samples, int milestones, int visited, bool readOnly, int tiers, int career) signature;
         /// <summary>Career: technology tier shown in the shop tab.</summary>
         int shopTier;
 
         string status = "";
         Color statusColor = Color.white;
-        Vector2 shopScroll, marketScroll, researchScroll;
+        Vector2 shopScroll, marketScroll, researchScroll, contractScroll, upgradeScroll, talentScroll;
         float contentWidth;
         readonly List<Action> pending = new List<Action>();
         GUIStyle note, compact, cell;
@@ -149,6 +149,23 @@ namespace SpaceSim.Runtime
             if (state != null) state.Notify(Loc.T("Рынок: ") + message);
         }
 
+        void BuyUpgrade(string upgradeId)
+        {
+            if (session == null || session.Profile == null) return;
+            PurchaseResult result = session.BuyUpgrade(upgradeId, out string message);
+            bool ok = result == PurchaseResult.Success;
+            SetStatus(message, ok ? HudStyle.Accent : HudStyle.Warning);
+            if (ok && state != null) state.Notify(Loc.T("Улучшения: ") + message);
+        }
+
+        void LearnTalent(string talentId)
+        {
+            if (session == null || session.Profile == null) return;
+            bool ok = session.LearnTalent(talentId, out string message);
+            SetStatus(message, ok ? HudStyle.Accent : HudStyle.Warning);
+            if (ok && state != null) state.Notify(Loc.T("Робот: ") + message);
+        }
+
         void SetStatus(string text, Color color)
         {
             status = text;
@@ -206,6 +223,11 @@ namespace SpaceSim.Runtime
             public readonly List<TierRow> Tiers = new List<TierRow>();
             /// <summary>Recent income and spending, newest first.</summary>
             public readonly List<KeyValuePair<string, string>> Ledger = new List<KeyValuePair<string, string>>();
+            public readonly List<ContractRow> Contracts = new List<ContractRow>();
+            public string ContractSummary = "";
+            public readonly List<UpgradeRow> Upgrades = new List<UpgradeRow>();
+            public readonly List<TalentRow> Talents = new List<TalentRow>();
+            public string TalentSummary = "";
         }
 
         sealed class TierRow
@@ -217,6 +239,28 @@ namespace SpaceSim.Runtime
             public readonly List<ShopRow> Items = new List<ShopRow>();
         }
 
+        sealed class ContractRow
+        {
+            public ContractState State;
+            public string Title, Description, Reward, Progress, Requires;
+        }
+
+        sealed class UpgradeRow
+        {
+            public string Id, Title, Effect, Level, StateText, ButtonLabel;
+            public Color StateColor;
+            public bool CanBuy;
+        }
+
+        sealed class TalentRow
+        {
+            public string Id, Title, Effect, StateText;
+            public TalentBranch Branch;
+            public int Rank;
+            public Color StateColor;
+            public bool CanLearn;
+        }
+
         bool NeedsRebuild()
         {
             if (view == null || dirty || viewLanguage != Loc.Version) return true;
@@ -224,9 +268,11 @@ namespace SpaceSim.Runtime
             return p != null && CurrentSignature(p) != signature;
         }
 
-        (int, double, int, int, int, int, bool, int) CurrentSignature(PlayerProfile p) =>
+        (int, double, int, int, int, int, bool, int, int) CurrentSignature(PlayerProfile p) =>
             (p.credits, p.researchPoints, p.ownedModules.Count, p.samples.Count, p.achievedMilestones.Count, p.visitedBodies.Count,
-                session.ReadOnly, p.unlockedTiers != null ? p.unlockedTiers.Count : 0);
+                session.ReadOnly, p.unlockedTiers != null ? p.unlockedTiers.Count : 0,
+                (p.completedContracts != null ? p.completedContracts.Count : 0) * 1000000 + (p.rocketUpgrades != null ? p.rocketUpgrades.Count : 0) * 10000 +
+                (p.learnedTalents != null ? p.learnedTalents.Count : 0) * 100 + p.talentPointsEarned);
 
         void BuildView()
         {
@@ -282,6 +328,104 @@ namespace SpaceSim.Runtime
             BuildMarket(v, p);
             BuildResearch(v, p);
             BuildHazards(v);
+            BuildCareer(v, p);
+        }
+
+        void BuildCareer(View v, PlayerProfile p)
+        {
+            int done = 0;
+            foreach (ContractDefinition c in SpaceSim.Economy.Contracts.All)
+            {
+                ContractState cs = SpaceSim.Economy.Contracts.StateOf(p, c);
+                if (cs == ContractState.Completed) done++;
+                ContractDefinition req = c.Requires != null ? SpaceSim.Economy.Contracts.Find(c.Requires) : null;
+                v.Contracts.Add(new ContractRow
+                {
+                    State = cs,
+                    Title = c.Title,
+                    Description = c.Description,
+                    Reward = Loc.T("Награда: +") + Credits(SpaceSim.Economy.Contracts.CreditsFor(p, c)) + " · +" + Points(c.Research) +
+                             (c.TalentPoints > 0 ? " · +" + c.TalentPoints + Loc.T(" очк. талантов робота") : ""),
+                    Progress = SpaceSim.Economy.Contracts.Progress(p, c),
+                    Requires = req != null ? Loc.T("Откроется после «") + req.Title + "»" : ""
+                });
+            }
+            v.ContractSummary = Loc.T("Выполнено контрактов: ") + done + Loc.T(" из ") + SpaceSim.Economy.Contracts.All.Count +
+                                Loc.T(". Контракт засчитывается сам, как только условие выполнено настоящим полётом.");
+
+            foreach (UpgradeDefinition u in RocketUpgrades.All)
+            {
+                int level = RocketUpgrades.LevelOf(p, u.Id);
+                UpgradeState us = RocketUpgrades.StateOf(p, u);
+                int price = RocketUpgrades.NextPrice(p, u);
+                var row = new UpgradeRow
+                {
+                    Id = u.Id,
+                    Title = u.Name,
+                    Effect = u.EffectPerLevel,
+                    Level = Loc.T("Уровень ") + level + " / " + u.MaxLevel,
+                    CanBuy = p.IsCareer && us == UpgradeState.Available,
+                    ButtonLabel = us == UpgradeState.Maxed ? Loc.T("Максимум") : Loc.T("Купить за ") + Credits(price)
+                };
+                switch (us)
+                {
+                    case UpgradeState.Maxed:
+                        row.StateText = Loc.T("Установлен максимальный уровень.");
+                        row.StateColor = HudStyle.Accent;
+                        break;
+                    case UpgradeState.Available:
+                        row.StateText = Loc.T("Доступно");
+                        row.StateColor = new Color(0.55f, 0.95f, 0.6f);
+                        break;
+                    case UpgradeState.TierLocked:
+                        row.StateText = Loc.T("Нужен уровень техники ") + RocketUpgrades.TierFor(level + 1) + ".";
+                        row.StateColor = HudStyle.Warning;
+                        break;
+                    default:
+                        row.StateText = Loc.T("Не хватает ") + N(price - p.credits, 0) + Loc.T(" кр");
+                        row.StateColor = HudStyle.Danger;
+                        break;
+                }
+                v.Upgrades.Add(row);
+            }
+
+            foreach (TalentDefinition t in RobotTalents.All)
+            {
+                TalentState ts = RobotTalents.StateOf(p, t);
+                var row = new TalentRow
+                {
+                    Id = t.Id,
+                    Branch = t.Branch,
+                    Title = t.Name,
+                    Effect = t.EffectPerRank,
+                    Rank = RobotTalents.RankOf(p, t.Id),
+                    CanLearn = p.IsCareer && ts == TalentState.Learnable
+                };
+                switch (ts)
+                {
+                    case TalentState.Maxed:
+                        row.StateText = Loc.T("Изучен полностью");
+                        row.StateColor = HudStyle.Accent;
+                        break;
+                    case TalentState.Learnable:
+                        row.StateText = Loc.T("Можно изучить");
+                        row.StateColor = new Color(0.55f, 0.95f, 0.6f);
+                        break;
+                    case TalentState.PreviousLocked:
+                        row.StateText = Loc.T("Сначала предыдущий талант ветки");
+                        row.StateColor = HudStyle.Warning;
+                        break;
+                    default:
+                        row.StateText = Loc.T("Нет свободных очков");
+                        row.StateColor = HudStyle.Warning;
+                        break;
+                }
+                v.Talents.Add(row);
+            }
+            v.TalentSummary = p.IsCareer
+                ? Loc.T("Свободных очков талантов: ") + RobotTalents.FreePoints(p) + Loc.T(" · получено всего: ") + p.talentPointsEarned +
+                  Loc.T(". Очки дают выполненные контракты; одно очко — один ранг.")
+                : Loc.T("Песочница: все таланты робота изучены полностью.");
         }
 
         ShopRow BuildShopRow(PlayerProfile p, ShopItem item)
@@ -537,6 +681,9 @@ namespace SpaceSim.Runtime
                 {
                     case Tab.Shop: DrawShop(scrollHeight); break;
                     case Tab.Market: DrawMarket(scrollHeight); break;
+                    case Tab.Contracts: DrawContracts(scrollHeight); break;
+                    case Tab.Upgrades: DrawUpgrades(scrollHeight); break;
+                    case Tab.Talents: DrawTalents(scrollHeight); break;
                     default: DrawResearch(scrollHeight); break;
                 }
             }
@@ -584,7 +731,7 @@ namespace SpaceSim.Runtime
 
         void DrawTabs(float innerW)
         {
-            float tw = Mathf.Min(180f, (innerW - 16f) / TabNames.Length);
+            float tw = Mathf.Min(160f, (innerW - 16f) / TabNames.Length);
             GUILayout.BeginHorizontal();
             for (int i = 0; i < TabNames.Length; i++)
             {
@@ -592,6 +739,8 @@ namespace SpaceSim.Runtime
                 bool on = tab == t;
                 string label = Loc.T(TabNames[i]);
                 if (t == Tab.Market && view.Samples.Count > 0) label += " (" + view.Samples.Count + ")";
+                if (t == Tab.Talents && view.Career && session.Profile != null && RobotTalents.FreePoints(session.Profile) > 0)
+                    label += " (+" + RobotTalents.FreePoints(session.Profile) + ")";
                 if (GUILayout.Toggle(on, label, HudStyle.Tab, GUILayout.Width(tw), GUILayout.Height(26)) && !on)
                     Defer(() => tab = t);
             }
@@ -810,6 +959,131 @@ namespace SpaceSim.Runtime
                     GUILayout.EndHorizontal();
                 }
             }
+            GUILayout.EndScrollView();
+        }
+
+        // ---- Tab 4: contracts ----------------------------------------------------------------
+
+        void SandboxNote(string text)
+        {
+            GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(contentWidth));
+            Colored(Loc.T("ПЕСОЧНИЦА"), HudStyle.Title, HudStyle.Accent);
+            GUILayout.Label(text, note);
+            GUILayout.EndVertical();
+        }
+
+        void DrawContracts(float height)
+        {
+            if (!view.Career)
+            {
+                SandboxNote(Loc.T("В песочнице нет контрактов: летайте куда угодно без цели. Контракты, кредиты и таланты робота — в режиме «Карьера»."));
+                return;
+            }
+            GUILayout.Label(view.ContractSummary, note);
+            GUILayout.Space(4);
+            contractScroll = GUILayout.BeginScrollView(contractScroll, GUILayout.Height(height - 30f));
+            foreach (ContractState wanted in new[] { ContractState.Active, ContractState.Completed, ContractState.Locked })
+            {
+                bool any = false;
+                foreach (ContractRow c in view.Contracts)
+                {
+                    if (c.State != wanted) continue;
+                    if (!any)
+                    {
+                        GUILayout.Label(wanted == ContractState.Active ? Loc.T("Активные контракты")
+                            : wanted == ContractState.Completed ? Loc.T("Выполненные") : Loc.T("Закрытые"), HudStyle.Title);
+                        any = true;
+                    }
+                    Color tint = wanted == ContractState.Completed ? HudStyle.Accent : wanted == ContractState.Active ? Color.white : new Color(0.6f, 0.6f, 0.6f);
+                    GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(contentWidth));
+                    Colored((wanted == ContractState.Completed ? "✓ " : wanted == ContractState.Active ? "○ " : "· ") + c.Title, HudStyle.Title, tint);
+                    if (wanted == ContractState.Locked)
+                    {
+                        GUILayout.Label(c.Requires, HudStyle.Small);
+                    }
+                    else
+                    {
+                        GUILayout.Label(c.Description, note);
+                        if (wanted == ContractState.Active && c.Progress.Length > 0) Colored(c.Progress, note, HudStyle.Warning);
+                        GUILayout.Label(c.Reward, HudStyle.Small);
+                    }
+                    GUILayout.EndVertical();
+                    GUILayout.Space(3);
+                }
+                if (any) GUILayout.Space(6);
+            }
+            GUILayout.EndScrollView();
+        }
+
+        // ---- Tab 5: rocket upgrades ----------------------------------------------------------
+
+        void DrawUpgrades(float height)
+        {
+            if (!view.Career)
+                SandboxNote(Loc.T("В песочнице все улучшения ракет уже установлены на максимум."));
+            else
+                GUILayout.Label(Loc.T("Улучшения покупаются за кредиты один раз и действуют на все ракеты, которые выкатываются на старт. ") +
+                                Loc.T("Каждый следующий уровень требует более высокого уровня техники."), note);
+            GUILayout.Space(4);
+            upgradeScroll = GUILayout.BeginScrollView(upgradeScroll, GUILayout.Height(height - 40f));
+            foreach (UpgradeRow u in view.Upgrades)
+            {
+                string id = u.Id;
+                GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(contentWidth));
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(u.Title, HudStyle.Title);
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(u.Level, HudStyle.Value, GUILayout.Width(140));
+                GUILayout.EndHorizontal();
+                GUILayout.Label(u.Effect, note);
+                Colored(u.StateText, note, u.StateColor);
+                if (view.Career)
+                {
+                    GUILayout.BeginHorizontal();
+                    if (Button(u.ButtonLabel, u.CanBuy, GUILayout.Width(240), GUILayout.Height(26))) Defer(() => BuyUpgrade(id));
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
+                GUILayout.Space(4);
+            }
+            GUILayout.EndScrollView();
+        }
+
+        // ---- Tab 6: robot talents ------------------------------------------------------------
+
+        void DrawTalents(float height)
+        {
+            Colored(view.TalentSummary, note, view.Career ? Color.white : HudStyle.Accent);
+            GUILayout.Space(4);
+            float column = Mathf.Max(160f, (contentWidth - 24f) / 3f);
+            talentScroll = GUILayout.BeginScrollView(talentScroll, GUILayout.Height(height - 30f));
+            GUILayout.BeginHorizontal();
+            foreach (TalentBranch branch in new[] { TalentBranch.Protection, TalentBranch.Mobility, TalentBranch.Science })
+            {
+                GUILayout.BeginVertical(GUILayout.Width(column));
+                Colored(RobotTalents.BranchName(branch).ToUpperInvariant(), HudStyle.Title, HudStyle.Accent);
+                bool first = true;
+                foreach (TalentRow t in view.Talents)
+                {
+                    if (t.Branch != branch) continue;
+                    if (!first) GUILayout.Label("\u2193", HudStyle.Small);
+                    first = false;
+                    string id = t.Id;
+                    GUILayout.BeginVertical(HudStyle.Panel, GUILayout.Width(column));
+                    GUILayout.Label(t.Title, HudStyle.Title);
+                    string pips = "";
+                    for (int r = 0; r < RobotTalents.MaxRank; r++) pips += r < t.Rank ? "\u25CF" : "\u25CB";
+                    Colored(pips + "  " + Loc.T("ранг ") + t.Rank + " / " + RobotTalents.MaxRank, compact, t.Rank > 0 ? HudStyle.Accent : Color.white);
+                    GUILayout.Label(t.Effect, note);
+                    Colored(t.StateText, note, t.StateColor);
+                    if (view.Career && Button(Loc.T("Изучить (1 очко)"), t.CanLearn, GUILayout.Height(24))) Defer(() => LearnTalent(id));
+                    GUILayout.EndVertical();
+                }
+                GUILayout.EndVertical();
+                GUILayout.Space(8);
+            }
+            GUILayout.EndHorizontal();
             GUILayout.EndScrollView();
         }
 

@@ -283,6 +283,58 @@ namespace SpaceSim.Tests
         }
 
         [Test]
+        public void Prediction_MarksSoiExit_OnTheSphere_AtThePatchStart()
+        {
+            CoastState s = CircularAroundHome(400000.0, 0.0, 1.45); // hyperbolic escape
+            TrajectoryPrediction p = TrajectoryPredictor.Predict(Sys, s, 3.0 * Day, -1);
+            Assert.AreEqual(1, p.Crossings.Count, "one crossing: leaving home");
+            SoiCrossing c = p.Crossings[0];
+            Assert.AreEqual(PatchEvent.SoiExit, c.Kind);
+            Assert.AreEqual(Home, c.Body);
+            Assert.AreEqual(Home, c.From);
+            Assert.AreEqual(PatchedConicSystem.Star, c.To);
+            Assert.AreEqual(Sys[Home].SoiRadius, c.Position.Magnitude, 1e-6 * Sys[Home].SoiRadius, "the mark sits on the sphere");
+            PredictedPatch after = p.Patches[c.Patch];
+            Assert.AreEqual(PatchedConicSystem.Star, after.Primary);
+            Assert.AreEqual(c.Time, after.StartTime, 1e-9, "the new patch starts exactly at the crossing");
+            Assert.AreEqual(c.Time, p.Patches[c.Patch - 1].EndTime, 1e-9);
+            // The patch's start state is the exact state on the boundary, re-expressed around the star.
+            Vector3d onSphere = c.Position + Sys.Position(Home, c.Time);
+            Assert.Less((after.Start.Position - onSphere).Magnitude, 1.0);
+        }
+
+        [Test]
+        public void Prediction_FollowGravity_ContinuesAlongTheNewConic()
+        {
+            CoastState s = CircularAroundHome(400000.0, 0.0, 1.45);
+            double toExit = ConicPropagator.TimeToRadius(Sys.Mu(Home), s.Position, s.Velocity, Sys[Home].SoiRadius);
+            // A horizon that ends just after leaving home: without following, the heliocentric arc is a stub.
+            double horizon = toExit + 600.0;
+            TrajectoryPrediction cut = TrajectoryPredictor.Predict(Sys, s, horizon, -1);
+            TrajectoryPrediction follow = TrajectoryPredictor.Predict(Sys, s, horizon, -1, followGravity: true);
+            Assert.AreEqual(horizon, cut.Final.Time, 1e-6, "default behaviour unchanged");
+            Assert.AreEqual(PatchedConicSystem.Star, follow.Final.Primary);
+            Assert.Greater(follow.Final.Time - horizon, 30.0 * Day, "the orbit around the star is shown after the exit");
+            Assert.LessOrEqual(follow.Final.Time, horizon + 2.0 * TrajectoryPredictor.MaxFollow + 1e-6);
+            Assert.AreEqual(PatchEvent.SoiExit, follow.Crossings[0].Kind);
+            Assert.AreEqual(cut.Crossings[0].Time, follow.Crossings[0].Time, 1e-6, "same crossing either way");
+        }
+
+        [Test]
+        public void Prediction_FollowGravity_AfterTheNode_ShowsTheNewOrbit()
+        {
+            // A short horizon from a low orbit, with a burn that raises it to an escape: the post-burn conic is followed out of the sphere.
+            CoastState s = CircularAroundHome(300000.0, 0.0);
+            var node = new ManeuverNode { Time = 600.0, Prograde = 0.5 * Math.Sqrt(Sys.Mu(Home) / s.Position.Magnitude) };
+            TrajectoryPrediction cut = TrajectoryPredictor.Predict(Sys, s, 1200.0, -1, node);
+            TrajectoryPrediction follow = TrajectoryPredictor.Predict(Sys, s, 1200.0, -1, node, followGravity: true);
+            Assert.IsTrue(follow.NodeApplied);
+            Assert.AreEqual(0, cut.Crossings.Count);
+            Assert.AreEqual(Home, cut.Final.Primary);
+            Assert.IsTrue(follow.Crossings.Exists(c => c.Kind == PatchEvent.SoiExit && c.Body == Home), "the escape is predicted");
+        }
+
+        [Test]
         public void Prediction_LongHorizonInLowOrbit_StaysCheap()
         {
             // The live HUD/map prediction runs twice a second: 83 days ahead from a 300 km orbit must not sample every orbit.
