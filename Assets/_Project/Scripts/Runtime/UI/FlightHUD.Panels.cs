@@ -208,6 +208,21 @@ namespace SpaceSim.Runtime
             GUI.Label(new Rect(M, 110f, 640f, 18f), PhaseName(state.Phase), HudStyle.Style(Face.Mono, 12, HudStyle.Blue));
             var reason = new GUIStyle(HudStyle.Small) { wordWrap = true };
             GUI.Label(new Rect(M, 128f, 440f, 32f), ReasonText(state.Reason), reason);
+            DrawCrewLine();
+        }
+
+        /// <summary>Team mission: this computer's roles and who holds the others («ВЫ: ПИЛОТ  ·  КП Nova  ИН Kepler …»).</summary>
+        void DrawCrewLine()
+        {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Active) return;
+            var sb = new System.Text.StringBuilder();
+            sb.Append(Loc.T("ВЫ")).Append(": ").Append(SpaceSim.Runtime.Multiplayer.CrewSession.LocalRolesText());
+            foreach (SpaceSim.Multiplayer.CrewRole role in SpaceSim.Multiplayer.CrewRoles.All)
+            {
+                string holder = SpaceSim.Runtime.Multiplayer.CrewSession.HolderOf(role);
+                if (holder != null) sb.Append("   ").Append(SpaceSim.Multiplayer.CrewRoles.Info(role).Initials).Append(' ').Append(holder);
+            }
+            GUI.Label(new Rect(M, 162f, 900f, 18f), sb.ToString(), HudStyle.Style(Face.Mono, 12, HudStyle.Amber));
         }
 
         void DrawAltitude(FlightTelemetry t, Vector2 screen)

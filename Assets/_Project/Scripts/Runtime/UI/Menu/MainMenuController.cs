@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using SpaceSim.Economy;
 using SpaceSim.Localization;
+using SpaceSim.Multiplayer;
+using SpaceSim.Runtime.Multiplayer;
 using SpaceSim.Units;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -66,6 +68,10 @@ namespace SpaceSim.Runtime.Menu
             // A flight left through the Esc menu must not leave the input facade thinking a window is still open.
             FlightInput.ModalWindowOpen = false;
             FlightInput.PauseMenuOpen = false;
+            // Back in the menu after a team mission: that room and crew are over.
+            CrewNetwork.Close();
+            CrewSession.End();
+            teamLink = CrewNetwork.OnlineAvailable ? CrewLink.Online : CrewLink.SameScreen;
         }
 
         void OnEnable()
@@ -74,7 +80,11 @@ namespace SpaceSim.Runtime.Menu
             Build(document.rootVisualElement);
         }
 
-        void OnDisable() => settingsView?.Detach();
+        void OnDisable()
+        {
+            settingsView?.Detach();
+            UnhookCrew();
+        }
 
         void Update()
         {
@@ -143,6 +153,7 @@ namespace SpaceSim.Runtime.Menu
         public void Show(string id, bool remember = true)
         {
             if (!screens.TryGetValue(id, out var next) || id == current) return;
+            if (current == TeamScreen) CloseTeamLobby();
             if (current != null)
             {
                 if (remember) history.Push(current);
@@ -202,6 +213,7 @@ namespace SpaceSim.Runtime.Menu
                 crewView?.Refresh();
             }
             else if (id == SettingsScreen && !rebuildingForLanguage) settingsView?.Open();
+            else if (id == TeamScreen && !rebuildingForLanguage) OpenTeamLobby();
         }
 
         bool rebuildingForLanguage;
@@ -328,7 +340,8 @@ namespace SpaceSim.Runtime.Menu
             bool resuming = scenarioId == null;
             MenuCatalog.Scenario s = MenuCatalog.FindScenario(resuming ? PlayerSession.ReadProfileFile()?.scenarioId : scenarioId);
             bool sandbox = s == MenuCatalog.Sandbox, career = s == MenuCatalog.Career;
-            string eyebrow = resuming ? Loc.T("ПРОДОЛЖЕНИЕ ИГРЫ")
+            string eyebrow = CrewSession.Active ? Loc.T("КОМАНДНАЯ МИССИЯ") + "  ·  " + CrewSession.LocalRolesText()
+                : resuming ? Loc.T("ПРОДОЛЖЕНИЕ ИГРЫ")
                 : sandbox ? Loc.T("ПЕСОЧНИЦА") : career ? Loc.T("НОВАЯ КАРЬЕРА") : Loc.T("НОВАЯ МИССИЯ") + "  ·  " + Loc.T(s.Difficulty.Title);
             string goal = sandbox || career ? Loc.T(s.Summary) : string.Join("  ·  ", Array.ConvertAll(s.Goals, Loc.T));
             if (!LoadingScreen.Begin(gameplayScene, eyebrow, Loc.T(s.Title), goal))
@@ -901,96 +914,450 @@ namespace SpaceSim.Runtime.Menu
         }
 
         // ─────────────────────────────── team lobby ───────────────────────────────
+        //
+        // The crew lobby: pick how to play (one screen or a Photon room), create a room or join one by code, choose the mission,
+        // take roles. 2–4 players; all four roles must be held before the host can start, so with fewer than four players
+        // somebody takes several. The lobby itself lives in CrewNetwork.Current (opened when the screen opens, closed when the
+        // player leaves it); this code only draws it and forwards clicks.
+
+        const string CrewNickKey = "horizon.crew.nick";
+
+        CrewLink teamLink = CrewLink.SameScreen;
+        int teamScenario;
+        bool teamLaunching;
+        ICrewNetwork teamHooked;
+        readonly List<(CrewLink link, Button button)> teamLinkButtons = new List<(CrewLink, Button)>();
+        TextField teamNameField, teamCodeField;
+        VisualElement teamRoomRow, teamRoles, teamCrew, teamFoot;
+        Label teamStatus, teamMissionTitle, teamMissionMeta;
+
+        /// <summary>The open crew lobby (null while the team screen is closed).</summary>
+        public ICrewNetwork Crew => CrewNetwork.Current;
 
         void BuildTeam()
         {
+            teamLinkButtons.Clear();
             var screen = AddScreen(TeamScreen);
-            ScreenHeader(screen, "TEAM MISSION", "ASSEMBLE YOUR CREW",
-                "Up to four players, one spacecraft. Each role owns a subsystem — and has to negotiate with the others.");
+            ScreenHeader(screen, "КОМАНДНАЯ МИССИЯ", "СОБЕРИТЕ ЭКИПАЖ",
+                "От 2 до 4 игроков, одна ракета. Если игроков меньше четырёх, кто-то берёт несколько ролей.");
 
             var body = Add(screen, El("screen-body", "team-body"));
             body.style.top = 262;
 
+            // Row 1: how to play · name · connection status.
             var bar = Add(body, El("team-bar"));
-            var mode = Add(bar, El("team-bar__group"));
-            mode.Add(Text("MODE", "team-bar__label", "t-strong"));
-            Segmented(mode, new[] { "CO-OP", "VERSUS" }, 0);
             var link = Add(bar, El("team-bar__group"));
-            link.Add(Text("PLAY", "team-bar__label", "t-strong"));
-            Segmented(link, new[] { "SAME SCREEN", "ONLINE" }, 1);
-            var code = Add(bar, El("team-bar__group"));
-            code.Add(Text("ROOM CODE", "team-bar__label", "t-strong"));
-            code.Add(Text("HZN-7Q4K", "room-code", "t-mono"));
+            link.Add(Text("ИГРА", "team-bar__label", "t-strong"));
+            var seg = Add(link, El("segmented"));
+            TeamLinkButton(seg, CrewLink.SameScreen, "НА ОДНОМ ЭКРАНЕ");
+            TeamLinkButton(seg, CrewLink.Online, "ОНЛАЙН · PHOTON");
+
+            var name = Add(bar, El("team-bar__group"));
+            name.Add(Text("ВАШЕ ИМЯ", "team-bar__label", "t-strong"));
+            teamNameField = new TextField { value = CrewNickname(), maxLength = 16 };
+            teamNameField.AddToClassList("hz-field");
+            teamNameField.AddToClassList("team-field");
+            name.Add(teamNameField);
+
             bar.Add(El("grow"));
-            var mission = Add(bar, El("chip"));
-            mission.Add(Text("MISSION", "chip__label"));
-            mission.Add(Text("QUORIS POLAR MAPPER · ENGINEER", "chip__value", "t-strong"));
+            teamStatus = Add(bar, Text("", "team-status", "t-mono"));
 
-            var roles = Add(body, El("roles"));
-            string[] players = { "Nova_7", "Kepler", "LunaByte", null };
-            string[] meta = { "Host · Level 12", "Level 8", "Level 15", "" };
-            bool[] ready = { true, true, false, false };
-            string[,] stats = { { "3", "VETO" }, { "38%", "MASS MARGIN" }, { "4", "INSTRUMENTS" }, { "2", "STATIONS" } };
-            for (int i = 0; i < MenuCatalog.Roles.Length; i++)
-            {
-                var role = MenuCatalog.Roles[i];
-                bool open = players[i] == null;
-                var card = Add(roles, El("role-card", open ? "role-card--open" : null, i == MenuCatalog.Roles.Length - 1 ? "role-card--last" : null));
-                var band = Add(card, El("role-card__band"));
-                band.style.backgroundColor = role.Tint;
-                var inner = Add(card, El("role-card__inner"));
-                var avatar = Add(inner, Text(open ? "+" : role.Initials, "role-card__avatar", "t-strong"));
-                if (!open)
-                {
-                    avatar.style.borderTopColor = avatar.style.borderBottomColor = avatar.style.borderLeftColor = avatar.style.borderRightColor = role.Tint;
-                    avatar.style.color = role.Tint;
-                    avatar.style.backgroundColor = new Color(role.Tint.r, role.Tint.g, role.Tint.b, 0.1f);
-                }
-                inner.Add(Text(role.Title, "role-card__title", "t-strong"));
-                Add(inner, Text(role.Owns, "role-card__owns", "t-strong")).style.color = role.Tint;
-                inner.Add(Text(role.Description, "role-card__desc"));
-                inner.Add(El("role-card__divider"));
-                inner.Add(Text(open ? "Open seat" : players[i], "role-card__player", "t-strong"));
-                inner.Add(Text(open ? "Share the room code or press ENTER on a second controller" : meta[i], "role-card__meta", "wrap"));
-                if (!open)
-                {
-                    var st = Add(inner, El("role-card__stats"));
-                    var stat = Add(st, El("stat"));
-                    stat.Add(Text(stats[i, 0], "stat__value", "t-mono"));
-                    stat.Add(Text(stats[i, 1], "stat__label", "t-strong"));
-                    var vote = Add(st, El("stat"));
-                    vote.Add(Text("1", "stat__value", "t-mono"));
-                    vote.Add(Text("VOTE", "stat__label", "t-strong"));
-                }
-                card.Add(Text(open ? "WAITING FOR CREW" : ready[i] ? "READY" : "DESIGNING…", "ready",
-                    open ? "ready--open" : ready[i] ? "ready--yes" : "ready--no", "t-strong"));
-            }
+            // Row 2: room (create / join / code) · mission.
+            var second = Add(body, El("team-bar", "team-bar--second"));
+            teamRoomRow = Add(second, El("team-bar__group"));
+            second.Add(El("grow"));
+            var mission = Add(second, El("team-mission"));
+            mission.Add(Text("МИССИЯ", "team-bar__label", "t-strong"));
+            Add(mission, TeamArrow("◀", () => StepTeamScenario(-1)));
+            var missionText = Add(mission, El("team-mission__text"));
+            teamMissionTitle = Add(missionText, Text("", "team-mission__title", "t-strong"));
+            teamMissionMeta = Add(missionText, Text("", "team-mission__meta", "t-mono"));
+            Add(mission, TeamArrow("▶", () => StepTeamScenario(+1)));
 
-            var foot = Add(body, El("team-foot"));
-            Add(foot, Text("HOW IT WORKS", "eyebrow", "eyebrow--cyan", "t-strong")).style.marginRight = 8;
-            foot.Add(Text("Each role signs off its own subsystem. Changes that cross roles — a heavier camera, a bigger antenna — go to a crew vote. Arguing costs schedule days, and the clock is a resource too.", "team-foot__text"));
-            foot.Add(El("grow"));
-            foot.Add(ButtonEl("INVITE CREW", () => { }));
-            var start = Add(foot, ButtonEl("START MISSION", BeginMission, primary: false, disabled: true));
-            start.style.marginLeft = 14;
-            start.Add(Text("2/4 READY", "btn__count", "t-mono"));
+            teamRoles = Add(body, El("roles"));
+            teamCrew = Add(body, El("team-crew"));
+            teamFoot = Add(body, El("team-foot"));
+
+            if (CrewNetwork.Current != null) HookCrew(CrewNetwork.Current); // rebuilt for a language change: keep the room
+            RefreshTeam();
         }
 
-        void Segmented(VisualElement parent, string[] options, int selected)
+        void TeamLinkButton(VisualElement seg, CrewLink link, string label)
         {
-            var seg = Add(parent, El("segmented"));
-            var items = new List<Button>();
-            for (int i = 0; i < options.Length; i++)
+            var b = new Button(() => SwitchTeamLink(link)) { text = Loc.T(label) };
+            b.AddToClassList("segmented__item");
+            b.AddToClassList("t-strong");
+            seg.Add(b);
+            teamLinkButtons.Add((link, b));
+        }
+
+        Button TeamArrow(string glyph, Action onClick)
+        {
+            var b = new Button(onClick) { text = glyph };
+            b.AddToClassList("team-arrow");
+            return b;
+        }
+
+        static string CrewNickname()
+        {
+            string saved = PlayerPrefs.GetString(CrewNickKey, "");
+            if (!string.IsNullOrWhiteSpace(saved)) return saved;
+            return Loc.T("Игрок") + " " + UnityEngine.Random.Range(100, 1000);
+        }
+
+        string TeamNickname()
+        {
+            string nick = teamNameField != null ? teamNameField.value : null;
+            if (string.IsNullOrWhiteSpace(nick)) nick = CrewNickname();
+            nick = nick.Trim();
+            PlayerPrefs.SetString(CrewNickKey, nick);
+            return nick;
+        }
+
+        /// <summary>The team screen opened: open the lobby in the last used mode (online when Photon is installed).</summary>
+        void OpenTeamLobby()
+        {
+            teamLaunching = false;
+            teamScenario = Mathf.Clamp(scenarioIndex, 0, MenuCatalog.Scenarios.Length - 1);
+            if (!CrewNetwork.OnlineAvailable) teamLink = CrewLink.SameScreen;
+            if (CrewNetwork.Current == null || CrewNetwork.Current.Link != teamLink) OpenCrew(teamLink);
+            else RefreshTeam();
+        }
+
+        /// <summary>The player left the team screen (not into the mission): leave the room.</summary>
+        void CloseTeamLobby()
+        {
+            if (teamLaunching) return;
+            UnhookCrew();
+            CrewNetwork.Close();
+        }
+
+        void SwitchTeamLink(CrewLink link)
+        {
+            if (link == CrewLink.Online && !CrewNetwork.OnlineAvailable)
             {
-                var b = new Button { text = Loc.T(options[i]) };
-                b.AddToClassList("segmented__item");
-                b.AddToClassList("t-strong");
-                if (i == selected) b.AddToClassList("segmented__item--on");
-                items.Add(b);
-                seg.Add(b);
+                teamLink = CrewLink.SameScreen;
+                RefreshTeam(Loc.T("Photon PUN 2 не установлен: импортируйте его из Asset Store и задайте App ID."));
+                return;
             }
-            foreach (var b in items)
-                b.clicked += () => { foreach (var o in items) o.EnableInClassList("segmented__item--on", o == b); };
+            if (link == teamLink && CrewNetwork.Current != null) return;
+            teamLink = link;
+            OpenCrew(link);
+        }
+
+        void OpenCrew(CrewLink link)
+        {
+            UnhookCrew();
+            ICrewNetwork net = CrewNetwork.Open(link);
+            HookCrew(net);
+            net.Connect(TeamNickname());
+            if (link == CrewLink.SameScreen) net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id);
+            RefreshTeam();
+        }
+
+        void HookCrew(ICrewNetwork net)
+        {
+            if (teamHooked == net) return;
+            UnhookCrew();
+            teamHooked = net;
+            net.Changed += OnCrewChanged;
+            net.MissionStarted += OnCrewMissionStarted;
+        }
+
+        void UnhookCrew()
+        {
+            if (teamHooked == null) return;
+            teamHooked.Changed -= OnCrewChanged;
+            teamHooked.MissionStarted -= OnCrewMissionStarted;
+            teamHooked = null;
+        }
+
+        void OnCrewChanged()
+        {
+            // The room's mission wins over the local pick (players who joined see the host's choice).
+            string id = Crew?.ScenarioId;
+            if (!string.IsNullOrEmpty(id))
+            {
+                int i = Array.FindIndex(MenuCatalog.Scenarios, s => s.Id == id);
+                if (i >= 0) teamScenario = i;
+            }
+            RefreshTeam();
+        }
+
+        void StepTeamScenario(int step)
+        {
+            ICrewNetwork net = Crew;
+            if (net != null && net.Status == CrewNetStatus.InRoom && !net.IsHost) return; // only the host picks the mission
+            int n = MenuCatalog.Scenarios.Length;
+            teamScenario = ((teamScenario + step) % n + n) % n;
+            if (net != null && net.Status == CrewNetStatus.InRoom) net.SetScenario(MenuCatalog.Scenarios[teamScenario].Id);
+            RefreshTeam();
+        }
+
+        void CreateTeamRoom()
+        {
+            ICrewNetwork net = Crew;
+            if (net == null) return;
+            net.Connect(TeamNickname());
+            net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id);
+        }
+
+        void JoinTeamRoom()
+        {
+            ICrewNetwork net = Crew;
+            if (net == null) return;
+            if (CrewRoomCode.Normalize(teamCodeField?.value) == null)
+            {
+                RefreshTeam(Loc.T("Неверный код комнаты"));
+                return;
+            }
+            net.Connect(TeamNickname());
+            net.JoinRoom(teamCodeField.value);
+        }
+
+        /// <summary>The host started the mission (fires on every computer of the room): freeze the crew and load the flight.</summary>
+        void OnCrewMissionStarted(string scenarioId)
+        {
+            ICrewNetwork net = Crew;
+            if (net == null || teamLaunching) return;
+            teamLaunching = true;
+            CrewSession.Begin(net, scenarioId);
+            // A team mission never touches the players' own careers: an in-memory profile with every part open.
+            PlayerSession.PendingSandbox = Application.CanStreamedLevelBeLoaded(gameplayScene);
+            LoadGameplay(scenarioId);
+        }
+
+        /// <summary>Redraws the dynamic part of the team screen from <see cref="Crew"/>.</summary>
+        void RefreshTeam(string message = null)
+        {
+            if (teamRoles == null) return;
+            ICrewNetwork net = Crew;
+            bool online = teamLink == CrewLink.Online;
+            bool inRoom = net != null && net.Status == CrewNetStatus.InRoom;
+            CrewLobbyState lobby = net?.State;
+
+            foreach (var (l, b) in teamLinkButtons) b.EnableInClassList("segmented__item--on", l == teamLink);
+            teamNameField.parent.style.display = online ? DisplayStyle.Flex : DisplayStyle.None;
+
+            teamStatus.text = message ?? (net == null ? "" : net.StatusText);
+            teamStatus.EnableInClassList("team-status--bad", net != null && net.Status == CrewNetStatus.Failed || message != null);
+
+            MenuCatalog.Scenario scenario = MenuCatalog.Scenarios[teamScenario];
+            teamMissionTitle.text = Loc.T(scenario.Title);
+            teamMissionMeta.text = Loc.T(scenario.Target) + "  ·  " + Loc.T(scenario.Difficulty.Title);
+
+            BuildTeamRoomRow(net, online, inRoom);
+            BuildTeamRoles(net, lobby, inRoom);
+            BuildTeamCrew(net, lobby, inRoom);
+            BuildTeamFoot(net, lobby, online, inRoom);
+            ApplyFonts(teamRoomRow.parent.parent);
+        }
+
+        void BuildTeamRoomRow(ICrewNetwork net, bool online, bool inRoom)
+        {
+            teamRoomRow.Clear();
+            if (!online)
+            {
+                teamRoomRow.Add(Text("ВСЕ ИГРОКИ ЗА ОДНИМ КОМПЬЮТЕРОМ: ВЫБЕРИТЕ ИГРОКА НИЖЕ И НАЖМИТЕ НА РОЛЬ", "team-bar__label", "t-strong"));
+                return;
+            }
+            if (inRoom)
+            {
+                teamRoomRow.Add(Text("КОД КОМНАТЫ", "team-bar__label", "t-strong"));
+                teamRoomRow.Add(Text(net.RoomCode ?? "—", "room-code", "t-mono"));
+                var leave = Add(teamRoomRow, ButtonEl("ВЫЙТИ ИЗ КОМНАТЫ", () => net.Leave()));
+                leave.AddToClassList("btn--text");
+                leave.style.marginLeft = 18;
+                return;
+            }
+            bool busy = net != null && (net.Status == CrewNetStatus.Connecting || net.Status == CrewNetStatus.JoiningRoom);
+            var create = Add(teamRoomRow, ButtonEl("СОЗДАТЬ КОМНАТУ", CreateTeamRoom, primary: !busy, disabled: busy));
+            create.style.marginRight = 26;
+            teamRoomRow.Add(Text("ИЛИ КОД", "team-bar__label", "t-strong"));
+            string typed = teamCodeField != null ? teamCodeField.value : "";
+            teamCodeField = new TextField { value = typed, maxLength = 9 };
+            teamCodeField.AddToClassList("hz-field");
+            teamCodeField.AddToClassList("team-field");
+            teamCodeField.AddToClassList("team-field--code");
+            teamRoomRow.Add(teamCodeField);
+            var join = Add(teamRoomRow, ButtonEl("ВОЙТИ", JoinTeamRoom, disabled: busy));
+            join.style.marginLeft = 10;
+        }
+
+        void BuildTeamRoles(ICrewNetwork net, CrewLobbyState lobby, bool inRoom)
+        {
+            teamRoles.Clear();
+            int me = net != null ? net.LocalMemberId : -1;
+            for (int i = 0; i < CrewRoles.Count; i++)
+            {
+                CrewRole role = CrewRoles.All[i];
+                CrewRoleInfo info = CrewRoles.Info(role);
+                Color tint = new Color32(info.R, info.G, info.B, 255);
+                int owner = lobby != null ? lobby.OwnerOf(role) : CrewLobbyState.NoOwner;
+                CrewMember holder = owner != CrewLobbyState.NoOwner ? lobby.Find(owner) : null;
+                bool mine = holder != null && owner == me, free = holder == null;
+
+                var card = new Button(() => { if (inRoom) Crew?.ToggleRole(role); });
+                card.AddToClassList("role-card");
+                card.AddToClassList("team-role");
+                if (free) card.AddToClassList("role-card--open");
+                if (mine) card.AddToClassList("team-role--mine");
+                if (i == CrewRoles.Count - 1) card.AddToClassList("role-card--last");
+                teamRoles.Add(card);
+
+                Add(card, El("role-card__band")).style.backgroundColor = tint;
+                var inner = Add(card, El("role-card__inner"));
+                var avatar = Add(inner, Text(info.Initials, "role-card__avatar", "t-strong"));
+                avatar.style.borderTopColor = avatar.style.borderBottomColor = avatar.style.borderLeftColor = avatar.style.borderRightColor = tint;
+                avatar.style.color = tint;
+                avatar.style.backgroundColor = new Color(tint.r, tint.g, tint.b, free ? 0.04f : 0.14f);
+                var title = Add(inner, new Label(info.Title));
+                title.AddToClassList("role-card__title");
+                title.AddToClassList("t-strong");
+                var owns = Add(inner, new Label(info.Owns));
+                owns.AddToClassList("role-card__owns");
+                owns.AddToClassList("t-strong");
+                owns.style.color = tint;
+                var desc = Add(inner, new Label(info.Description));
+                desc.AddToClassList("role-card__desc");
+                for (int d = 0; d < info.DutyCount; d++)
+                {
+                    var duty = Add(inner, new Label("—  " + info.Duty(d)));
+                    duty.AddToClassList("role-card__duty");
+                }
+                inner.Add(El("role-card__divider"));
+                var who = Add(inner, new Label(free ? Loc.T("Свободно") : holder.Name));
+                who.AddToClassList("role-card__player");
+                who.AddToClassList("t-strong");
+                string meta = free ? Loc.T("Нажмите, чтобы взять роль")
+                    : mine ? Loc.T("Это вы") + OtherRolesText(lobby, owner, role)
+                    : (holder.IsHost ? Loc.T("Хост") : Loc.T("Игрок")) + OtherRolesText(lobby, owner, role);
+                var metaLabel = Add(inner, new Label(meta));
+                metaLabel.AddToClassList("role-card__meta");
+                metaLabel.AddToClassList("wrap");
+
+                string action = !inRoom ? Loc.T("НЕТ КОМНАТЫ") : free ? Loc.T("ВЗЯТЬ РОЛЬ") : mine ? Loc.T("ВАША РОЛЬ · СНЯТЬ") : Loc.T("ЗАНЯТО");
+                var state = Add(card, new Label(action));
+                state.AddToClassList("ready");
+                state.AddToClassList(free ? "ready--open" : mine ? "ready--yes" : "ready--no");
+                state.AddToClassList("t-strong");
+            }
+        }
+
+        /// <summary>« · ещё ПИЛОТ» — the other roles the same player holds.</summary>
+        static string OtherRolesText(CrewLobbyState lobby, int owner, CrewRole except)
+        {
+            var others = new List<string>();
+            foreach (CrewRole r in lobby.RolesOf(owner))
+                if (r != except) others.Add(CrewRoles.Info(r).Title);
+            return others.Count == 0 ? "" : "  ·  " + Loc.T("ещё") + " " + string.Join(", ", others);
+        }
+
+        void BuildTeamCrew(ICrewNetwork net, CrewLobbyState lobby, bool inRoom)
+        {
+            teamCrew.Clear();
+            if (!inRoom || lobby == null) return;
+            var crewTitle = Add(teamCrew, new Label(Loc.T("ЭКИПАЖ") + "  " + lobby.Count + "/" + CrewLobbyState.MaxPlayers));
+            crewTitle.AddToClassList("team-bar__label");
+            crewTitle.AddToClassList("t-strong");
+            var local = net as LocalCrewNetwork;
+            foreach (CrewMember m in lobby.Members)
+            {
+                int id = m.Id;
+                bool active = id == net.LocalMemberId;
+                var seat = new Button(() => local?.SelectSeat(id));
+                seat.AddToClassList("crew-seat");
+                if (active) seat.AddToClassList("crew-seat--active");
+                teamCrew.Add(seat);
+                var label = Add(seat, new Label((m.IsHost && local == null ? "★ " : "") + m.Name));
+                label.AddToClassList("crew-seat__name");
+                label.AddToClassList("t-strong");
+                var initials = new List<string>();
+                foreach (CrewRole r in lobby.RolesOf(id)) initials.Add(CrewRoles.Info(r).Initials);
+                var roles = Add(seat, new Label(initials.Count == 0 ? Loc.T("без роли") : string.Join(" ", initials)));
+                roles.AddToClassList("crew-seat__roles");
+                roles.AddToClassList("t-mono");
+                if (local == null)
+                {
+                    var ready = Add(seat, new Label(m.Ready ? Loc.T("ГОТОВ") : Loc.T("НЕ ГОТОВ")));
+                    ready.AddToClassList("crew-seat__state");
+                    ready.AddToClassList(m.Ready ? "crew-seat__state--yes" : "crew-seat__state--no");
+                }
+                else if (lobby.Count > 1)
+                {
+                    var remove = new Button(() => local.RemoveSeat(id)) { text = "×" };
+                    remove.AddToClassList("crew-seat__remove");
+                    seat.Add(remove);
+                }
+            }
+            if (local != null && !lobby.IsFull)
+            {
+                var add = new Button(() => local.AddSeat()) { text = Loc.T("+ ИГРОК") };
+                add.AddToClassList("crew-seat");
+                add.AddToClassList("crew-seat--add");
+                add.AddToClassList("t-strong");
+                teamCrew.Add(add);
+            }
+        }
+
+        void BuildTeamFoot(ICrewNetwork net, CrewLobbyState lobby, bool online, bool inRoom)
+        {
+            teamFoot.Clear();
+            Add(teamFoot, Text("КАК ЭТО РАБОТАЕТ", "eyebrow", "eyebrow--cyan", "t-strong")).style.marginRight = 8;
+            Add(teamFoot, new Label(TeamIssueText(net, lobby, online, inRoom))).AddToClassList("team-foot__text");
+            teamFoot.Add(El("grow"));
+            if (!inRoom || lobby == null) return;
+
+            bool host = net.IsHost;
+            if (host && lobby.UncoveredRoles().Count > 0 && lobby.Count > 0)
+                Add(teamFoot, ButtonEl("РАЗДАТЬ СВОБОДНЫЕ РОЛИ", () => Crew?.AssignUncovered())).style.marginRight = 14;
+            if (online)
+            {
+                CrewMember me = lobby.Find(net.LocalMemberId);
+                bool ready = me != null && me.Ready;
+                bool hasRole = me != null && lobby.RolesOf(me.Id).Count > 0;
+                Add(teamFoot, ButtonEl(ready ? "НЕ ГОТОВ" : "ГОТОВ", () => Crew?.SetReady(!ready), primary: !ready && hasRole && !host,
+                    disabled: !hasRole)).style.marginRight = 14;
+            }
+            bool canStart = host && lobby.CanStart;
+            var start = Add(teamFoot, ButtonEl("НАЧАТЬ МИССИЮ", () => { if (Crew != null && Crew.IsHost) Crew.StartMission(); },
+                primary: canStart, disabled: !canStart));
+            int covered = CrewRoles.Count - lobby.UncoveredRoles().Count;
+            start.Add(Text(covered + "/" + CrewRoles.Count + "  " + Loc.T("РОЛЕЙ"), "btn__count", "t-mono"));
+        }
+
+        /// <summary>What the crew has to do next, in plain words.</summary>
+        static string TeamIssueText(ICrewNetwork net, CrewLobbyState lobby, bool online, bool inRoom)
+        {
+            if (net == null) return "";
+            if (!inRoom)
+                return online ? Loc.T("Создайте комнату и продиктуйте код команде — или введите код друга.") : "";
+            switch (lobby.Check())
+            {
+                case CrewLobbyIssue.NotEnoughPlayers:
+                    return online
+                        ? Loc.T("Нужно минимум 2 игрока, сейчас в комнате: ") + lobby.Count + "."
+                        : Loc.T("Нужно минимум 2 игрока: добавьте второго кнопкой «+ ИГРОК».");
+                case CrewLobbyIssue.RolesUncovered:
+                    var free = new List<string>();
+                    foreach (CrewRole r in lobby.UncoveredRoles()) free.Add(CrewRoles.Info(r).Title);
+                    return Loc.T("Свободны роли: ") + string.Join(", ", free) + ". " +
+                           Loc.T("Игроков меньше четырёх — кто-то должен взять несколько ролей.");
+                case CrewLobbyIssue.MemberWithoutRole:
+                    foreach (CrewMember m in lobby.Members)
+                        if (lobby.RolesOf(m.Id).Count == 0)
+                            return Loc.T("У игрока без роли нечего делать: ") + m.Name + Loc.T(" — возьмите роль у товарища.");
+                    return "";
+                case CrewLobbyIssue.NotReady:
+                    var waiting = new List<string>();
+                    foreach (CrewMember m in lobby.Members)
+                        if (!m.Ready) waiting.Add(m.Name);
+                    return Loc.T("Ждём готовности: ") + string.Join(", ", waiting) + ".";
+                default:
+                    return net.IsHost
+                        ? Loc.T("Экипаж собран — можно начинать миссию.")
+                        : Loc.T("Экипаж собран — ждём, когда хост начнёт миссию.");
+            }
         }
 
         // ─────────────────────────────── academy ───────────────────────────────

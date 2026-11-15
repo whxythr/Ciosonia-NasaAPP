@@ -6,7 +6,7 @@ namespace SpaceSim.Runtime.Menu
     public enum MissionResource { Budget, Mass, Power, Data, Comms, Lifetime }
 
     /// <summary>
-    /// Static content for the main menu: mission scenarios, difficulty levels, team roles and Academy lessons.
+    /// Static content for the main menu: mission scenarios, difficulty levels and Academy lessons (team roles: SpaceSim.Multiplayer.CrewRoles).
     /// Pure data so the mission-design screens can reuse it later.
     /// </summary>
     public static class MenuCatalog
@@ -34,12 +34,6 @@ namespace SpaceSim.Runtime.Menu
         public sealed class Difficulty
         {
             public string Title, Tagline, Description;
-        }
-
-        public sealed class Role
-        {
-            public string Title, Initials, Owns, Description;
-            public Color Tint;
         }
 
         public sealed class Lesson
@@ -182,34 +176,6 @@ namespace SpaceSim.Runtime.Menu
             {
                 Title = "FLIGHT DIRECTOR", Tagline = "No safety net",
                 Description = "Tight budgets, part failures and random events during the mission. Plan reserves or lose the spacecraft.",
-            },
-        };
-
-        public static readonly Role[] Roles =
-        {
-            new Role
-            {
-                Title = "MISSION PLANNER", Initials = "MP", Owns = "Objective · Orbit · Timeline",
-                Description = "Sets the goal, picks the orbit and keeps the schedule.",
-                Tint = new Color32(0xFF, 0xC8, 0x57, 0xFF),
-            },
-            new Role
-            {
-                Title = "SPACECRAFT ENGINEER", Initials = "SE", Owns = "Structure · Power · Mass",
-                Description = "Builds the bus: frame, solar arrays, batteries, attitude control.",
-                Tint = new Color32(0x7F, 0xD4, 0xFF, 0xFF),
-            },
-            new Role
-            {
-                Title = "SCIENCE LEAD", Initials = "SL", Owns = "Instruments · Data",
-                Description = "Chooses the instruments and fights for science return.",
-                Tint = new Color32(0xA9, 0x8B, 0xFF, 0xFF),
-            },
-            new Role
-            {
-                Title = "OPS & COMMS", Initials = "OC", Owns = "Launch · Ground stations · Budget",
-                Description = "Books the rocket, the antennas and signs off on the money.",
-                Tint = new Color32(0x5B, 0xE4, 0xC8, 0xFF),
             },
         };
 

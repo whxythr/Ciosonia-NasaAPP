@@ -62,13 +62,18 @@ namespace SpaceSim.Runtime
             initializedPath = SavePath;
             if (PendingSandbox)
             {
+                // A team mission also plays in such an in-memory profile, but keeps the mission the crew picked as its goal.
+                bool team = SpaceSim.Runtime.Multiplayer.CrewSession.Active;
+                string goal = team && !string.IsNullOrEmpty(PendingScenarioId) ? PendingScenarioId : SandboxScenarioId;
                 PendingSandbox = false;
                 PendingScenarioId = null;
                 Transient = true;
                 ReadOnly = false;
                 Profile = PlayerProfile.CreateNew(homeBodyId, GameMode.Sandbox);
-                Profile.scenarioId = SandboxScenarioId;
-                LoadMessage = Loc.T("Песочница: всё открыто, топливо бесконечное, игра не сохраняется.");
+                Profile.scenarioId = goal;
+                LoadMessage = team
+                    ? Loc.T("Командная миссия: ") + SpaceSim.Runtime.Multiplayer.CrewSession.LocalRolesText() + Loc.T(". Игра не сохраняется.")
+                    : Loc.T("Песочница: всё открыто, топливо бесконечное, игра не сохраняется.");
                 return;
             }
             Transient = false;

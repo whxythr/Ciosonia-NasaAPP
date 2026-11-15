@@ -215,6 +215,7 @@ namespace UnityEngine
     public static class Mathf
     {
         public static int FloorToInt(float f) => 0;
+        public static float PerlinNoise(float x, float y) => 0f;
         public static int CeilToInt(float f) => 0;
         public const float PI = 3.14159265f;
         public const float Deg2Rad = PI / 180f, Rad2Deg = 180f / PI;
@@ -422,6 +423,7 @@ namespace UnityEngine
         public static int targetFrameRate { get; set; }
         public static RuntimePlatform platform => RuntimePlatform.WindowsPlayer;
         public static string persistentDataPath => "";
+        public static string dataPath => "";
         public static string streamingAssetsPath => "";
         public static void OpenURL(string url) { }
         public static bool CanStreamedLevelBeLoaded(string levelName) => false;

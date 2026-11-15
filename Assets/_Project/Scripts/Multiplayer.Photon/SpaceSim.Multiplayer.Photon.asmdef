@@ -1,0 +1,21 @@
+{
+    "name": "SpaceSim.Multiplayer.Photon",
+    "rootNamespace": "SpaceSim.Networking",
+    "references": [
+        "SpaceSim.Core",
+        "SpaceSim.Runtime",
+        "PhotonUnityNetworking",
+        "PhotonRealtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "PHOTON_UNITY_NETWORKING"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

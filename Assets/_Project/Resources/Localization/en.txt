@@ -3210,3 +3210,93 @@ Tab — экипаж	Tab — crew
 СВОБОДНЫЙ ПОЛЁТ · БЕЗ СОХРАНЕНИЙ	FREE FLIGHT · NO SAVES
 Сохранений нет: игра ещё не начиналась. «Карьера» или «Новая миссия» создадут профиль	No saves: the game has not started yet. «Career» or «New mission» will create a profile
 Выход из сферы влияния	SOI exit
+КАПИТАН	CAPTAIN
+КП	CP
+Миссия · Связь ролей	Mission · Links the roles
+Разбирает миссию, выбранную командой, и раздаёт каждому то, что ему нужно	Analyses the mission the team chose and gives everyone what they need
+Вес и задачи робота — водителю робота	Robot mass and tasks — to the robot driver
+Характеристики ракеты — инженеру и пилоту	Rocket specs — to the engineer and the pilot
+Как робота заберут после миссии	How the robot is recovered after the mission
+ИН	EN
+Ракета · Δv · Запас	Rocket · Δv · Margin
+Строит ракету под миссию: дистанция, полезная нагрузка и запас на ошибку человека	Builds the rocket for the mission: distance, payload and a margin for human error
+Ракета под дистанцию и массу робота	A rocket for the distance and the robot's mass
+Запас топлива на ошибку пилота	Fuel margin for pilot error
+Предупреждения системы о нехватке запаса	System warnings when the margin runs short
+ПЛ	PL
+План полёта · Управление	Flight plan · Controls
+Планирует полёт на готовой ракете и управляет ей	Plans the flight with the finished rocket and flies it
+План полёта и манёвры	Flight plan and manoeuvres
+Взлёт, переход и посадка	Launch, transfer and landing
+Доставка робота к цели	Delivering the robot to the target
+ВОДИТЕЛЬ РОБОТА	ROBOT DRIVER
+ВР	RD
+Робот · Батарея · Защита	Robot · Battery · Shielding
+Собирает робота по снимкам со спутника и управляет им на поверхности	Builds the robot from the satellite images and drives it on the surface
+Батарея и накладки на ноги	Battery and foot pads
+Защита от радиации и температуры	Radiation and temperature protection
+Управление роботом и его состоянием	Driving the robot and keeping it healthy
+Игрок	Player
+Отключено	Disconnected
+Создание комнаты	Creating room
+Не удалось создать комнату	Could not create the room
+Неверный код комнаты	Invalid room code
+Вход в комнату	Joining room
+в комнате уже 4 игрока	the room already has 4 players
+миссия уже началась	the mission has already started
+комната не найдена	room not found
+Не удалось войти	Could not join
+В комнате	In room
+Вы вышли из комнаты	You left the room
+НАБЛЮДАТЕЛЬ	OBSERVER
+Игроки за одним компьютером	Players at one computer
+Не подключено	Not connected
+Игра не сохраняется	The game is not saved
+СОБЕРИТЕ ЭКИПАЖ	ASSEMBLE YOUR CREW
+От 2 до 4 игроков, одна ракета. Если игроков меньше четырёх, кто-то берёт несколько ролей	2 to 4 players, one rocket. With fewer than four players, someone takes several roles
+ИГРА	PLAY
+НА ОДНОМ ЭКРАНЕ	SAME SCREEN
+ОНЛАЙН · PHOTON	ONLINE · PHOTON
+ВАШЕ ИМЯ	YOUR NAME
+МИССИЯ	MISSION
+ВСЕ ИГРОКИ ЗА ОДНИМ КОМПЬЮТЕРОМ: ВЫБЕРИТЕ ИГРОКА НИЖЕ И НАЖМИТЕ НА РОЛЬ	EVERYONE AT ONE COMPUTER: PICK A PLAYER BELOW, THEN CLICK A ROLE
+КОД КОМНАТЫ	ROOM CODE
+ВЫЙТИ ИЗ КОМНАТЫ	LEAVE ROOM
+СОЗДАТЬ КОМНАТУ	CREATE ROOM
+ИЛИ КОД	OR CODE
+ВОЙТИ	JOIN
+Свободно	Open
+Нажмите, чтобы взять роль	Click to take the role
+Это вы	That is you
+Хост	Host
+НЕТ КОМНАТЫ	NO ROOM
+ВЗЯТЬ РОЛЬ	TAKE ROLE
+ВАША РОЛЬ · СНЯТЬ	YOUR ROLE · DROP
+ЗАНЯТО	TAKEN
+ещё	also
+без роли	no role
+ГОТОВ	READY
+НЕ ГОТОВ	NOT READY
+КАК ЭТО РАБОТАЕТ	HOW IT WORKS
+РАЗДАТЬ СВОБОДНЫЕ РОЛИ	ASSIGN OPEN ROLES
+НАЧАТЬ МИССИЮ	START MISSION
+РОЛЕЙ	ROLES
+Создайте комнату и продиктуйте код команде — или введите код друга	Create a room and read the code to your team — or enter a friend's code
+Нужно минимум 2 игрока, сейчас в комнате	At least 2 players are needed, in the room now
+Нужно минимум 2 игрока: добавьте второго кнопкой «+ ИГРОК	At least 2 players are needed: add a second one with “+ PLAYER
+Свободны роли	Open roles
+Игроков меньше четырёх — кто-то должен взять несколько ролей	Fewer than four players — someone has to take several roles
+У игрока без роли нечего делать	A player without a role has nothing to do
+возьмите роль у товарища	take a role from a teammate
+Ждём готовности	Waiting for
+Экипаж собран — можно начинать миссию	Crew assembled — the mission can start
+Экипаж собран — ждём, когда хост начнёт миссию	Crew assembled — waiting for the host to start the mission
+Photon PUN 2 не установлен: импортируйте его из Asset Store и задайте App ID	Photon PUN 2 is not installed: import it from the Asset Store and set the App ID
+Photon: не задан App ID (Window ▸ Photon Unity Networking ▸ Highlight Server Settings	Photon: no App ID set (Window ▸ Photon Unity Networking ▸ Highlight Server Settings
+Подключение к Photon	Connecting to Photon
+Photon: не удалось начать подключение	Photon: could not start connecting
+Подключено к Photon	Connected to Photon
+Связь с Photon потеряна	Lost connection to Photon
+Photon: не удалось создать комнату	Photon: could not create the room
+Photon: не удалось войти в комнату	Photon: could not join the room
+ВЫ	YOU
