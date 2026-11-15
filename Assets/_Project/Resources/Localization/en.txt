@@ -3259,7 +3259,7 @@ Tab — экипаж	Tab — crew
 КОД КОМНАТЫ	ROOM CODE
 ВЫЙТИ ИЗ КОМНАТЫ	LEAVE ROOM
 СОЗДАТЬ КОМНАТУ	CREATE ROOM
-ИЛИ КОД	OR CODE
+ИЛИ КОД	ROOM'S CODE
 ВОЙТИ	JOIN
 Свободно	Open
 Нажмите, чтобы взять роль	Click to take the role
@@ -3301,3 +3301,24 @@ Photon: не удалось войти в комнату	Photon: could not join 
 вышел	left
 Напишите игроку: что ему нужно для миссии.	Message the player: tell them what they need for the mission.
 Здесь сообщения капитана. Ответить можно только ему.	The captain's messages appear here. You can reply only to the captain.
+Ракету строит	The rocket is built by
+Полёт планирует	The flight is planned by
+Ракетой управляет	The rocket is flown by
+Роботом управляет	The robot is driven by
+Ангар открыт только для просмотра.	The hangar is open for viewing only.
+Инженер собрал новую ракету: она встанет на старт, когда эта вернётся на площадку.	The engineer has built a new rocket: it goes on the pad once this one is back on the pad.
+На старте ракета инженера	On the pad: the engineer's rocket
+Пилот вышел из миссии: полёт больше не повторяет его ракету.	The pilot has left the mission: the flight no longer follows their rocket.
+РЕГИОН	REGION
+Переход в регион	Switching to region
+Комната не найдена в	Room not found in
+ищем в	searching in
+комнаты нет ни в EU, ни в US	the room is in neither EU nor US
+ОТКРЫТАЯ	PUBLIC
+ПО КОДУ	BY CODE
+ОТКРЫТЫЕ КОМНАТЫ	PUBLIC ROOMS
+Пока никого: создайте открытую комнату или войдите по коду.	Nobody yet: create a public room or join by code.
+Список загружается…	Loading the list…
+Создание открытой комнаты	Creating public room
+Photon отклонил App ID: нужен App ID приложения типа PUN (dashboard.photonengine.com), скопированный целиком.	Photon rejected the App ID: use the App ID of a PUN-type app (dashboard.photonengine.com), copied in full.
+Photon: достигнут лимит одновременных игроков бесплатного тарифа.	Photon: the free plan's concurrent player limit is reached.

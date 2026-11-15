@@ -190,3 +190,66 @@ namespace SpaceSim.Tests
             Assert.AreEqual(expected, CrewRoomCode.Normalize(typed));
     }
 }
+
+namespace SpaceSim.Tests
+{
+    public class CrewRegionTests
+    {
+        [NUnit.Framework.Test]
+        public void Normalize_KeepsKnownRegions_AndFallsBackToEurope()
+        {
+            NUnit.Framework.Assert.AreEqual("eu", SpaceSim.Multiplayer.CrewRegion.Normalize("EU"));
+            NUnit.Framework.Assert.AreEqual("us", SpaceSim.Multiplayer.CrewRegion.Normalize(" us "));
+            NUnit.Framework.Assert.AreEqual("eu", SpaceSim.Multiplayer.CrewRegion.Normalize("asia"));
+            NUnit.Framework.Assert.AreEqual("eu", SpaceSim.Multiplayer.CrewRegion.Normalize(null));
+        }
+
+        [NUnit.Framework.Test]
+        public void Other_SwapsEuropeAndAmerica()
+        {
+            NUnit.Framework.Assert.AreEqual("us", SpaceSim.Multiplayer.CrewRegion.Other("eu"));
+            NUnit.Framework.Assert.AreEqual("eu", SpaceSim.Multiplayer.CrewRegion.Other("us"));
+            NUnit.Framework.Assert.AreEqual("US", SpaceSim.Multiplayer.CrewRegion.Label("us"));
+        }
+    }
+}
+
+namespace SpaceSim.Tests
+{
+    public class CrewRoomListTests
+    {
+        static SpaceSim.Multiplayer.CrewRoomInfo Room(string code, int players, bool open = true, int max = 4) =>
+            new SpaceSim.Multiplayer.CrewRoomInfo { Code = code, Players = players, Open = open, MaxPlayers = max, Host = "H" };
+
+        [NUnit.Framework.Test]
+        public void Joinable_DropsFullClosedEmptyAndForeignRooms()
+        {
+            var rooms = new[]
+            {
+                Room("HZN-AAAA", 2),
+                Room("HZN-BBBB", 4),            // full
+                Room("HZN-CCCC", 1, open: false), // mission started
+                Room("HZN-DDDD", 0),            // nobody left
+                Room("somebody-else", 1),       // not a crew code
+                null,
+            };
+            var list = SpaceSim.Multiplayer.CrewRoomList.Joinable(rooms);
+            NUnit.Framework.Assert.AreEqual(1, list.Count);
+            NUnit.Framework.Assert.AreEqual("HZN-AAAA", list[0].Code);
+        }
+
+        [NUnit.Framework.Test]
+        public void Joinable_PutsTheFullestFirstThenByCode_AndCaps()
+        {
+            var rooms = new System.Collections.Generic.List<SpaceSim.Multiplayer.CrewRoomInfo>
+            {
+                Room("HZN-CCCC", 1), Room("HZN-AAAA", 1), Room("HZN-BBBB", 3),
+            };
+            var list = SpaceSim.Multiplayer.CrewRoomList.Joinable(rooms);
+            NUnit.Framework.CollectionAssert.AreEqual(new[] { "HZN-BBBB", "HZN-AAAA", "HZN-CCCC" },
+                list.ConvertAll(r => r.Code));
+            NUnit.Framework.Assert.AreEqual(2, SpaceSim.Multiplayer.CrewRoomList.Joinable(rooms, 2).Count);
+            NUnit.Framework.Assert.AreEqual("3/4", SpaceSim.Multiplayer.CrewRoomList.Seats(list[0]));
+        }
+    }
+}

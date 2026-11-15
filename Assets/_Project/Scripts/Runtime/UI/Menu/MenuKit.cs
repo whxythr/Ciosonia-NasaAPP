@@ -38,6 +38,28 @@ namespace SpaceSim.Runtime.Menu
             return l;
         }
 
+        /// <summary>
+        /// Label whose letters fade left → right from <paramref name="from"/> to <paramref name="to"/> (rich-text colour per
+        /// character: UI Toolkit has no gradient fill for text). The text is not localized.
+        /// </summary>
+        public static Label GradientText(string text, Color from, Color to, params string[] classes)
+        {
+            var sb = new System.Text.StringBuilder();
+            int last = Mathf.Max(1, text.Length - 1);
+            for (int i = 0; i < text.Length; i++)
+            {
+                Color c = Color.Lerp(from, to, i / (float)last);
+                sb.Append("<color=#")
+                  .Append(((int)(Mathf.Clamp01(c.r) * 255f + 0.5f)).ToString("X2"))
+                  .Append(((int)(Mathf.Clamp01(c.g) * 255f + 0.5f)).ToString("X2"))
+                  .Append(((int)(Mathf.Clamp01(c.b) * 255f + 0.5f)).ToString("X2"))
+                  .Append('>').Append(text[i]).Append("</color>");
+            }
+            var l = new Label(sb.ToString()); // rich text is on by default for Label
+            foreach (var c in classes) if (!string.IsNullOrEmpty(c)) l.AddToClassList(c);
+            return l;
+        }
+
         /// <summary>Menu button (".btn"); primary = amber.</summary>
         public static Button ButtonEl(string label, Action onClick, bool primary = false, bool disabled = false)
         {

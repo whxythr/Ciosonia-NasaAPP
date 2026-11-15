@@ -114,7 +114,7 @@ Button {
 .title {
     font-size: 124px; letter-spacing: 26px; color: rgb(240, 234, 220);
     margin-top: 0; margin-left: -6px; margin-bottom: -8px;
-    text-shadow: 0 0 10px rgba(127, 180, 255, 0.18);
+    text-shadow: 0 0 12px rgba(200, 120, 255, 0.22);
 }
 .title-rule { flex-direction: row; align-items: center; margin-top: 2px; margin-bottom: 8px; }
 .title-rule__line { width: 64px; height: 2px; background-color: rgb(98, 140, 255); margin-right: 18px; }

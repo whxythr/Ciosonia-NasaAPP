@@ -31,6 +31,8 @@ namespace UnityEngine
         public static bool HasKey(string key) => false;
         public static string GetString(string key, string defaultValue) => defaultValue;
         public static void SetString(string key, string value) { }
+        public static int GetInt(string key, int defaultValue) => defaultValue;
+        public static void SetInt(string key, int value) { }
         public static void Save() { }
     }
 

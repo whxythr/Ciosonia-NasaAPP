@@ -59,6 +59,11 @@ namespace SpaceSim.Runtime
         /// <summary>Starts drilling; returns the message shown to the player.</summary>
         public string Begin()
         {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface))
+            {
+                SpaceSim.Runtime.Multiplayer.CrewGate.Deny(SpaceSim.Multiplayer.CrewAction.WorkOnSurface, state);
+                return SpaceSim.Runtime.Multiplayer.CrewSession.DeniedText(SpaceSim.Multiplayer.CrewAction.WorkOnSurface);
+            }
             string msg = Start();
             state?.Notify(msg);
             return msg;

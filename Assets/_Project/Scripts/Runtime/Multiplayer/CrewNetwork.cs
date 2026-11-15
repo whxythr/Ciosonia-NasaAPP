@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SpaceSim.Multiplayer;
 
 namespace SpaceSim.Runtime.Multiplayer
@@ -45,8 +46,28 @@ namespace SpaceSim.Runtime.Multiplayer
         /// <summary>A chat line arrived from another player: (sender id, text). Raised only for lines addressed to this computer.</summary>
         event Action<int, string> ChatReceived;
 
+        /// <summary>The Photon region this lobby connects to (<see cref="CrewRegion"/>: «eu» or «us»).</summary>
+        string Region { get; }
+        /// <summary>
+        /// Picks the region (outside a room only). Connected already: drops the connection and connects to the new region.
+        /// </summary>
+        void SetRegion(string region);
+
         void Connect(string nickname);
-        void CreateRoom(string scenarioId);
+        /// <summary>
+        /// Makes a room. <paramref name="isPublic"/>: it is listed in the lobby of its region and anyone may join without the code;
+        /// otherwise (the default) only by the code.
+        /// </summary>
+        void CreateRoom(string scenarioId, bool isPublic = false);
+
+        /// <summary>Open rooms of the current region, as last listed by the server (updates raise <see cref="Changed"/>).</summary>
+        IReadOnlyList<CrewRoomInfo> PublicRooms { get; }
+        /// <summary>The room list is being received (connected to the region's lobby).</summary>
+        bool ListingRooms { get; }
+        /// <summary>The current room is listed for everyone (false outside a room).</summary>
+        bool RoomIsPublic { get; }
+        /// <summary>Host: list the room for everyone or hide it again (code only).</summary>
+        void SetRoomPublic(bool isPublic);
         void JoinRoom(string code);
         void Leave();
 
@@ -61,6 +82,23 @@ namespace SpaceSim.Runtime.Multiplayer
         void StartMission();
         /// <summary>Sends a chat line to one player (the rule «only with the captain» is checked by <see cref="CrewChat"/>).</summary>
         void SendChat(int toMemberId, string text);
+
+        // ---- Mission sync (see CrewFlightLink) ----
+
+        /// <summary>A flight snapshot arrived: (sender id, <see cref="CrewFlightSnapshot.Encode"/> text).</summary>
+        event Action<int, string> FlightReceived;
+        /// <summary>Sends a flight snapshot to every other player (unreliable: a lost one is replaced by the next).</summary>
+        void SendFlight(string snapshot);
+        /// <summary>A robot snapshot arrived: (sender id, <see cref="CrewRobotSnapshot.Encode"/> text).</summary>
+        event Action<int, string> RobotReceived;
+        /// <summary>Sends a robot snapshot to every other player (unreliable).</summary>
+        void SendRobot(string snapshot);
+        /// <summary>The engineer's latest rocket (blueprint JSON) kept by the room, or null; changes raise <see cref="Changed"/>.</summary>
+        string SharedDesign { get; }
+        /// <summary>Engineer: puts the rolled-out rocket into the room for everybody (also players whose scene is still loading).</summary>
+        void PublishDesign(string blueprintJson);
+        /// <summary>Estimated one-way delay to the server [s] (half the round trip).</summary>
+        double LatencySeconds { get; }
     }
 
     /// <summary>

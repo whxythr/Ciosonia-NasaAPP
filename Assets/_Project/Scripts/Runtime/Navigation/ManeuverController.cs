@@ -6,6 +6,8 @@ using SpaceSim.Localization;
 using SpaceSim.Mathematics;
 using SpaceSim.Navigation;
 using SpaceSim.Physics;
+using SpaceSim.Multiplayer;
+using SpaceSim.Runtime.Multiplayer;
 using UnityEngine;
 
 namespace SpaceSim.Runtime
@@ -107,6 +109,9 @@ namespace SpaceSim.Runtime
         FreeFlightSimulation Sim => boot != null && boot.Body != null ? boot.Body.Simulation : null;
         double Now => boot.Simulation.SimulationTime;
 
+        /// <summary>Team mission: planning and burns belong to the pilot (the others still see the plan and may select points).</summary>
+        bool PilotAllowed() => CrewGate.Allows(CrewAction.PlanFlight, boot != null ? boot.FlightState : null);
+
         void Notify(string text)
         {
             if (boot.FlightState != null) boot.FlightState.Notify(text);
@@ -120,7 +125,7 @@ namespace SpaceSim.Runtime
         /// <summary>Warp to the selected point of the trajectory.</summary>
         public void WarpToSelected()
         {
-            if (!HasSelection) return;
+            if (!HasSelection || !PilotAllowed()) return;
             if (Selected.Time <= Now + WarpApproach.ArrivalTolerance)
             {
                 Notify(Loc.T("Эта точка уже пройдена."));
@@ -133,7 +138,7 @@ namespace SpaceSim.Runtime
         public void WarpToNode()
         {
             ManeuverNode node = Node;
-            if (node == null) return;
+            if (node == null || !PilotAllowed()) return;
             double lead = WarpApproach.NodeLead(nav.Guidance.BurnTime, NodeMargin);
             double t = node.Time - lead;
             if (t <= Now + 1.0)
@@ -228,6 +233,7 @@ namespace SpaceSim.Runtime
 
         public void CreateNode(ManeuverNode node)
         {
+            if (!PilotAllowed()) return;
             AbortBurn(false);
             if (Warp != null && Warp.ToNode) CancelWarp();
             NodeConfirmed = false;
@@ -237,7 +243,7 @@ namespace SpaceSim.Runtime
         public void SetComponents(double prograde, double normal, double radial)
         {
             ManeuverNode n = Node;
-            if (n == null || NodeConfirmed) return;
+            if (n == null || NodeConfirmed || !PilotAllowed()) return;
             n = n.Clone();
             n.Prograde = prograde;
             n.Normal = normal;
@@ -257,7 +263,7 @@ namespace SpaceSim.Runtime
         public void ShiftNode(double seconds)
         {
             ManeuverNode n = Node;
-            if (n == null || NodeConfirmed) return;
+            if (n == null || NodeConfirmed || !PilotAllowed()) return;
             n = n.Clone();
             n.Time = Math.Max(Now + 1.0, n.Time + seconds);
             nav.UpdateNodeLive(n);
@@ -265,6 +271,7 @@ namespace SpaceSim.Runtime
 
         public void DeleteNode()
         {
+            if (!PilotAllowed()) return;
             AbortBurn(false);
             if (Warp != null && Warp.ToNode) CancelWarp();
             NodeConfirmed = false;
@@ -273,7 +280,7 @@ namespace SpaceSim.Runtime
 
         public void ConfirmNode(bool confirmed)
         {
-            if (Node == null) return;
+            if (Node == null || !PilotAllowed()) return;
             NodeConfirmed = confirmed;
             if (confirmed) nav.RefreshNow();
         }
@@ -373,7 +380,7 @@ namespace SpaceSim.Runtime
         public void StartAssistedBurn()
         {
             RocketState r = boot.Body != null ? boot.Body.Rocket : null;
-            if (Node == null) return;
+            if (Node == null || !PilotAllowed()) return;
             if (r == null || !r.HasStages || r.DeltaVRemaining() <= 0.0)
             {
                 Notify(Loc.T("Нет двигателя или топлива: манёвр выполнить нечем."));
@@ -407,7 +414,7 @@ namespace SpaceSim.Runtime
         /// <summary>Sandbox/cheat: adds the node's Δv to the velocity at the node time — no propellant is burnt; flight rewards stop counting.</summary>
         public void StartInstantSandbox()
         {
-            if (Node == null) return;
+            if (Node == null || !PilotAllowed()) return;
             if (!InstantBurnAllowed)
             {
                 Notify(Loc.T("Карьера: мгновенный манёвр недоступен — выполните его двигателем."));
@@ -546,6 +553,7 @@ namespace SpaceSim.Runtime
         /// <summary>Plans a transfer to <paramref name="target"/> in the background; <paramref name="createNode"/> also puts the node at the window.</summary>
         public void PlanTransfer(int target, bool createNode)
         {
+            if (createNode && !PilotAllowed()) return; // anyone may compute the window; only the pilot puts the node
             PatchedConicSystem sys = nav.System;
             FreeFlightSimulation sim = Sim;
             if (sys == null || sim == null || sim.Navigation == null || sim.IsLanded)

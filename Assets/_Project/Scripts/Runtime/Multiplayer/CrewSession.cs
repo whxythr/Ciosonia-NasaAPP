@@ -35,6 +35,9 @@ namespace SpaceSim.Runtime.Multiplayer
         static readonly List<CrewRole> localRoles = new List<CrewRole>();
         static ICrewNetwork network;
 
+        /// <summary>The room the mission runs in (null outside a team mission): flight and rocket sync go through it.</summary>
+        public static ICrewNetwork Network => network;
+
         /// <summary>Freezes the lobby as the mission's crew.</summary>
         public static void Begin(ICrewNetwork net, string scenarioId)
         {
@@ -78,6 +81,13 @@ namespace SpaceSim.Runtime.Multiplayer
 
         /// <summary>True when this computer plays the role (always true outside a team mission).</summary>
         public static bool Has(CrewRole role) => !Active || localRoles.Contains(role);
+
+        /// <summary>True when this computer may do the action (<see cref="CrewPermissions"/>; always true outside a team mission).</summary>
+        public static bool Can(CrewAction action) => !Active || CrewPermissions.Allowed(action, localRoles);
+
+        /// <summary>«Ракету строит ИНЖЕНЕР (Kepler).» — who does the action instead of this computer.</summary>
+        public static string DeniedText(CrewAction action) =>
+            CrewPermissions.DeniedText(action, HolderOf(CrewPermissions.Owner(action)));
 
         static void OnChatReceived(int fromId, string text) => Chat?.Post(fromId, LocalId, text);
 

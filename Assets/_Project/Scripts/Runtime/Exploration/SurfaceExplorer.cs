@@ -227,6 +227,43 @@ namespace SpaceSim.Runtime
             return waterTest;
         }
 
+        // ---- Team mission (CrewRobotLink) -------------------------------------------------------------------
+
+        /// <summary>The walking input of the last EVA step (the robot operator's computer sends it so the others' copy walks alike).</summary>
+        public double LastForward { get; private set; }
+        public double LastRight { get; private set; }
+        public bool LastSprint { get; private set; }
+        /// <summary>Jumps started during this flight stack (a change tells the others' copy to jump).</summary>
+        public int JumpCount { get; private set; }
+
+        /// <summary>A walker on this world's ground at a planet-fixed point, for the copy of another computer's robot.</summary>
+        public SurfaceWalker CreateCrewWalker(Vector3d fixedPoint)
+        {
+            var w = new SurfaceWalker(planet.Model.GravitationalParameter, planet.Model.Radius, WalkSurface(), fixedPoint, WaterTest());
+            w.PlaceAt(fixedPoint);
+            return w;
+        }
+
+        /// <summary>The same robot body this computer would wear outside (drawn whole: the copy is always seen from outside).</summary>
+        public IExplorerBody CreateCrewBody()
+        {
+            IExplorerBody b = CreateBody();
+            if (b != null) b.SetFirstPerson(false);
+            return b;
+        }
+
+        /// <summary>Another computer's robot took this sample: it disappears here and cannot be taken twice.</summary>
+        public void MarkCollectedByCrew(string siteId)
+        {
+            if (string.IsNullOrEmpty(siteId) || session == null) return;
+            if (!session.Profile.collectedSites.Contains(siteId)) session.Profile.collectedSites.Add(siteId);
+            if (siteVisuals.TryGetValue(siteId, out Transform t) && t != null) Destroy(t.gameObject);
+            siteVisuals.Remove(siteId);
+        }
+
+        /// <summary>Samples taken on this computer (the profile's list; in a team mission an in-memory profile).</summary>
+        public IReadOnlyList<string> CollectedSites => session != null ? (IReadOnlyList<string>)session.Profile.collectedSites : new string[0];
+
         // ---- Sites -------------------------------------------------------------------------------------------
 
         void RefreshSites()
@@ -306,6 +343,7 @@ namespace SpaceSim.Runtime
         /// <summary>Goes outside if a suit survives here; returns the reason when not.</summary>
         public string TryStartEva()
         {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface)) return SpaceSim.Runtime.Multiplayer.CrewSession.DeniedText(SpaceSim.Multiplayer.CrewAction.WorkOnSurface); // team mission: the robot is the robot operator's
             var sim = body.Simulation;
             if (sim == null || !sim.IsLanded || body.Destroyed) return Loc.T("Выйти можно только из стоящей на грунте ракеты.");
             CollectionCheck exit = RobotEva.CanExit(planet.Model.Properties, planet.Definition.hazards, robot);
@@ -422,6 +460,7 @@ namespace SpaceSim.Runtime
         /// <summary>Takes a sample through the core rules; returns the message shown to the player.</summary>
         public string TryCollect(SampleSite site)
         {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface)) return SpaceSim.Runtime.Multiplayer.CrewSession.DeniedText(SpaceSim.Multiplayer.CrewAction.WorkOnSurface);
             if (site == null) return Loc.T("Рядом нет образцов.");
             CollectionCheck check = SampleCollection.Check(site, body.Capabilities, session.Profile.CargoMass(), session.Profile.collectedSites);
             if (!check.Ok) return check.Reason;
@@ -449,6 +488,11 @@ namespace SpaceSim.Runtime
         /// <summary>E: outside — take the nearest sample in reach or board the rocket; inside — go out, or use the arm.</summary>
         public string Interact()
         {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface))
+            {
+                SpaceSim.Runtime.Multiplayer.CrewGate.Deny(SpaceSim.Multiplayer.CrewAction.WorkOnSurface, state);
+                return SpaceSim.Runtime.Multiplayer.CrewSession.DeniedText(SpaceSim.Multiplayer.CrewAction.WorkOnSurface);
+            }
             var sim = body.Simulation;
             if (Eva)
             {
@@ -505,6 +549,10 @@ namespace SpaceSim.Runtime
                 sprint |= driveRun;
             }
             float dt = Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            LastForward = forward;
+            LastRight = right;
+            LastSprint = sprint;
+            if (jump) JumpCount++;
             walker.Step(dt, forward, right, yaw, sprint, jump);
             UpdateRobot(dt);
             if (!Eva) return; // the robot failed this step

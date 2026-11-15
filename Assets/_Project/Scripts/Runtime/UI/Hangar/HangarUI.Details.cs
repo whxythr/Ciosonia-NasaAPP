@@ -172,7 +172,7 @@ namespace SpaceSim.Runtime
                 GUILayout.Label(Tonnes(shown) + " / " + Tonnes(capacity) + Loc.T(" т (") + N(shown / capacity * 100.0, 0) + " %)", compact,
                     GUILayout.Width(160));
                 GUILayout.EndHorizontal();
-                if (Math.Abs(slider - shown) > capacity * 1e-4)
+                if (Math.Abs(slider - shown) > capacity * 1e-4 && CrewEditAllowed())
                 {
                     // The value itself can change mid-pass (same controls); flags/status/recompile wait until after the pass.
                     double step = capacity * SliderStep;

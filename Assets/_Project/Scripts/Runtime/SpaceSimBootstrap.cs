@@ -149,6 +149,13 @@ namespace SpaceSim.Runtime
             ScienceMap.Initialize(Science, System);
 
             BuildFlightStack();
+
+            // Team mission: one rocket for the whole crew (the engineer's design, the pilot's flight and clock).
+            if (SpaceSim.Runtime.Multiplayer.CrewSession.Active && SpaceSim.Runtime.Multiplayer.CrewSession.Network != null)
+            {
+                Create<SpaceSim.Runtime.Multiplayer.CrewFlightLink>("CrewFlightLink").Initialize(this);
+                Create<SpaceSim.Runtime.Multiplayer.CrewRobotLink>("CrewRobotLink").Initialize(this); // the robot and the rover
+            }
         }
 
         /// <summary>Orbital scanning and the saved science maps.</summary>

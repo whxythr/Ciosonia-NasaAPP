@@ -12,6 +12,7 @@ namespace SpaceSim.Runtime
 
         void SetEngine(int stage, string engineId)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             StageBlueprint s = design.stages[stage];
             s.engineId = engineId;
@@ -22,6 +23,7 @@ namespace SpaceSim.Runtime
 
         void ChangeEngineCount(int stage, int delta)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             StageBlueprint s = design.stages[stage];
             s.engineCount = Math.Max(1, Math.Min(BlueprintCompiler.MaxEnginesPerStage, s.engineCount + delta));
@@ -32,6 +34,7 @@ namespace SpaceSim.Runtime
 
         void RemoveEngine(int stage)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             design.stages[stage].engineId = "";
             MarkChanged();
@@ -40,6 +43,7 @@ namespace SpaceSim.Runtime
         /// <summary>Adds a tank on top of the stage's tanks (public for tools and tests).</summary>
         public void AddTank(int stage, string tankId)
         {
+            if (!CrewEditAllowed()) return;
             ModuleDefinition tank = ModuleCatalog.Find(tankId);
             if (!ValidStage(stage) || tank == null) return;
             design.stages[stage].tanks.Add(new TankLoad { moduleId = tankId, propellantLoaded = tank.propellantCapacity });
@@ -50,6 +54,7 @@ namespace SpaceSim.Runtime
 
         void RemoveTank(int stage, int tank)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             List<TankLoad> tanks = design.stages[stage].tanks;
             if (tank < 0 || tank >= tanks.Count) return;
@@ -60,6 +65,7 @@ namespace SpaceSim.Runtime
         /// <summary>Installs a payload module in the head section (public for tools and tests).</summary>
         public void AddPayload(string moduleId)
         {
+            if (!CrewEditAllowed()) return;
             ModuleDefinition m = ModuleCatalog.Find(moduleId);
             if (design == null || m == null || !m.IsPayload) return;
             design.payloadModules.Add(moduleId);
@@ -71,6 +77,7 @@ namespace SpaceSim.Runtime
         /// <summary>Mounts a side set (fins, RCS, landing legs) on a stage.</summary>
         void AddAttachment(int stage, string moduleId)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             design.stages[stage].EnsureLists();
             design.stages[stage].attachments.Add(moduleId);
@@ -79,6 +86,7 @@ namespace SpaceSim.Runtime
 
         void RemoveAttachment(int stage, int index)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             List<string> list = design.stages[stage].attachments;
             if (list == null || index < 0 || index >= list.Count) return;
@@ -88,6 +96,7 @@ namespace SpaceSim.Runtime
 
         void RemovePayload(int index)
         {
+            if (!CrewEditAllowed()) return;
             if (design == null || index < 0 || index >= design.payloadModules.Count) return;
             design.payloadModules.RemoveAt(index);
             MarkChanged();
@@ -99,6 +108,7 @@ namespace SpaceSim.Runtime
         /// </summary>
         public bool Install(string moduleId, int stage)
         {
+            if (!CrewEditAllowed()) return false;
             ModuleDefinition m = ModuleCatalog.Find(moduleId);
             if (!open || m == null || IsLocked(m)) return false;
             switch (m.mount)
@@ -175,6 +185,7 @@ namespace SpaceSim.Runtime
 
         void AddStageOnTop()
         {
+            if (!CrewEditAllowed()) return;
             design.stages.Add(new StageBlueprint { name = Loc.T("Ступень ") + (design.stages.Count + 1), engineId = "", engineCount = 1 });
             selectedStage = design.stages.Count - 1;
             RenumberStages();
@@ -183,6 +194,7 @@ namespace SpaceSim.Runtime
 
         void RemoveStage(int stage)
         {
+            if (!CrewEditAllowed()) return;
             if (!ValidStage(stage)) return;
             design.stages.RemoveAt(stage);
             if (selectedStage >= design.stages.Count) selectedStage = design.stages.Count - 1;
@@ -204,6 +216,7 @@ namespace SpaceSim.Runtime
 
         void ResetToDefault()
         {
+            if (!CrewEditAllowed()) return;
             design = RocketBlueprint.CreateDefault();
             selectedStage = 0;
             MarkChanged();
@@ -214,6 +227,7 @@ namespace SpaceSim.Runtime
         /// <summary>"Новый": an empty project — one stage without engine and tanks, a probe core in the head section.</summary>
         void NewProject()
         {
+            if (!CrewEditAllowed()) return;
             design = new RocketBlueprint { name = Loc.T("Новая ракета") };
             design.stages.Add(new StageBlueprint { name = "Ступень 1", engineId = "", engineCount = 1 });
             design.payloadModules.Add(ModuleCatalog.ProbeCore);
@@ -225,6 +239,7 @@ namespace SpaceSim.Runtime
 
         void OpenProject(string name)
         {
+            if (!CrewEditAllowed()) return;
             RocketBlueprint loaded = HangarProjectStore.Load(name, out string message);
             if (loaded == null)
             {

@@ -165,7 +165,7 @@ namespace SpaceSim.Runtime
             GUI.SetNextControlName("hangar-project-name");
             string name = design.name ?? "";
             string edited = GUI.TextField(nameRect, name, HudStyle.Field);
-            if (edited != name)
+            if (edited != name && CrewEditAllowed())
             {
                 design.name = edited.Length > HangarProjectStore.MaxNameLength ? edited.Substring(0, HangarProjectStore.MaxNameLength) : edited;
                 modified = true;

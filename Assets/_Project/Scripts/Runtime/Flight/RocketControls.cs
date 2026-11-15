@@ -1,5 +1,7 @@
 using SpaceSim.Flight;
 using SpaceSim.Localization;
+using SpaceSim.Multiplayer;
+using SpaceSim.Runtime.Multiplayer;
 using UnityEngine;
 
 namespace SpaceSim.Runtime
@@ -46,6 +48,12 @@ namespace SpaceSim.Runtime
         {
             var r = body != null ? body.Rocket : null;
             if (r == null || FlightInput.IsTyping || Suspended || body.Destroyed) return;
+            if (!CrewSession.Can(CrewAction.FlyRocket))
+            {
+                // Team mission: the controls belong to the pilot; a press here only says so.
+                if (AnyControlPressed()) CrewGate.Deny(CrewAction.FlyRocket, state);
+                return;
+            }
             float dt = Time.unscaledDeltaTime;
 
             bool pitching = FlightInput.GetKey(InputKey.W) || FlightInput.GetKey(InputKey.S);
@@ -82,9 +90,17 @@ namespace SpaceSim.Runtime
             if (FlightInput.GetKeyDown(InputKey.Alpha3)) ToggleRcs();
         }
 
+        static bool AnyControlPressed() =>
+            FlightInput.GetKeyDown(InputKey.W) || FlightInput.GetKeyDown(InputKey.S) || FlightInput.GetKeyDown(InputKey.A) ||
+            FlightInput.GetKeyDown(InputKey.D) || FlightInput.GetKeyDown(InputKey.LeftShift) || FlightInput.GetKeyDown(InputKey.LeftCtrl) ||
+            FlightInput.GetKeyDown(InputKey.Z) || FlightInput.GetKeyDown(InputKey.X) || FlightInput.GetKeyDown(InputKey.Return) ||
+            FlightInput.GetKeyDown(InputKey.Space) || FlightInput.GetKeyDown(InputKey.Alpha1) || FlightInput.GetKeyDown(InputKey.Alpha2) ||
+            FlightInput.GetKeyDown(InputKey.Alpha3);
+
         /// <summary>Engine cut-off. A burning solid motor cannot be stopped: nothing changes and the pilot is told so.</summary>
         public void CutOff()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             var r = body.Rocket;
             if (r == null) return;
             if (r.IsSolidBurning)
@@ -98,6 +114,7 @@ namespace SpaceSim.Runtime
 
         public void Ignite()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             if (Suspended)
             {
                 state.Notify(Loc.T("Нельзя: астронавт снаружи. Вернитесь в ракету (E у ракеты)."));
@@ -111,12 +128,14 @@ namespace SpaceSim.Runtime
 
         public void Separate()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             string name = body.Rocket.HasStages ? body.Rocket.CurrentStage.name : null;
             if (body.SeparateStage()) state.Notify(Loc.T("Отделена ") + name + "." + (body.Rocket.HasStages && !body.Rocket.EngineOn ? Loc.T(" Включите следующую ступень (Enter).") : ""));
         }
 
         public void ReleaseParachutes()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             switch (body.ReleaseParachutes())
             {
                 case ParachuteCommand.NoParachutes:
@@ -133,6 +152,7 @@ namespace SpaceSim.Runtime
 
         public void ToggleLegs()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             FlightSystems s = body.Simulation.Systems;
             bool want = s == null || !s.LegsDeployed;
             if (body.SetLegsDeployed(want)) state.Notify(want ? Loc.T("Опоры выпущены.") : Loc.T("Опоры убраны."));
@@ -141,6 +161,7 @@ namespace SpaceSim.Runtime
 
         public void ToggleRcs()
         {
+            if (!CrewGate.Allows(CrewAction.FlyRocket, state)) return;
             FlightSystems s = body.Simulation.Systems;
             var r = body.Rocket;
             if (s == null || s.RcsThrust(r) <= 0.0)

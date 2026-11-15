@@ -815,9 +815,13 @@ namespace SpaceSim.Runtime
                 int parent = b.Index >= 0 ? sys.Parent(b.Index) : PatchedConicSystem.Star;
                 if (b.Index >= 0 && parent >= 0)
                 {
-                    // A moon that would sit on its parent's disk at this zoom only clutters it.
+                    // A moon whose whole orbit would fit on its parent's disk at this zoom only clutters it. The test uses the
+                    // true 3D separation (as if seen face-on), not the projected one: otherwise a moon vanished every time a tilted
+                    // view lined it up with its parent, although it was clearly in front of or beside it (the depth buffer
+                    // already hides one that is really behind).
                     MapBody p = BodyOf(parent);
-                    b.Visible = Vector2.Distance(b.Screen, p.Screen) > p.PixelRadius + b.PixelRadius + 3f;
+                    float separation = Vector3.Distance(b.Position, p.Position) / Mathf.Max(unitsPerPixel * Vector3.Distance(p.Position, cameraPosition), 1e-9f);
+                    b.Visible = separation > p.PixelRadius + b.PixelRadius + 3f;
                 }
                 b.Renderer.enabled = b.Visible;
                 b.Transform.position = b.Position;

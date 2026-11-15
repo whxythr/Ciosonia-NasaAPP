@@ -125,6 +125,12 @@ namespace SpaceSim.Runtime
 
         public void ResetWarp() => SetWarp(1.0);
 
+        /// <summary>
+        /// Team mission follower: moves the clock to <paramref name="time"/> at once (the pilot's clock). The caller puts its
+        /// vehicle on the matching state right after; nothing is stepped in between.
+        /// </summary>
+        public void JumpTo(double time) => clock.Reset(time);
+
         void RefreshWarpLimit()
         {
             double[] levels = settings.timeWarpLevels;
@@ -148,7 +154,8 @@ namespace SpaceSim.Runtime
                 WarpClampCount++;
             }
 
-            if (!FlightInput.IsTyping)
+            // Team mission: the clock follows the pilot's (CrewFlightLink), so only the pilot warps and pauses.
+            if (!FlightInput.IsTyping && SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.FlyRocket))
             {
                 if (FlightInput.GetKeyDown(InputKey.Period)) IncreaseWarp();
                 if (FlightInput.GetKeyDown(InputKey.Comma)) DecreaseWarp();

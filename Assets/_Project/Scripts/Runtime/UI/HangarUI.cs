@@ -148,6 +148,7 @@ namespace SpaceSim.Runtime
             confirmExit = false;
             projectsOpen = false;
             status = "";
+            if (!CrewCanBuild) SetStatus(CrewViewOnlyText, HudStyle.Warning);
             tab = Tab.Design;
             pending.Clear();
             focusRequest = null;
@@ -169,6 +170,7 @@ namespace SpaceSim.Runtime
             projectsOpen = false;
             if (apply)
             {
+                if (!CrewEditAllowed()) return; // team mission: only the engineer rolls a rocket out
                 Refresh();
                 if (!body.IsOnLaunchPad)
                 {

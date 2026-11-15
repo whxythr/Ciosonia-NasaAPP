@@ -127,12 +127,20 @@ namespace SpaceSim.Runtime
             return "";
         }
 
+        /// <summary>Team mission: driving and the manipulator belong to the robot operator.</summary>
+        string Deny()
+        {
+            SpaceSim.Runtime.Multiplayer.CrewGate.Deny(SpaceSim.Multiplayer.CrewAction.WorkOnSurface, state);
+            return SpaceSim.Runtime.Multiplayer.CrewSession.DeniedText(SpaceSim.Multiplayer.CrewAction.WorkOnSurface);
+        }
+
         /// <summary>Q: drive mode on/off; returns the message shown to the player.</summary>
         public string Toggle() => Active ? Disable(Loc.T("Режим ровера выключен.")) : Enable();
 
         public string Enable()
         {
             if (Active) return "";
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface)) return Deny();
             string reason = CanDrive();
             if (reason.Length > 0)
             {
@@ -276,6 +284,7 @@ namespace SpaceSim.Runtime
         /// <summary>E while driving: the manipulator takes the nearest surface sample in its reach (no one goes outside).</summary>
         public string UseManipulator()
         {
+            if (!SpaceSim.Runtime.Multiplayer.CrewSession.Can(SpaceSim.Multiplayer.CrewAction.WorkOnSurface)) return Deny();
             string msg = Manipulate();
             if (msg.Length > 0) state?.Notify(msg);
             return msg;

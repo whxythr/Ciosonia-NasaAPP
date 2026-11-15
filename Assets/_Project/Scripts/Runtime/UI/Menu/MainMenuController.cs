@@ -382,7 +382,8 @@ namespace SpaceSim.Runtime.Menu
             column.Add(Text(Loc.T("ПРОФИЛЬ") + "  /  " + (profile != null
                 ? Loc.T("АВТОСОХРАНЕНИЕ") + "  ·  " + GameModeRules.Name(profile.gameMode).ToUpperInvariant()
                 : Loc.T("НОВАЯ ИГРА")), "eyebrow", "t-mono"));
-            column.Add(Text("HORIZON", "title"));
+            // Warm orange → violet word mark.
+            column.Add(MenuKit.GradientText("HORIZON", new Color(1f, 0.62f, 0.26f), new Color(0.62f, 0.36f, 1f), "title"));
             var status = Add(column, El("hz-status"));
             status.Add(El("hz-status__mark"));
             status.Add(Text("СЧЁТ ПРОГРАММЫ", "hz-status__label", "t-mono"));
@@ -920,6 +921,38 @@ namespace SpaceSim.Runtime.Menu
         // player leaves it); this code only draws it and forwards clicks.
 
         const string CrewNickKey = "horizon.crew.nick";
+        const string CrewRegionKey = "horizon.crew.region";
+
+        VisualElement teamRegion;
+
+        static string SavedCrewRegion() => CrewRegion.Normalize(PlayerPrefs.GetString(CrewRegionKey, CrewRegion.Default));
+
+        /// <summary>EU | US switch; locked while in a room or entering one (the room stays in its region).</summary>
+        void BuildTeamRegion(ICrewNetwork net, bool inRoom)
+        {
+            teamRegion.Clear();
+            if (net == null) return;
+            teamRegion.Add(Text("РЕГИОН", "team-bar__label", "t-strong"));
+            var seg = Add(teamRegion, El("hz-seg"));
+            bool locked = inRoom || net.Status == CrewNetStatus.JoiningRoom;
+            foreach (string r in CrewRegion.All)
+            {
+                string region = r;
+                var b = new Button(() =>
+                {
+                    ICrewNetwork n = Crew;
+                    if (n == null || n.Status == CrewNetStatus.InRoom || n.Status == CrewNetStatus.JoiningRoom) return;
+                    PlayerPrefs.SetString(CrewRegionKey, region);
+                    Crew?.SetRegion(region);
+                    RefreshTeam();
+                }) { text = CrewRegion.Label(region) };
+                b.AddToClassList("hz-seg__item");
+                b.AddToClassList("t-mono");
+                b.EnableInClassList("hz-seg__item--on", net.Region == region);
+                if (locked) b.AddToClassList("btn--disabled");
+                seg.Add(b);
+            }
+        }
 
         int teamScenario;
         bool teamLaunching;
@@ -948,6 +981,10 @@ namespace SpaceSim.Runtime.Menu
             teamNameField.AddToClassList("hz-field");
             teamNameField.AddToClassList("team-field");
             name.Add(teamNameField);
+
+            // Photon region: a room lives in one region, the host's choice makes it there (joining also searches the other).
+            teamRegion = Add(bar, El("team-bar__group"));
+            teamRegion.style.marginLeft = 26;
 
             bar.Add(El("grow"));
             teamStatus = Add(bar, Text("", "team-status", "t-mono"));
@@ -1024,6 +1061,7 @@ namespace SpaceSim.Runtime.Menu
                 return;
             }
             HookCrew(net);
+            net.SetRegion(SavedCrewRegion());
             net.Connect(TeamNickname());
             RefreshTeam();
         }
@@ -1073,7 +1111,38 @@ namespace SpaceSim.Runtime.Menu
             if (net == null) { OpenCrew(); net = Crew; }
             if (net == null) return;
             net.Connect(TeamNickname());
-            net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id);
+            net.CreateRoom(MenuCatalog.Scenarios[teamScenario].Id, TeamPublic);
+        }
+
+        const string CrewPublicKey = "horizon.crew.public";
+
+        /// <summary>New rooms are listed for everyone (remembered between launches; off by default: code only).</summary>
+        static bool TeamPublic
+        {
+            get => PlayerPrefs.GetInt(CrewPublicKey, 0) != 0;
+            set => PlayerPrefs.SetInt(CrewPublicKey, value ? 1 : 0);
+        }
+
+        /// <summary>«ПО КОДУ | ОТКРЫТАЯ»: before creating — for the new room; in a room — the host lists or hides it.</summary>
+        void AddVisibilitySwitch(VisualElement parent, bool current, bool enabled, Action<bool> pick)
+        {
+            var seg = Add(parent, El("hz-seg"));
+            seg.style.marginRight = 18;
+            foreach (bool value in new[] { false, true })
+            {
+                bool v = value;
+                var b = new Button(() =>
+                {
+                    if (!enabled) return;
+                    pick(v);
+                    RefreshTeam();
+                }) { text = Loc.T(v ? "ОТКРЫТАЯ" : "ПО КОДУ") };
+                b.AddToClassList("hz-seg__item");
+                b.AddToClassList("t-mono");
+                b.EnableInClassList("hz-seg__item--on", current == v);
+                if (!enabled) b.AddToClassList("btn--disabled");
+                seg.Add(b);
+            }
         }
 
         void JoinTeamRoom()
@@ -1117,6 +1186,7 @@ namespace SpaceSim.Runtime.Menu
             teamMissionTitle.text = Loc.T(scenario.Title);
             teamMissionMeta.text = Loc.T(scenario.Target) + "  ·  " + Loc.T(scenario.Difficulty.Title);
 
+            BuildTeamRegion(net, inRoom);
             BuildTeamRoomRow(net, online, inRoom);
             BuildTeamRoles(net, lobby, inRoom);
             BuildTeamCrew(net, lobby, inRoom);
@@ -1132,12 +1202,16 @@ namespace SpaceSim.Runtime.Menu
             {
                 teamRoomRow.Add(Text("КОД КОМНАТЫ", "team-bar__label", "t-strong"));
                 teamRoomRow.Add(Text(net.RoomCode ?? "—", "room-code", "t-mono"));
+                var visibility = Add(teamRoomRow, El("team-bar__group"));
+                visibility.style.marginLeft = 18;
+                AddVisibilitySwitch(visibility, net.RoomIsPublic, net.IsHost, v => Crew?.SetRoomPublic(v));
                 var leave = Add(teamRoomRow, ButtonEl("ВЫЙТИ ИЗ КОМНАТЫ", () => net.Leave()));
                 leave.AddToClassList("btn--text");
                 leave.style.marginLeft = 18;
                 return;
             }
             bool busy = net != null && (net.Status == CrewNetStatus.Connecting || net.Status == CrewNetStatus.JoiningRoom);
+            AddVisibilitySwitch(teamRoomRow, TeamPublic, !busy, v => TeamPublic = v);
             var create = Add(teamRoomRow, ButtonEl("СОЗДАТЬ КОМНАТУ", CreateTeamRoom, primary: !busy, disabled: busy));
             create.style.marginRight = 26;
             teamRoomRow.Add(Text("ИЛИ КОД", "team-bar__label", "t-strong"));
@@ -1223,7 +1297,12 @@ namespace SpaceSim.Runtime.Menu
         void BuildTeamCrew(ICrewNetwork net, CrewLobbyState lobby, bool inRoom)
         {
             teamCrew.Clear();
-            if (!inRoom || lobby == null) return;
+            if (!inRoom)
+            {
+                BuildPublicRooms(net);
+                return;
+            }
+            if (lobby == null) return;
             var crewTitle = Add(teamCrew, new Label(Loc.T("ЭКИПАЖ") + "  " + lobby.Count + "/" + CrewLobbyState.MaxPlayers));
             crewTitle.AddToClassList("team-bar__label");
             crewTitle.AddToClassList("t-strong");
@@ -1246,6 +1325,50 @@ namespace SpaceSim.Runtime.Menu
                 var ready = Add(seat, new Label(m.Ready ? Loc.T("ГОТОВ") : Loc.T("НЕ ГОТОВ")));
                 ready.AddToClassList("crew-seat__state");
                 ready.AddToClassList(m.Ready ? "crew-seat__state--yes" : "crew-seat__state--no");
+            }
+        }
+
+        /// <summary>Outside a room: the open rooms of this region, one click to join (no code needed).</summary>
+        void BuildPublicRooms(ICrewNetwork net)
+        {
+            if (net == null || net.Status == CrewNetStatus.Failed || net.Status == CrewNetStatus.Idle) return;
+            var title = Add(teamCrew, new Label(Loc.T("ОТКРЫТЫЕ КОМНАТЫ") + " · " + CrewRegion.Label(net.Region)));
+            title.AddToClassList("team-bar__label");
+            title.AddToClassList("t-strong");
+            IReadOnlyList<CrewRoomInfo> rooms = net.PublicRooms;
+            if (!net.ListingRooms || rooms == null || rooms.Count == 0)
+            {
+                var none = Add(teamCrew, new Label(net.ListingRooms
+                    ? Loc.T("Пока никого: создайте открытую комнату или войдите по коду.")
+                    : Loc.T("Список загружается…")));
+                none.AddToClassList("crew-seat__roles");
+                none.AddToClassList("t-mono");
+                return;
+            }
+            bool busy = net.Status == CrewNetStatus.Connecting || net.Status == CrewNetStatus.JoiningRoom;
+            foreach (CrewRoomInfo r in rooms)
+            {
+                string code = r.Code;
+                var row = new Button(() =>
+                {
+                    ICrewNetwork n = Crew;
+                    if (n == null || n.Status == CrewNetStatus.JoiningRoom || n.Status == CrewNetStatus.InRoom) return;
+                    n.Connect(TeamNickname());
+                    n.JoinRoom(code);
+                });
+                row.AddToClassList("crew-seat");
+                if (busy) row.AddToClassList("btn--disabled");
+                teamCrew.Add(row);
+                var host = Add(row, new Label("★ " + (string.IsNullOrEmpty(r.Host) ? code : r.Host)));
+                host.AddToClassList("crew-seat__name");
+                host.AddToClassList("t-strong");
+                int i = string.IsNullOrEmpty(r.MissionId) ? -1 : Array.FindIndex(MenuCatalog.Scenarios, s => s.Id == r.MissionId);
+                var mission = Add(row, new Label(i >= 0 ? Loc.T(MenuCatalog.Scenarios[i].Title) : code));
+                mission.AddToClassList("crew-seat__roles");
+                mission.AddToClassList("t-mono");
+                var seats = Add(row, new Label(CrewRoomList.Seats(r)));
+                seats.AddToClassList("crew-seat__state");
+                seats.AddToClassList("crew-seat__state--yes");
             }
         }
 
