@@ -64,6 +64,7 @@ namespace SpaceSim.Runtime
             new KeyAction(InputKey.F1, GroupWindows, "Flight Manual"),
             new KeyAction(InputKey.F2, GroupWindows, "Научная карта"),
             new KeyAction(InputKey.I, GroupWindows, "Начальные условия (тест)"),
+            new KeyAction(InputKey.J, GroupWindows, "Задания экипажа (командная миссия)"),
 
             new KeyAction(InputKey.H, GroupInterface, "Скрыть / показать приборы"),
             new KeyAction(InputKey.Tab, GroupInterface, "Экипаж полёта"),
@@ -76,6 +77,7 @@ namespace SpaceSim.Runtime
             new KeyAction(InputKey.E, GroupSurface, "Выйти · взять образец"),
             new KeyAction(InputKey.Q, GroupSurface, "Режим ровера"),
             new KeyAction(InputKey.Alpha5, GroupSurface, "Бурение (керн)"),
+            new KeyAction(InputKey.V, GroupSurface, "Снимок цели (водитель робота)"),
             new KeyAction(InputKey.Alpha4, GroupRocket, "Фонари"),
         };
 

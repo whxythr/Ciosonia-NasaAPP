@@ -39,6 +39,8 @@ namespace SpaceSim.Runtime
 
         public void Toggle()
         {
+            // Team mission: the test tools move the shared rocket, so they are the pilot's.
+            if (!open && !SpaceSim.Runtime.Multiplayer.CrewGate.Allows(SpaceSim.Multiplayer.CrewAction.FlyRocket, state)) return;
             open = !open;
             if (!open) GUIUtility.keyboardControl = 0;
         }

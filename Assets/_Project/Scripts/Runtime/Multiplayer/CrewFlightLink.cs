@@ -187,7 +187,38 @@ namespace SpaceSim.Runtime.Multiplayer
                 s.Rcs = sys.RcsEnabled;
                 s.Parachutes = sys.ParachuteCount > 0 && sys.CanopiesIn(CanopyState.Stowed) < sys.ParachuteCount;
             }
+            s.Destroyed = body.Destroyed;
+            SpaceSim.Navigation.ManeuverNode node = boot.Navigation != null ? boot.Navigation.Plan.Departure : null;
+            if (node != null)
+            {
+                s.HasNode = true;
+                s.NodeTime = node.Time;
+                s.NodePrograde = node.Prograde;
+                s.NodeNormal = node.Normal;
+                s.NodeRadial = node.Radial;
+            }
             return s;
+        }
+
+        /// <summary>Follower: the pilot's manoeuvre node on this computer's map too (set, moved, removed with it).</summary>
+        void MirrorNode(CrewFlightSnapshot s)
+        {
+            NavigationService nav = boot.Navigation;
+            if (nav == null) return;
+            SpaceSim.Navigation.ManeuverNode mine = nav.Plan.Departure;
+            if (!s.HasNode)
+            {
+                if (mine != null) nav.ClearNode();
+                return;
+            }
+            if (mine != null && System.Math.Abs(mine.Time - s.NodeTime) < 1e-3 && System.Math.Abs(mine.Prograde - s.NodePrograde) < 1e-3 &&
+                System.Math.Abs(mine.Normal - s.NodeNormal) < 1e-3 && System.Math.Abs(mine.Radial - s.NodeRadial) < 1e-3) return;
+            var node = new SpaceSim.Navigation.ManeuverNode
+            {
+                Time = s.NodeTime, Prograde = s.NodePrograde, Normal = s.NodeNormal, Radial = s.NodeRadial,
+            };
+            if (mine != null && System.Math.Abs(mine.Time - s.NodeTime) < 1e-3) nav.UpdateNodeLive(node); // dragged handles
+            else nav.SetNode(node);
         }
 
         // ---- Follower: mirror the pilot ------------------------------------------------------------------------------
@@ -268,6 +299,8 @@ namespace SpaceSim.Runtime.Multiplayer
                 sys.RcsEnabled = s.Rcs;
                 if (s.Parachutes && sys.ParachuteCount > 0 && sys.CanopiesIn(CanopyState.Stowed) == sys.ParachuteCount) body.ReleaseParachutes();
             }
+            MirrorNode(s);
+            if (s.Destroyed && !body.Destroyed) body.DestroyFromCrew();
 
             // Where it is. While the robot operator's rover drives, it owns the landed position: on its own computer, and here
             // through CrewRobotLink (the pilot's landed point lags behind the rover meanwhile).

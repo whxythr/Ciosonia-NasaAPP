@@ -13,7 +13,7 @@ namespace SpaceSim.Multiplayer
     /// </summary>
     public sealed class CrewFlightSnapshot
     {
-        public const string Version = "v1";
+        public const string Version = "v2";
 
         /// <summary>Grows with every snapshot of one pilot (an older or repeated one is dropped).</summary>
         public int Sequence;
@@ -44,6 +44,13 @@ namespace SpaceSim.Multiplayer
 
         public bool Legs, Rcs, Parachutes;
 
+        /// <summary>The pilot's rocket is wrecked (a crash on touchdown).</summary>
+        public bool Destroyed;
+
+        /// <summary>The pilot's manoeuvre node, so everybody sees the plan on their map (none when <see cref="HasNode"/> is false).</summary>
+        public bool HasNode;
+        public double NodeTime, NodePrograde, NodeNormal, NodeRadial;
+
         public string Encode()
         {
             var sb = new StringBuilder(256);
@@ -68,6 +75,12 @@ namespace SpaceSim.Multiplayer
             Add(sb, Legs);
             Add(sb, Rcs);
             Add(sb, Parachutes);
+            Add(sb, Destroyed);
+            Add(sb, HasNode);
+            Add(sb, NodeTime);
+            Add(sb, NodePrograde);
+            Add(sb, NodeNormal);
+            Add(sb, NodeRadial);
             double[] p = Propellant ?? new double[0];
             Add(sb, p.Length);
             foreach (double v in p) Add(sb, v);
@@ -79,7 +92,7 @@ namespace SpaceSim.Multiplayer
         {
             if (string.IsNullOrEmpty(text)) return null;
             string[] f = text.Split(';');
-            if (f.Length < 28 || f[0] != Version) return null;
+            if (f.Length < 34 || f[0] != Version) return null; // version + 32 fixed values + propellant count
             var r = new Reader(f);
             try
             {
@@ -105,6 +118,12 @@ namespace SpaceSim.Multiplayer
                     Legs = r.Bool(),
                     Rcs = r.Bool(),
                     Parachutes = r.Bool(),
+                    Destroyed = r.Bool(),
+                    HasNode = r.Bool(),
+                    NodeTime = r.Double(),
+                    NodePrograde = r.Double(),
+                    NodeNormal = r.Double(),
+                    NodeRadial = r.Double(),
                 };
                 int n = r.Int();
                 if (n < 0 || n > 64 || r.Left != n) return null;

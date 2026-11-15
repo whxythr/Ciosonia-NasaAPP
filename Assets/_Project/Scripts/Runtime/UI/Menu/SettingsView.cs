@@ -295,6 +295,7 @@ namespace SpaceSim.Runtime.Menu
         void BuildPage()
         {
             list.Clear();
+            list.style.flexDirection = FlexDirection.Column; // BuildScroll switches it to Row; plain pages stack rows
             keyRows.Clear();
             segments.Clear();
             brightness = sensitivity = null;

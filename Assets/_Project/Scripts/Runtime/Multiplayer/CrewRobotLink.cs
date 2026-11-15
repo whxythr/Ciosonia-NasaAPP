@@ -41,12 +41,18 @@ namespace SpaceSim.Runtime.Multiplayer
 
         /// <summary>The operator's rover is driving the shared rocket right now (seen in a recent snapshot).</summary>
         public static bool RoverDrivenRemotely { get; private set; }
+        /// <summary>Photos the robot operator reports (their computer counts them; others read it here).</summary>
+        public static int RemotePhotos { get; private set; }
+        /// <summary>The operator's robot is outside (from a recent snapshot).</summary>
+        public static bool RemoteEva { get; private set; }
 
         public void Initialize(SpaceSimBootstrap bootstrap)
         {
             boot = bootstrap;
             net = CrewSession.Network;
             if (net != null) net.RobotReceived += OnRobot;
+            RemotePhotos = 0; // statics: a new mission starts from zero
+            RemoteEva = false;
         }
 
         void OnDestroy()
@@ -73,6 +79,8 @@ namespace SpaceSim.Runtime.Multiplayer
             }
             bool current = latest != null && Time.unscaledTime - latestAt < CrewRobotSync.StaleAfter;
             RoverDrivenRemotely = current && latest.RoverActive && latest.Frame == boot.Body.Simulation.FrameBody;
+            if (latest != null) RemotePhotos = Math.Max(RemotePhotos, latest.Photos);
+            RemoteEva = current && latest.Eva;
             if (fresh)
             {
                 fresh = false;
@@ -98,6 +106,7 @@ namespace SpaceSim.Runtime.Multiplayer
                 Right = ex.Eva ? ex.LastRight : 0.0,
                 Sprint = ex.Eva && ex.LastSprint,
                 Jumps = ex.JumpCount,
+                Photos = CrewMissionTasks.LocalPhotos,
                 RoverActive = boot.Rover != null && boot.Rover.Active,
                 RoverFixed = boot.Body.Simulation.LandedFixedPosition,
             };

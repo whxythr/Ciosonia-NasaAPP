@@ -18,6 +18,7 @@ namespace SpaceSim.Tests
             Right = -1.0,
             Sprint = true,
             Jumps = 3,
+            Photos = 4,
             RoverActive = false,
             RoverFixed = new Vector3d(6.371e6, 0.0, 0.0),
             Collected = new[] { "home:12", "home:40" },
@@ -39,6 +40,7 @@ namespace SpaceSim.Tests
             Assert.AreEqual(a.Right, b.Right);
             Assert.AreEqual(a.Sprint, b.Sprint);
             Assert.AreEqual(a.Jumps, b.Jumps);
+            Assert.AreEqual(a.Photos, b.Photos);
             Assert.AreEqual(a.RoverActive, b.RoverActive);
             Assert.AreEqual(a.RoverFixed.x, b.RoverFixed.x);
             CollectionAssert.AreEqual(a.Collected, b.Collected);
@@ -64,8 +66,8 @@ namespace SpaceSim.Tests
         public void Decode_RejectsGarbageAndClampsInput()
         {
             Assert.IsNull(CrewRobotSnapshot.Decode(null));
-            Assert.IsNull(CrewRobotSnapshot.Decode("r1;1;2"));
-            Assert.IsNull(CrewRobotSnapshot.Decode(Sample().Encode().Replace("r1;", "v1;")));
+            Assert.IsNull(CrewRobotSnapshot.Decode("r2;1;2"));
+            Assert.IsNull(CrewRobotSnapshot.Decode(Sample().Encode().Replace("r2;", "v1;")));
             string text = Sample().Encode().Replace(";271.5;1;-1;", ";271.5;7;-9;");
             CrewRobotSnapshot s = CrewRobotSnapshot.Decode(text);
             Assert.AreEqual(1.0, s.Forward);

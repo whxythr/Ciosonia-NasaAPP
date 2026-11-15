@@ -11,11 +11,11 @@ namespace SpaceSim.Multiplayer
     /// operator's computer is the authority over them (the pilot's over the flight, <see cref="CrewFlightSnapshot"/>).
     /// The others walk a copy of the robot with the same input and put it on the sent point when it drifts
     /// (<see cref="CrewRobotSync"/>); while the rover drives, the shared rocket stands where the rover is. Pure, no Unity.
-    /// Wire form: «r1;…» invariant-culture numbers, the collected sample ids last, separated by «|».
+    /// Wire form: «r2;…» invariant-culture numbers, the collected sample ids last, separated by «|».
     /// </summary>
     public sealed class CrewRobotSnapshot
     {
-        public const string Version = "r1";
+        public const string Version = "r2";
 
         public int Sequence;
         /// <summary>Navigation index of the body the robot is on.</summary>
@@ -31,6 +31,8 @@ namespace SpaceSim.Multiplayer
         public bool Sprint;
         /// <summary>Jumps started so far (a new value makes the copy jump).</summary>
         public int Jumps;
+        /// <summary>Photos the robot operator has taken at the target (counts for the objectives).</summary>
+        public int Photos;
         /// <summary>The rocket drives as a rover on the robot operator's computer.</summary>
         public bool RoverActive;
         /// <summary>Planet-fixed position of the landed rocket on the robot operator's computer [m].</summary>
@@ -52,6 +54,7 @@ namespace SpaceSim.Multiplayer
             Add(sb, Right);
             Add(sb, Sprint);
             Add(sb, Jumps);
+            Add(sb, Photos);
             Add(sb, RoverActive);
             Add(sb, RoverFixed);
             var ids = new List<string>();
@@ -70,7 +73,7 @@ namespace SpaceSim.Multiplayer
         {
             if (string.IsNullOrEmpty(text)) return null;
             string[] f = text.Split(';');
-            if (f.Length != 20 || f[0] != Version) return null; // version + 18 numbers + the id list
+            if (f.Length != 21 || f[0] != Version) return null; // version + 19 numbers + the id list
             int i = 1;
             try
             {
@@ -86,6 +89,7 @@ namespace SpaceSim.Multiplayer
                     Right = Clamp1(Double(f[i++])),
                     Sprint = Bool(f[i++]),
                     Jumps = Int(f[i++]),
+                    Photos = Math.Max(0, Int(f[i++])),
                     RoverActive = Bool(f[i++]),
                     RoverFixed = new Vector3d(Double(f[i++]), Double(f[i++]), Double(f[i++])),
                 };

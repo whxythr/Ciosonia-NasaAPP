@@ -155,6 +155,7 @@ namespace SpaceSim.Runtime
             {
                 Create<SpaceSim.Runtime.Multiplayer.CrewFlightLink>("CrewFlightLink").Initialize(this);
                 Create<SpaceSim.Runtime.Multiplayer.CrewRobotLink>("CrewRobotLink").Initialize(this); // the robot and the rover
+                Create<SpaceSim.Runtime.Multiplayer.CrewMissionTasks>("CrewMissionTasks").Initialize(this); // objectives, photos (V), panel (J)
             }
         }
 
@@ -344,6 +345,8 @@ namespace SpaceSim.Runtime
         /// <summary>R: a fresh rocket on the start planet's pad. Whatever was on board is lost.</summary>
         public void NewRocketAtHome()
         {
+            // Team mission: a new flight is the pilot's call (the others follow the pilot's rocket and would drift apart).
+            if (!SpaceSim.Runtime.Multiplayer.CrewGate.Allows(SpaceSim.Multiplayer.CrewAction.FlyRocket, FlightState)) return;
             Session?.EndCrewFlight(); // the old flight is over: its crew is free again
             int lost = Session != null ? Session.LoseCargo() : 0;
             int home = System.IndexOf(startBodyId);

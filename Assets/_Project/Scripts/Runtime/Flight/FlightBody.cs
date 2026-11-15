@@ -291,6 +291,19 @@ namespace SpaceSim.Runtime
             Touchdown?.Invoke(outcome);
         }
 
+        /// <summary>
+        /// Team mission follower: the pilot's rocket crashed. The same wreck here (engine out, equipment gone), even when this
+        /// computer's own touchdown judged it a little differently.
+        /// </summary>
+        public void DestroyFromCrew()
+        {
+            if (Destroyed) return;
+            Destroyed = true;
+            if (sim.Rocket != null) sim.Rocket.Extinguish();
+            Condition.Damage(1.0);
+            SystemMessage?.Invoke(Loc.T("Ракета разбилась при посадке (у пилота)."));
+        }
+
         void ApplyHazards(double dt)
         {
             // Environmental hazards act on the equipment where the vehicle actually is (Level B).
@@ -396,7 +409,11 @@ namespace SpaceSim.Runtime
         public void ResetToLaunchSite()
         {
             sim.Rocket = startWithRocket ? new RocketState(rocket) : null;
-            if (sim.Rocket != null) sim.Rocket.InfinitePropellant = Session != null && Session.Transient && Session.Profile.IsSandbox;
+            // Sandbox play has endless propellant; a team mission (also a transient sandbox profile) does not: the engineer's
+            // margin and the pilot's burns must count.
+            if (sim.Rocket != null)
+                sim.Rocket.InfinitePropellant = Session != null && Session.Transient && Session.Profile.IsSandbox &&
+                                                !SpaceSim.Runtime.Multiplayer.CrewSession.Active;
             sim.Systems = new FlightSystems(DesignCapabilities);
             sim.TakeHeatDamage();
             Condition.Reset();

@@ -29,6 +29,12 @@ namespace SpaceSim.Tests
             Legs = true,
             Rcs = false,
             Parachutes = true,
+            Destroyed = true,
+            HasNode = true,
+            NodeTime = 5000.25,
+            NodePrograde = 120.5,
+            NodeNormal = -3.0,
+            NodeRadial = 0.125,
         };
 
         [Test]
@@ -59,6 +65,12 @@ namespace SpaceSim.Tests
             Assert.AreEqual(a.Legs, b.Legs);
             Assert.AreEqual(a.Rcs, b.Rcs);
             Assert.AreEqual(a.Parachutes, b.Parachutes);
+            Assert.AreEqual(a.Destroyed, b.Destroyed);
+            Assert.AreEqual(a.HasNode, b.HasNode);
+            Assert.AreEqual(a.NodeTime, b.NodeTime);
+            Assert.AreEqual(a.NodePrograde, b.NodePrograde);
+            Assert.AreEqual(a.NodeNormal, b.NodeNormal);
+            Assert.AreEqual(a.NodeRadial, b.NodeRadial);
         }
 
         [Test]
@@ -85,7 +97,7 @@ namespace SpaceSim.Tests
             Assert.IsNull(CrewFlightSnapshot.Decode(""));
             Assert.IsNull(CrewFlightSnapshot.Decode("hello"));
             string good = Sample().Encode();
-            Assert.IsNull(CrewFlightSnapshot.Decode("v2" + good.Substring(2)));
+            Assert.IsNull(CrewFlightSnapshot.Decode("v9" + good.Substring(2)));
             Assert.IsNull(CrewFlightSnapshot.Decode(good.Replace(";0.75;", ";NaN;")));
             Assert.IsNull(CrewFlightSnapshot.Decode(good + ";5")); // one propellant value too many
             Assert.IsNull(CrewFlightSnapshot.Decode(good.Substring(0, good.LastIndexOf(';')))); // one too few
